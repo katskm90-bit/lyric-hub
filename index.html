@@ -29,16 +29,8 @@ h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1e
 .btn-red:hover{background:#fee2e2;color:#b91c1c}
 .btn-cancel{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
 .btn-cancel:hover{background:#e2e8f0;color:#1e293b}
-.btn-yt{background:#ff0000;color:#fff}
-.btn-yt:hover{background:#cc0000}
-.btn-audio{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff}
-.btn-audio:hover{filter:brightness(1.08)}
-.btn-inst{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
-.btn-inst:hover{filter:brightness(1.08)}
-.btn-solfa{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff}
-.btn-solfa:hover{filter:brightness(1.08)}
 .btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
-.search-area{padding:18px 24px 0;background:#fff}
+.search-area{padding:18px 24px 0}
 .search-wrap{position:relative;max-width:680px;margin:0 auto}
 .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:#8b5cf6;fill:none;pointer-events:none}
 #search{width:100%;padding:13px 16px 13px 44px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;color:#1e293b;font-size:14px;outline:none;transition:border-color 0.2s}
@@ -80,14 +72,24 @@ h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1e
 .empty-state p{color:#64748b;font-size:14px;margin-bottom:20px}
 footer{padding:12px 24px;text-align:center;border-top:1px solid #e2e8f0;background:#fff}
 footer p{font-size:13px;color:#7c3aed;font-weight:500}
-
-/* Modals */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .modal-overlay.open{display:flex}
 .modal-box{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;width:100%;max-width:580px;margin:auto;position:relative;animation:slideIn 0.22s ease-out;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
 .modal-box.wide{max-width:860px}
 .modal-box.narrow{max-width:420px}
 .modal-box.yt-box{max-width:760px;padding:20px}
+/* YouTube floating panel — sits on top of projection */
+#yt-float{position:fixed;z-index:300;display:none;flex-direction:column;background:#000;border-radius:16px;border:1px solid rgba(255,255,255,0.15);box-shadow:0 24px 60px rgba(0,0,0,0.8);overflow:hidden;resize:both;min-width:320px;min-height:200px}
+#yt-float.open{display:flex}
+#yt-float-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.07);cursor:move;user-select:none;flex-shrink:0}
+#yt-float-title{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 80px)}
+#yt-float-controls{display:flex;gap:6px;flex-shrink:0}
+.yt-float-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer;padding:4px 8px;font-size:11px;font-weight:600;transition:background 0.15s;white-space:nowrap}
+.yt-float-btn:hover{background:rgba(255,255,255,0.2)}
+.yt-float-btn.close-btn{background:rgba(220,38,38,0.3);border-color:rgba(220,38,38,0.5)}
+.yt-float-btn.close-btn:hover{background:rgba(220,38,38,0.6)}
+#yt-float-body{flex:1;position:relative;min-height:0}
+#yt-float-body iframe{width:100%;height:100%;border:none;display:block}
 .modal-box.solfa-box{max-width:960px}
 @keyframes slideIn{from{opacity:0;transform:scale(0.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .modal-close{position:absolute;top:16px;right:16px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#64748b;cursor:pointer;transition:all 0.15s}
@@ -112,15 +114,14 @@ textarea.fi{resize:vertical}
 .section-divider{border:none;border-top:1px solid #e2e8f0;margin:20px 0}
 .section-label{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px}
 .media-hint{font-size:12px;color:#94a3b8;margin-top:5px;line-height:1.5}
-
 /* Projection */
 #projection{position:fixed;inset:0;background:#0d0d0d;z-index:200;display:none;flex-direction:column}
 #projection.open{display:flex}
-.proj-header{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:flex-start;z-index:10}
-.proj-btns{display:flex;gap:8px;flex-wrap:wrap}
-.proj-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;backdrop-filter:blur(10px)}
+.proj-header{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:flex-start;z-index:10;gap:8px}
+.proj-btns{display:flex;gap:6px;flex-wrap:wrap}
+.proj-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;backdrop-filter:blur(10px)}
 .proj-btn:hover{background:rgba(255,255,255,0.18)}
-.proj-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5}
+.proj-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5}
 .proj-btn.yt{background:rgba(255,0,0,0.3);border-color:rgba(255,0,0,0.4)}
 .proj-btn.yt:hover{background:rgba(255,0,0,0.5)}
 .proj-btn.vocal{background:rgba(14,165,233,0.25);border-color:rgba(14,165,233,0.4)}
@@ -129,34 +130,39 @@ textarea.fi{resize:vertical}
 .proj-btn.inst:hover{background:rgba(245,158,11,0.4)}
 .proj-btn.solfa{background:rgba(139,92,246,0.25);border-color:rgba(139,92,246,0.4)}
 .proj-btn.solfa:hover{background:rgba(139,92,246,0.4)}
+.proj-btn.mic-btn{background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.4)}
+.proj-btn.mic-btn:hover{background:rgba(16,185,129,0.35)}
+.proj-btn.mic-btn.listening{background:rgba(16,185,129,0.6);border-color:#10b981;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
 .proj-btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
-.proj-info{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;text-align:right;max-width:38%}
-.proj-info-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff}
-.proj-info-sub{color:#c4b5fd;font-size:12px;margin-top:2px}
+.proj-info{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 16px;text-align:right;max-width:36%;flex-shrink:0}
+.proj-info-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#fff}
+.proj-info-sub{color:#c4b5fd;font-size:11px;margin-top:2px}
 .proj-info-pos{color:#a78bfa;font-size:11px;margin-top:2px}
 .proj-body{flex:1;display:flex;align-items:center;justify-content:center;padding:110px 48px 20px}
 .proj-stanza-wrap{text-align:center;width:100%;max-width:960px;transition:opacity 0.18s}
 .proj-stanza-label{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#a78bfa;margin-bottom:22px}
 .proj-stanza-text{font-family:'Playfair Display',serif;font-size:48px;color:#fff;line-height:1.55;white-space:pre-line}
 @media(max-width:768px){.proj-stanza-text{font-size:28px}}
-.proj-footer{background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.proj-nav{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s}
+.proj-footer{background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.08);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.proj-nav{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s}
 .proj-nav:hover:not(:disabled){background:rgba(255,255,255,0.16)}
 .proj-nav:disabled{opacity:0.3;cursor:not-allowed}
 .proj-nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5}
 .proj-indicator{text-align:center;flex:1}
 .proj-indicator-num{color:#fff;font-size:16px;font-weight:600}
 .proj-indicator-hint{color:#64748b;font-size:11px;margin-top:3px}
-
-/* Audio player panel in projection */
+/* Voice command feedback */
+.voice-feedback{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(16,185,129,0.9);border-radius:12px;padding:10px 20px;color:#fff;font-size:14px;font-weight:600;white-space:nowrap;display:none;z-index:30;backdrop-filter:blur(10px)}
+.voice-feedback.show{display:block;animation:slideIn 0.2s ease-out}
+/* Audio panel */
 .audio-panel{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.95);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px 20px;min-width:340px;backdrop-filter:blur(16px);z-index:20;display:none}
 .audio-panel.open{display:block}
 .audio-panel-title{font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .audio-panel audio{width:100%;border-radius:8px;accent-color:#8b5cf6}
 .audio-panel-close{position:absolute;top:10px;right:10px;background:transparent;border:none;color:#64748b;cursor:pointer;padding:2px}
 .audio-panel-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5}
-
-/* Divider page */
+/* Divider */
 .divider-wrap{text-align:center;padding:20px 0}
 .divider-up-next{display:inline-block;padding:7px 20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:9px;color:#c4b5fd;font-size:16px;font-weight:600;margin-bottom:20px}
 .divider-title{font-family:'Playfair Display',serif;font-size:52px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:14px}
@@ -164,13 +170,10 @@ textarea.fi{resize:vertical}
 .divider-key-box{display:inline-block;padding:14px 36px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px}
 .divider-key-label{color:#c4b5fd;font-size:14px;margin-bottom:5px}
 .divider-key-val{font-family:'Playfair Display',serif;font-size:44px;font-weight:800;color:#fff}
-
-/* YouTube modal */
+/* YouTube */
 .yt-wrapper{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000}
 .yt-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px}
-
-/* Solfa notation renderer */
-.solfa-modal-inner{padding:4px 0}
+/* Solfa */
 .solfa-voice-row{display:flex;align-items:flex-start;gap:0;margin-bottom:2px}
 .solfa-voice-label{width:28px;font-size:11px;font-weight:700;color:#7c3aed;flex-shrink:0;padding-top:4px;text-transform:uppercase}
 .solfa-bars{display:flex;flex-wrap:wrap;gap:0;flex:1}
@@ -181,12 +184,17 @@ textarea.fi{resize:vertical}
 .solfa-beat .lower-dot{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#7c3aed}
 .solfa-beat.held{color:#6366f1}
 .solfa-beat.rest{color:#94a3b8}
-.solfa-section-label{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin:12px 0 6px}
 .solfa-grid-wrap{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;overflow-x:auto;margin-bottom:12px}
 .solfa-part-divider{border:none;border-top:1px dashed #e2e8f0;margin:8px 0}
-.solfa-part-row{margin-bottom:6px}
 .no-solfa{text-align:center;padding:32px;color:#94a3b8;font-size:14px}
-
+/* Repeat config */
+.repeat-section-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px}
+.repeat-section-label{font-size:13px;font-weight:600;color:#1e293b;flex:1}
+.repeat-section-type{font-size:11px;color:#7c3aed;background:#ede9fe;padding:2px 8px;border-radius:5px;margin-right:12px;font-weight:600}
+.repeat-count-wrap{display:flex;align-items:center;gap:8px}
+.repeat-count-wrap label{font-size:12px;color:#64748b;font-weight:500}
+.repeat-count-input{width:60px;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:7px;color:#1e293b;font-size:13px;font-weight:600;text-align:center;outline:none}
+.repeat-count-input:focus{border-color:#8b5cf6}
 /* Repertoire */
 .rep-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;cursor:pointer;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .rep-card:hover{border-color:#c4b5fd;box-shadow:0 4px 16px rgba(139,92,246,0.1)}
@@ -205,6 +213,8 @@ textarea.fi{resize:vertical}
 .rep-remove{background:transparent;border:none;color:#94a3b8;cursor:pointer;transition:color 0.15s;padding:4px;line-height:0;flex-shrink:0}
 .rep-remove:hover{color:#dc2626}
 .rep-remove svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+.rep-cfg-btn{padding:5px 10px;background:#ede9fe;border:1px solid #ddd6fe;border-radius:7px;color:#6d28d9;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0}
+.rep-cfg-btn:hover{background:#ddd6fe}
 .sel-rep-item{display:block;width:100%;text-align:left;background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px;padding:13px 16px;cursor:pointer;transition:all 0.15s;margin-bottom:7px;color:#1e293b}
 .sel-rep-item:hover:not(:disabled){background:#ede9fe;border-color:#c4b5fd}
 .sel-rep-item:disabled{opacity:0.5;cursor:not-allowed}
@@ -230,9 +240,7 @@ textarea.fi{resize:vertical}
 <div id="main-view">
   <header>
     <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-      </div>
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
       <h1>Lyric Hub</h1>
     </div>
     <div class="header-actions">
@@ -255,26 +263,19 @@ textarea.fi{resize:vertical}
   <div class="filters">
     <select id="filter-type"><option value="all">All types</option><option value="common">Common</option><option value="uncommon">Uncommon</option></select>
     <select id="filter-chorus"><option value="all">All hymns</option><option value="with">With chorus</option><option value="without">Without chorus</option></select>
-    <button class="btn btn-ghost" id="clear-filters">
-      <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      Clear
-    </button>
+    <button class="btn btn-ghost" id="clear-filters"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Clear</button>
   </div>
   <div class="lang-tabs" id="lang-tabs"></div>
   <div class="grid" id="hymn-grid"></div>
   <div class="empty-state" id="empty-state" style="display:none">
     <div class="empty-icon"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19V6l12-3v13M9 19c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zm12-3c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zM9 10l12-3"/></svg></div>
-    <h3>No hymns yet</h3>
-    <p>Start building your hymn library</p>
-    <button class="btn btn-purple" id="empty-add-btn" style="font-size:14px;padding:11px 22px">
-      <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-      Add your first hymn
-    </button>
+    <h3>No hymns yet</h3><p>Start building your hymn library</p>
+    <button class="btn btn-purple" id="empty-add-btn" style="font-size:14px;padding:11px 22px"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add your first hymn</button>
   </div>
   <footer><p>Lyric Hub · SDA Music Realm</p></footer>
 </div>
 
-<!-- Add/Edit Hymn Modal -->
+<!-- Add/Edit Hymn -->
 <div class="modal-overlay" id="add-modal">
   <div class="modal-box" style="max-width:680px">
     <button class="modal-close" id="close-add-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
@@ -286,13 +287,7 @@ textarea.fi{resize:vertical}
       <div><label class="fl">Language *</label>
         <select id="f-lang" class="fi">
           <option value="">Select language</option>
-          <option>English</option><option>SDA Hymnal (English)</option>
-          <option>Isizulu</option><option>Isixhosa</option><option>Tswana</option>
-          <option>Sotho</option><option>Sepedi</option><option>Chichewa</option>
-          <option>Tonga</option><option>Shona</option><option>Venda</option>
-          <option>Swahili</option><option>Xitsonga</option><option>Kikuyu</option>
-          <option>Abagusii</option><option>Dholuo</option><option>Kinyarwanda</option>
-          <option>Portuguesa</option><option>Espanol</option><option>Tumbuka</option>
+          <option>English</option><option>SDA Hymnal (English)</option><option>Isizulu</option><option>Isixhosa</option><option>Tswana</option><option>Sotho</option><option>Sepedi</option><option>Chichewa</option><option>Tonga</option><option>Shona</option><option>Venda</option><option>Swahili</option><option>Xitsonga</option><option>Kikuyu</option><option>Abagusii</option><option>Dholuo</option><option>Kinyarwanda</option><option>Portuguesa</option><option>Espanol</option><option>Tumbuka</option>
         </select>
       </div>
       <div><label class="fl">Hymn book *</label><select id="f-book" class="fi" disabled><option value="">Select language first</option></select></div>
@@ -310,14 +305,14 @@ textarea.fi{resize:vertical}
     <div class="form-group"><label class="fl">Chorus <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><textarea id="f-chorus" class="fi" rows="3" placeholder="Enter chorus (if applicable)"></textarea></div>
     <hr class="section-divider">
     <p class="section-label">Media links <span style="font-weight:400;color:#cbd5e1">(all optional)</span></p>
-    <div class="form-group"><label class="fl">YouTube URL</label><input type="url" id="f-yt" placeholder="https://youtube.com/watch?v=..."><p class="media-hint">Paste the full YouTube URL for this hymn</p></div>
+    <div class="form-group"><label class="fl">YouTube URL</label><input type="url" id="f-yt" placeholder="https://youtube.com/watch?v=..."></div>
     <div class="form-row">
-      <div><label class="fl">Vocal audio URL</label><input type="url" id="f-vocal" placeholder="https://... (direct MP3/audio link)"><p class="media-hint">Direct link to vocal recording (MP3, M4A, WAV)</p></div>
-      <div><label class="fl">Instrumental URL</label><input type="url" id="f-inst" placeholder="https://... (direct MP3/audio link)"><p class="media-hint">Direct link to backing track / instrumental</p></div>
+      <div><label class="fl">Vocal audio URL</label><input type="url" id="f-vocal" placeholder="https://... (direct MP3 link)"></div>
+      <div><label class="fl">Instrumental URL</label><input type="url" id="f-inst" placeholder="https://... (direct MP3 link)"></div>
     </div>
     <hr class="section-divider">
     <p class="section-label">Tonic Sol-fa Notation <span style="font-weight:400;color:#cbd5e1">(SATB — all optional)</span></p>
-    <p style="font-size:12px;color:#64748b;margin-bottom:12px;line-height:1.6">Enter each voice part using sol-fa syllables separated by spaces. Use <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">|</code> for bar lines, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">-</code> for held notes, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">d1</code> for upper octave, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">d,</code> for lower octave. Example: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">d r m - | s s m -</code></p>
+    <p style="font-size:12px;color:#64748b;margin-bottom:12px;line-height:1.6">Use <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">|</code> for bar lines, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">-</code> for held notes, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">d1</code> upper octave, <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">d,</code> lower octave.</p>
     <div class="form-group"><label class="fl">Soprano</label><textarea id="f-soprano" class="fi" rows="2" placeholder="d  r  m  -  |  s  s  m  -  |  ..."></textarea></div>
     <div class="form-group"><label class="fl">Alto</label><textarea id="f-alto" class="fi" rows="2" placeholder="m  f  s  -  |  s  l  s  -  |  ..."></textarea></div>
     <div class="form-group"><label class="fl">Tenor</label><textarea id="f-tenor" class="fi" rows="2" placeholder="s  l  d1 -  |  d1 t  d1 -  |  ..."></textarea></div>
@@ -330,29 +325,15 @@ textarea.fi{resize:vertical}
 <div id="projection">
   <div class="proj-header">
     <div class="proj-btns">
-      <button class="proj-btn" id="exit-proj">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        Exit
-      </button>
-      <button class="proj-btn" id="fullscreen-btn">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-        Fullscreen
-      </button>
-      <button class="proj-btn yt" id="proj-yt-btn" disabled>
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        YouTube
-      </button>
-      <button class="proj-btn vocal" id="proj-vocal-btn" disabled>
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
-        Vocals
-      </button>
-      <button class="proj-btn inst" id="proj-inst-btn" disabled>
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
-        Instrumental
-      </button>
-      <button class="proj-btn solfa" id="proj-solfa-btn" disabled>
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="19" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Sol-fa
+      <button class="proj-btn" id="exit-proj"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Exit</button>
+      <button class="proj-btn" id="fullscreen-btn"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>Fullscreen</button>
+      <button class="proj-btn yt" id="proj-yt-btn" disabled><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>YouTube</button>
+      <button class="proj-btn vocal" id="proj-vocal-btn" disabled><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>Vocals</button>
+      <button class="proj-btn inst" id="proj-inst-btn" disabled><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>Instrumental</button>
+      <button class="proj-btn solfa" id="proj-solfa-btn" disabled><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="19" r="3"/><circle cx="18" cy="16" r="3"/></svg>Sol-fa</button>
+      <button class="proj-btn mic-btn" id="proj-mic-btn" title="Hold SPACEBAR to speak a command">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+        Voice
       </button>
     </div>
     <div class="proj-info">
@@ -361,39 +342,35 @@ textarea.fi{resize:vertical}
       <div class="proj-info-pos" id="proj-pos" style="display:none"></div>
     </div>
   </div>
-
-  <!-- Audio panel overlay -->
   <div class="audio-panel" id="audio-panel">
     <button class="audio-panel-close" id="close-audio-panel"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
     <div class="audio-panel-title" id="audio-panel-title">Vocals</div>
     <audio id="audio-player" controls></audio>
   </div>
-
-  <div class="proj-body">
-    <div id="proj-content" class="proj-stanza-wrap"></div>
-  </div>
+  <div class="voice-feedback" id="voice-feedback"></div>
+  <div class="proj-body"><div id="proj-content" class="proj-stanza-wrap"></div></div>
   <div class="proj-footer">
-    <button class="proj-nav" id="prev-stanza">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
-      Previous
-    </button>
+    <button class="proj-nav" id="prev-stanza"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>Previous</button>
     <div class="proj-indicator">
       <div class="proj-indicator-num" id="proj-indicator"></div>
-      <div class="proj-indicator-hint">← → navigate · Esc exit · F fullscreen</div>
+      <div class="proj-indicator-hint">← → navigate · Esc exit · F fullscreen · Hold SPACE for voice</div>
     </div>
-    <button class="proj-nav" id="next-stanza">
-      <span id="next-label">Next</span>
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
-    </button>
+    <button class="proj-nav" id="next-stanza"><span id="next-label">Next</span><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg></button>
   </div>
 </div>
 
-<!-- YouTube Modal -->
-<div class="modal-overlay" id="yt-modal">
-  <div class="modal-box yt-box">
-    <button class="modal-close" id="close-yt-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
-    <h2 class="modal-title" id="yt-modal-title" style="margin-bottom:16px"></h2>
-    <div class="yt-wrapper"><iframe id="yt-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>
+<!-- YouTube floating panel (overlays projection) -->
+<div id="yt-float">
+  <div id="yt-float-header">
+    <span id="yt-float-title"></span>
+    <div id="yt-float-controls">
+      <button class="yt-float-btn" id="yt-float-small" title="Small">Small</button>
+      <button class="yt-float-btn" id="yt-float-large" title="Large">Large</button>
+      <button class="yt-float-btn close-btn" id="yt-float-close">✕ Close</button>
+    </div>
+  </div>
+  <div id="yt-float-body">
+    <iframe id="yt-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
   </div>
 </div>
 
@@ -404,6 +381,17 @@ textarea.fi{resize:vertical}
     <h2 class="modal-title" id="solfa-modal-title"></h2>
     <p class="modal-sub" id="solfa-modal-sub"></p>
     <div id="solfa-render"></div>
+  </div>
+</div>
+
+<!-- Repeat Config Modal -->
+<div class="modal-overlay" id="repeat-modal">
+  <div class="modal-box narrow" style="max-width:500px">
+    <button class="modal-close" id="close-repeat-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title" id="repeat-modal-title">Configure repeats</h2>
+    <p class="modal-sub">Set how many times each section repeats before moving on</p>
+    <div id="repeat-sections-list"></div>
+    <button class="btn btn-purple btn-full" id="save-repeats">Save repeat settings</button>
   </div>
 </div>
 
@@ -423,10 +411,7 @@ textarea.fi{resize:vertical}
     <button class="modal-close" id="close-rep-list"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
     <h2 class="modal-title">Service repertoires</h2>
     <p class="modal-sub">Manage your service hymn collections</p>
-    <button class="btn btn-purple btn-full" id="create-rep-btn" style="margin-bottom:18px">
-      <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-      Create new repertoire
-    </button>
+    <button class="btn btn-purple btn-full" id="create-rep-btn" style="margin-bottom:18px"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Create new repertoire</button>
     <div id="rep-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
     <div id="rep-empty" style="display:none;text-align:center;padding:40px 0"><p style="color:#64748b;font-size:14px">No repertoires yet.</p></div>
   </div>
@@ -455,10 +440,7 @@ textarea.fi{resize:vertical}
     <div id="rd-items"></div>
     <div id="rd-empty" style="display:none;text-align:center;padding:28px 0"><p style="color:#64748b;font-size:14px">No hymns in this repertoire yet.</p></div>
     <div class="action-row">
-      <button class="btn btn-green" id="start-proj-btn" style="flex:2;padding:12px;justify-content:center">
-        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Start projection
-      </button>
+      <button class="btn btn-green" id="start-proj-btn" style="flex:2;padding:12px;justify-content:center"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Start projection</button>
       <button class="btn btn-ghost" id="edit-rep-btn" style="padding:12px;justify-content:center">Edit info</button>
       <button class="btn btn-red" id="del-rep-btn" style="padding:12px;justify-content:center">Delete</button>
     </div>
@@ -492,21 +474,9 @@ textarea.fi{resize:vertical}
 <div class="toast-container" id="toasts"></div>
 
 <script>
-const LANG_BOOKS={
-  'English':['Christ In Song'],'SDA Hymnal (English)':['SDA Hymnal'],
-  'Tswana':['Kereste Mo Kopelong'],'Sotho':['Keresete Pineng'],
-  'Chichewa':['Khristu Mu Nyimbo'],'Tonga':['Kristu MuNzwiyo'],
-  'Venda':['Ngosha YaDzingosha'],'Shona':['Nyimbo Za Kristo'],
-  'Swahili':['Nyimbo Za Kristo'],'Isizulu':['Ukrestu Esihlabelelweni'],
-  'Isixhosa':['Ukrestu Engomeni'],'Xitsonga':['Risima Ra Vuyimbeleri'],
-  'Kikuyu':['Nyimbo cia Agendi'],'Abagusii':["Ogotera Kw'ogotogia Nyasae"],
-  'Dholuo':['Wende Nyasaye'],'Kinyarwanda':['Indirimbo Zo Guhimbaza Imana'],
-  'Portuguesa':['Hinario Adventusta Guhimbaza Imana'],'Espanol':['Himnario Adventista'],
-  'Tumbuka':['Nyimbo za Mpingo wa SDA'],'Sepedi':['Kreste Ka Kopelong']
-};
+const LANG_BOOKS={'English':['Christ In Song'],'SDA Hymnal (English)':['SDA Hymnal'],'Tswana':['Kereste Mo Kopelong'],'Sotho':['Keresete Pineng'],'Chichewa':['Khristu Mu Nyimbo'],'Tonga':['Kristu MuNzwiyo'],'Venda':['Ngosha YaDzingosha'],'Shona':['Nyimbo Za Kristo'],'Swahili':['Nyimbo Za Kristo'],'Isizulu':['Ukrestu Esihlabelelweni'],'Isixhosa':['Ukrestu Engomeni'],'Xitsonga':['Risima Ra Vuyimbeleri'],'Kikuyu':['Nyimbo cia Agendi'],'Abagusii':["Ogotera Kw'ogotogia Nyasae"],'Dholuo':['Wende Nyasaye'],'Kinyarwanda':['Indirimbo Zo Guhimbaza Imana'],'Portuguesa':['Hinario Adventusta Guhimbaza Imana'],'Espanol':['Himnario Adventista'],'Tumbuka':['Nyimbo za Mpingo wa SDA'],'Sepedi':['Kreste Ka Kopelong']};
 const KEYS=['C','C#/Db','D','D#/Eb','E','F','F#/Gb','G','G#/Ab','A','A#/Bb','B'];
 
-// ── localStorage ─────────────────────────────────────────────
 function save(){try{localStorage.setItem('lh_hymns',JSON.stringify(hymns));localStorage.setItem('lh_reps',JSON.stringify(repertoires));localStorage.setItem('lh_items',JSON.stringify(repItems));}catch(e){}}
 function load(){try{hymns=JSON.parse(localStorage.getItem('lh_hymns')||'[]');repertoires=JSON.parse(localStorage.getItem('lh_reps')||'[]');repItems=JSON.parse(localStorage.getItem('lh_items')||'[]');}catch(e){hymns=[];repertoires=[];repItems=[];}}
 
@@ -515,9 +485,10 @@ load();
 let filterLang='All',filterType='all',filterChorus='all',searchQ='';
 let hymnToDelete=null,hymnToAddToRep=null;
 let editingHymn=null,editingRep=null,currentRep=null,repToDelete=null;
-let projStanzas=[],projIndex=0,projHymn=null;
+let projSequence=[],projSeqIndex=0,projHymn=null;
 let repProjection=[],repProjIndex=0,fromRep=false;
 let currentProjHymnData=null;
+let repeatConfigItem=null;
 let nextId=Date.now();
 function uid(){return 'id_'+(nextId++)}
 function $i(id){return document.getElementById(id)}
@@ -527,8 +498,7 @@ function showEl(id){$i(id).style.display=''}
 function hideEl(id){$i(id).style.display='none'}
 
 function toast(msg,type='info'){
-  const el=document.createElement('div');
-  el.className='toast toast-'+type;
+  const el=document.createElement('div');el.className='toast toast-'+type;
   const icons={success:'<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',error:'<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>',info:'<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'};
   el.innerHTML='<svg viewBox="0 0 24 24" stroke-width="2">'+(icons[type]||icons.info)+'</svg><span>'+msg+'</span>';
   $i('toasts').appendChild(el);
@@ -551,19 +521,13 @@ function renderLangTabs(){
 
 function getFiltered(){
   const q=searchQ.toLowerCase();
-  return hymns.filter(h=>
-    (filterLang==='All'||h.language===filterLang)&&
-    (filterType==='all'||(filterType==='common'&&h.classification==='common')||(filterType==='uncommon'&&h.classification==='uncommon'))&&
-    (filterChorus==='all'||(filterChorus==='with'&&h.chorus&&h.chorus.trim())||(filterChorus==='without'&&(!h.chorus||!h.chorus.trim())))&&
-    (!q||h.title.toLowerCase().includes(q)||String(h.number).includes(q)||h.lyrics.toLowerCase().includes(q))
-  );
+  return hymns.filter(h=>(filterLang==='All'||h.language===filterLang)&&(filterType==='all'||(filterType==='common'&&h.classification==='common')||(filterType==='uncommon'&&h.classification==='uncommon'))&&(filterChorus==='all'||(filterChorus==='with'&&h.chorus&&h.chorus.trim())||(filterChorus==='without'&&(!h.chorus||!h.chorus.trim())))&&(!q||h.title.toLowerCase().includes(q)||String(h.number).includes(q)||h.lyrics.toLowerCase().includes(q)));
 }
 
 function hasMedia(h){return !!(h.youtube||h.vocal||h.instrumental||(h.soprano||h.alto||h.tenor||h.bass))}
 
 function renderHymnGrid(){
-  const list=getFiltered();
-  const grid=$i('hymn-grid');
+  const list=getFiltered(),grid=$i('hymn-grid');
   if(list.length===0){grid.innerHTML='';showEl('empty-state');return;}
   hideEl('empty-state');
   grid.innerHTML=list.map(h=>'<div class="hymn-card" data-id="'+h.id+'"><div class="card-top"><div class="badges"><span class="badge badge-num">#'+h.number+'</span><span class="badge '+(h.classification==='common'?'badge-common':'badge-uncommon')+'">'+(h.classification==='common'?'Common':'Uncommon')+'</span></div><div class="card-actions"><button class="icon-btn add-rep" data-id="'+h.id+'" title="Add to repertoire"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></button><button class="icon-btn edit-h" data-id="'+h.id+'" title="Edit"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button><button class="icon-btn del-h" data-id="'+h.id+'" title="Delete"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div></div><h4 class="card-title">'+h.title+'</h4><p class="card-preview">'+((h.lyrics.split('\n')[0]||'').substring(0,80))+'…</p><div class="card-meta"><span class="meta-tag">'+h.language+'</span><span class="meta-tag">'+h.book+'</span>'+(h.chorus&&h.chorus.trim()?'<span class="meta-tag chorus">Chorus</span>':'')+(hasMedia(h)?'<span class="meta-tag has-media">Media</span>':'')+'</div></div>').join('');
@@ -575,23 +539,17 @@ function renderHymnGrid(){
 
 function renderAll(){renderLangTabs();renderHymnGrid()}
 
-// ── Add/Edit Hymn ─────────────────────────────────────────────
+// ── Add/Edit hymn ─────────────────────────────────────────────
 function openAddModal(hymn){
   editingHymn=hymn||null;
   $i('add-modal-title').textContent=hymn?'Edit hymn':'Add new hymn';
   $i('add-modal-sub').textContent=hymn?'Update the details below':'Fill in the details below';
-  $i('f-title').value=hymn?hymn.title:'';
-  $i('f-lang').value=hymn?hymn.language:'';
-  $i('f-number').value=hymn?hymn.number:'';
-  $i('f-lyrics').value=hymn?hymn.lyrics:'';
-  $i('f-chorus').value=hymn?(hymn.chorus||''):'';
-  $i('f-yt').value=hymn?(hymn.youtube||''):'';
-  $i('f-vocal').value=hymn?(hymn.vocal||''):'';
-  $i('f-inst').value=hymn?(hymn.instrumental||''):'';
-  $i('f-soprano').value=hymn?(hymn.soprano||''):'';
-  $i('f-alto').value=hymn?(hymn.alto||''):'';
-  $i('f-tenor').value=hymn?(hymn.tenor||''):'';
-  $i('f-bass').value=hymn?(hymn.bass||''):'';
+  $i('f-title').value=hymn?hymn.title:'';$i('f-lang').value=hymn?hymn.language:'';
+  $i('f-number').value=hymn?hymn.number:'';$i('f-lyrics').value=hymn?hymn.lyrics:'';
+  $i('f-chorus').value=hymn?(hymn.chorus||''):'';$i('f-yt').value=hymn?(hymn.youtube||''):'';
+  $i('f-vocal').value=hymn?(hymn.vocal||''):'';$i('f-inst').value=hymn?(hymn.instrumental||''):'';
+  $i('f-soprano').value=hymn?(hymn.soprano||''):'';$i('f-alto').value=hymn?(hymn.alto||''):'';
+  $i('f-tenor').value=hymn?(hymn.tenor||''):'';$i('f-bass').value=hymn?(hymn.bass||''):'';
   if(hymn&&hymn.classification==='uncommon')$i('f-uncommon').checked=true;else $i('f-common').checked=true;
   $i('form-error').classList.remove('show');$i('form-error').textContent='';
   updateBookDropdown(hymn?hymn.language:'',hymn?hymn.book:'');
@@ -599,14 +557,7 @@ function openAddModal(hymn){
 }
 
 function saveHymn(){
-  const title=$i('f-title').value.trim(),lang=$i('f-lang').value,book=$i('f-book').value,
-    num=parseInt($i('f-number').value),lyrics=$i('f-lyrics').value.trim(),
-    chorus=$i('f-chorus').value.trim(),cls=$i('f-common').checked?'common':'uncommon',
-    youtube=$i('f-yt').value.trim(),vocal=$i('f-vocal').value.trim(),
-    instrumental=$i('f-inst').value.trim(),
-    soprano=$i('f-soprano').value.trim(),alto=$i('f-alto').value.trim(),
-    tenor=$i('f-tenor').value.trim(),bass=$i('f-bass').value.trim(),
-    err=$i('form-error');
+  const title=$i('f-title').value.trim(),lang=$i('f-lang').value,book=$i('f-book').value,num=parseInt($i('f-number').value),lyrics=$i('f-lyrics').value.trim(),chorus=$i('f-chorus').value.trim(),cls=$i('f-common').checked?'common':'uncommon',youtube=$i('f-yt').value.trim(),vocal=$i('f-vocal').value.trim(),instrumental=$i('f-inst').value.trim(),soprano=$i('f-soprano').value.trim(),alto=$i('f-alto').value.trim(),tenor=$i('f-tenor').value.trim(),bass=$i('f-bass').value.trim(),err=$i('form-error');
   if(!title||!lang||!book||!num||!lyrics){err.textContent='Please fill in all required fields.';err.classList.add('show');return;}
   if(isNaN(num)||num<1){err.textContent='Hymn number must be a positive integer.';err.classList.add('show');return;}
   const dup=hymns.find(h=>h.language===lang&&h.book===book&&h.number===num&&(!editingHymn||h.id!==editingHymn.id));
@@ -624,101 +575,119 @@ function deleteHymn(){
   hymnToDelete=null;save();closeModal('del-modal');toast('Hymn deleted','success');renderAll();
 }
 
-// ── Sol-fa parser & renderer ─────────────────────────────────
+// ── Build stanza sequence with repeats ───────────────────────
+// repeatConfig: { stanza_1: 2, chorus_1: 3, ... }
+// keys: stanza_N (1-based) or chorus_N (occurrence index)
+function buildSequence(h, repeatConfig){
+  repeatConfig=repeatConfig||{};
+  const raw=h.lyrics.split(/\n\s*\n/).filter(s=>s.trim());
+  const seq=[];
+  raw.forEach((s,i)=>{
+    const stanzaKey='stanza_'+(i+1);
+    const reps=parseInt(repeatConfig[stanzaKey])||1;
+    for(let r=0;r<reps;r++) seq.push({text:s,type:'stanza',num:i+1,total:raw.length,repNum:r+1,repTotal:reps});
+    if(h.chorus&&h.chorus.trim()){
+      const chorusKey='chorus_'+(i+1);
+      const creps=parseInt(repeatConfig[chorusKey])||1;
+      for(let r=0;r<creps;r++) seq.push({text:h.chorus,type:'chorus',repNum:r+1,repTotal:creps});
+    }
+  });
+  return seq;
+}
+
+// ── Sol-fa renderer ───────────────────────────────────────────
 function parseSolfaLine(line){
   if(!line||!line.trim())return[];
-  const bars=line.split('|').map(b=>b.trim()).filter(b=>b.length>0);
-  return bars.map(bar=>{
-    const tokens=bar.trim().split(/\s+/).filter(t=>t.length>0);
-    return tokens.map(tok=>{
-      const lower=tok.toLowerCase();
-      let syllable=lower,octave=0,held=false,rest=false;
-      if(lower==='-'){held=true;syllable='-';}
-      else if(lower==='0'||lower==='z'){rest=true;syllable='0';}
-      else{
-        if(lower.endsWith('1')||lower.endsWith("'")){syllable=lower.replace(/[1']$/,'');octave=1;}
-        else if(lower.endsWith(',')){syllable=lower.replace(/,$/,'');octave=-1;}
-        else syllable=lower;
-      }
-      return{syllable,octave,held,rest,raw:tok};
-    });
-  });
+  return line.split('|').map(b=>b.trim()).filter(b=>b).map(bar=>bar.trim().split(/\s+/).filter(t=>t).map(tok=>{
+    const l=tok.toLowerCase();
+    if(l==='-')return{syllable:'—',octave:0,held:true,rest:false};
+    if(l==='0'||l==='z')return{syllable:'0',octave:0,held:false,rest:true};
+    let syl=l,oct=0;
+    if(l.endsWith('1')||l.endsWith("'")){syl=l.replace(/[1']$/,'');oct=1;}
+    else if(l.endsWith(',')){syl=l.replace(/,$/,'');oct=-1;}
+    return{syllable:syl,octave:oct,held:false,rest:false};
+  }));
 }
-
 function renderSolfaToken(tok){
-  let text=tok.syllable;
-  if(tok.held)text='—';
-  if(tok.rest)text='0';
-  let cls='solfa-beat';
-  if(tok.held)cls+=' held';
-  if(tok.rest)cls+=' rest';
-  const upper=tok.octave===1?'<span class="upper-dot"></span>':'';
-  const lower=tok.octave===-1?'<span class="lower-dot"></span>':'';
-  return'<span class="'+cls+'">'+upper+text+lower+'</span>';
+  let cls='solfa-beat'+(tok.held?' held':'')+(tok.rest?' rest':'');
+  return'<span class="'+cls+'">'+(tok.octave===1?'<span class="upper-dot"></span>':'')+tok.syllable+(tok.octave===-1?'<span class="lower-dot"></span>':'')+'</span>';
 }
-
 function renderSolfaVoice(label,line){
-  const bars=parseSolfaLine(line);
-  if(!bars||bars.length===0)return'';
+  const bars=parseSolfaLine(line);if(!bars||!bars.length)return'';
   let html='<div class="solfa-voice-row"><span class="solfa-voice-label">'+label+'</span><div class="solfa-bars">';
-  bars.forEach(bar=>{
-    html+='<div class="solfa-bar">';
-    bar.forEach(tok=>{html+=renderSolfaToken(tok);});
-    html+='</div>';
-  });
-  html+='</div></div>';
-  return html;
+  bars.forEach(bar=>{html+='<div class="solfa-bar">';bar.forEach(tok=>{html+=renderSolfaToken(tok);});html+='</div>';});
+  return html+'</div></div>';
 }
-
 function renderSolfa(hymn){
-  const hasSolfa=hymn.soprano||hymn.alto||hymn.tenor||hymn.bass;
-  if(!hasSolfa)return'<div class="no-solfa"><p>No sol-fa notation has been entered for this hymn yet.</p><p style="margin-top:8px;font-size:12px;color:#cbd5e1">Edit the hymn to add SATB notation.</p></div>';
+  if(!hymn.soprano&&!hymn.alto&&!hymn.tenor&&!hymn.bass)return'<div class="no-solfa"><p>No sol-fa notation has been entered for this hymn yet.</p></div>';
   let html='<div class="solfa-grid-wrap">';
   if(hymn.soprano)html+=renderSolfaVoice('S',hymn.soprano);
   if(hymn.alto){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('A',hymn.alto);}
   if(hymn.tenor){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('T',hymn.tenor);}
   if(hymn.bass){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('B',hymn.bass);}
-  html+='</div>';
-  html+='<p style="font-size:11px;color:#94a3b8;margin-top:8px">S = Soprano &nbsp;·&nbsp; A = Alto &nbsp;·&nbsp; T = Tenor &nbsp;·&nbsp; B = Bass &nbsp;·&nbsp; Dot above = upper octave &nbsp;·&nbsp; Dot below = lower octave</p>';
-  return html;
+  return html+'</div><p style="font-size:11px;color:#94a3b8;margin-top:8px">S = Soprano · A = Alto · T = Tenor · B = Bass · Dot above = upper octave · Dot below = lower octave</p>';
 }
 
-// ── YouTube helpers ──────────────────────────────────────────
-function extractYtId(url){
-  if(!url)return null;
-  const m=url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-  return m?m[1]:null;
-}
-
+// ── YouTube ───────────────────────────────────────────────────
+function extractYtId(url){if(!url)return null;const m=url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
 function openYtModal(hymn){
-  const id=extractYtId(hymn.youtube);
-  if(!id){toast('Invalid YouTube URL','error');return;}
-  $i('yt-modal-title').textContent=hymn.title;
+  const id=extractYtId(hymn.youtube);if(!id){toast('Invalid YouTube URL','error');return;}
+  const panel=$i('yt-float');
+  $i('yt-float-title').textContent=hymn.title;
   $i('yt-iframe').src='https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0';
-  openModal('yt-modal');
+  // Default size and position — bottom-right corner, medium size
+  const W=Math.min(560,window.innerWidth-32);
+  const H=Math.round(W*9/16)+44;
+  panel.style.width=W+'px';panel.style.height=H+'px';
+  panel.style.right='24px';panel.style.bottom='90px';
+  panel.style.left='auto';panel.style.top='auto';
+  panel.classList.add('open');
 }
+function closeYtModal(){$i('yt-iframe').src='';$i('yt-float').classList.remove('open');}
 
-function closeYtModal(){
-  $i('yt-iframe').src='';
-  closeModal('yt-modal');
-}
+// Drag logic for floating panel
+(function(){
+  let dragging=false,ox=0,oy=0;
+  const header=$i('yt-float-header');
+  header.addEventListener('mousedown',e=>{
+    if(e.target.closest('.yt-float-btn'))return;
+    dragging=true;
+    const panel=$i('yt-float'),rect=panel.getBoundingClientRect();
+    // Switch from right/bottom anchoring to left/top for drag
+    panel.style.left=rect.left+'px';panel.style.top=rect.top+'px';
+    panel.style.right='auto';panel.style.bottom='auto';
+    ox=e.clientX-rect.left;oy=e.clientY-rect.top;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const panel=$i('yt-float');
+    let nx=e.clientX-ox,ny=e.clientY-oy;
+    nx=Math.max(0,Math.min(nx,window.innerWidth-panel.offsetWidth));
+    ny=Math.max(0,Math.min(ny,window.innerHeight-panel.offsetHeight));
+    panel.style.left=nx+'px';panel.style.top=ny+'px';
+  });
+  document.addEventListener('mouseup',()=>{dragging=false;});
+})();
+
+// Size presets
+$i('yt-float-small').addEventListener('click',()=>{
+  const panel=$i('yt-float'),W=320,H=Math.round(W*9/16)+44;
+  panel.style.width=W+'px';panel.style.height=H+'px';
+});
+$i('yt-float-large').addEventListener('click',()=>{
+  const panel=$i('yt-float'),W=Math.min(760,window.innerWidth-32),H=Math.round((W)*9/16)+44;
+  panel.style.width=W+'px';panel.style.height=H+'px';
+});
 
 // ── Audio panel ───────────────────────────────────────────────
 function openAudioPanel(url,label){
-  const player=$i('audio-player');
-  player.src=url;
-  $i('audio-panel-title').textContent=label;
-  $i('audio-panel').classList.add('open');
-  player.play().catch(()=>{});
+  const p=$i('audio-player');p.src=url;$i('audio-panel-title').textContent=label;
+  $i('audio-panel').classList.add('open');p.play().catch(()=>{});
 }
+function closeAudioPanel(){$i('audio-panel').classList.remove('open');const p=$i('audio-player');p.pause();p.src='';}
 
-function closeAudioPanel(){
-  $i('audio-panel').classList.remove('open');
-  const player=$i('audio-player');
-  player.pause();player.src='';
-}
-
-// ── Update projection media buttons ─────────────────────────
+// ── Projection media buttons ──────────────────────────────────
 function updateProjMediaBtns(hymn){
   $i('proj-yt-btn').disabled=!(hymn&&hymn.youtube&&hymn.youtube.trim());
   $i('proj-vocal-btn').disabled=!(hymn&&hymn.vocal&&hymn.vocal.trim());
@@ -727,74 +696,109 @@ function updateProjMediaBtns(hymn){
 }
 
 // ── Projection ────────────────────────────────────────────────
-function buildStanzas(h){
-  const raw=h.lyrics.split(/\n\s*\n/).filter(s=>s.trim()),out=[];
-  raw.forEach((s,i)=>{out.push({text:s,type:'stanza',num:i+1,total:raw.length});if(h.chorus&&h.chorus.trim())out.push({text:h.chorus,type:'chorus'});});
-  return out;
-}
-
-function startProjection(h){
+function startProjection(h, repeatConfig){
   projHymn=h;currentProjHymnData=h;
-  projStanzas=buildStanzas(h);projIndex=0;
+  projSequence=buildSequence(h,repeatConfig||{});
+  projSeqIndex=0;
   $i('proj-title').textContent=h.title;
   $i('proj-sub').textContent=h.book+' #'+h.number+' · '+h.language;
   if(fromRep){const sn=Math.floor(repProjIndex/2)+1,tot=Math.floor(repProjection.length/2);$i('proj-pos').textContent='Song '+sn+' of '+tot;$i('proj-pos').style.display='';}
   else $i('proj-pos').style.display='none';
-  closeAudioPanel();
-  updateProjMediaBtns(h);
+  closeAudioPanel();updateProjMediaBtns(h);
   $i('projection').classList.add('open');
-  renderStanza();
+  renderSlide();
 }
 
 function showDivider(d){
-  projHymn=d;currentProjHymnData=null;
-  $i('proj-title').textContent=d.title;
-  $i('proj-sub').textContent=d.book+' #'+d.number;
+  projHymn=d;currentProjHymnData=null;projSequence=[];projSeqIndex=0;
+  $i('proj-title').textContent=d.title;$i('proj-sub').textContent=d.book+' #'+d.number;
   if(fromRep){const sn=Math.floor(repProjIndex/2)+1,tot=Math.floor(repProjection.length/2);$i('proj-pos').textContent='Song '+sn+' of '+tot;$i('proj-pos').style.display='';}
   $i('proj-content').innerHTML='<div class="divider-wrap"><div class="divider-up-next">Up next</div><div class="divider-title">'+d.title+'</div><div class="divider-ref"><span>'+d.book+'</span><span style="color:#4f46e5">·</span><span>#'+d.number+'</span></div><div class="divider-key-box"><div class="divider-key-label">Song key</div><div class="divider-key-val">'+(d.key||'Not set')+'</div></div></div>';
   $i('proj-indicator').textContent='Song intro';
-  $i('prev-stanza').disabled=repProjIndex===0;
-  $i('next-stanza').disabled=false;
-  $i('next-label').textContent='Start song';
-  // Disable media buttons on divider
-  updateProjMediaBtns(null);
-  closeAudioPanel();
+  $i('prev-stanza').disabled=repProjIndex===0;$i('next-stanza').disabled=false;$i('next-label').textContent='Start song';
+  updateProjMediaBtns(null);closeAudioPanel();
   $i('projection').classList.add('open');
 }
 
-function renderStanza(){
-  const s=projStanzas[projIndex],label=s.type==='chorus'?'♫ Chorus ♫':'Stanza '+s.num+' of '+s.total;
+function renderSlide(){
+  const s=projSequence[projSeqIndex];
+  let label='';
+  if(s.type==='chorus'){
+    label='♫ Chorus ♫'+(s.repTotal>1?' ('+s.repNum+'/'+s.repTotal+')':'');
+  } else {
+    label='Stanza '+s.num+' of '+s.total+(s.repTotal>1?' · repeat '+s.repNum+'/'+s.repTotal:'');
+  }
   const wrap=$i('proj-content');
   wrap.style.opacity='0';
   setTimeout(()=>{wrap.innerHTML='<div class="proj-stanza-label">'+label+'</div><p class="proj-stanza-text">'+s.text+'</p>';wrap.style.opacity='1';wrap.style.transition='opacity 0.18s';},150);
-  $i('proj-indicator').textContent=(projIndex+1)+' of '+projStanzas.length;
-  const isLast=projIndex>=projStanzas.length-1,hasNext=fromRep&&repProjIndex<repProjection.length-1;
-  $i('prev-stanza').disabled=projIndex===0&&(!fromRep||repProjIndex===0);
+  $i('proj-indicator').textContent=(projSeqIndex+1)+' of '+projSequence.length;
+  const isLast=projSeqIndex>=projSequence.length-1,hasNext=fromRep&&repProjIndex<repProjection.length-1;
+  $i('prev-stanza').disabled=projSeqIndex===0&&(!fromRep||repProjIndex===0);
   $i('next-stanza').disabled=isLast&&!hasNext;
   $i('next-label').textContent=(isLast&&hasNext)?'Next song':'Next';
 }
 
-function nextStanza(){
+function nextSlide(){
   if(projHymn&&projHymn.type==='divider'){if(fromRep&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}return;}
-  const isLast=projIndex>=projStanzas.length-1;
+  const isLast=projSeqIndex>=projSequence.length-1;
   if(isLast&&fromRep&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}
-  else if(!isLast){projIndex++;renderStanza();}
+  else if(!isLast){projSeqIndex++;renderSlide();}
 }
 
-function prevStanza(){
+function prevSlide(){
   if(projHymn&&projHymn.type==='divider'){if(repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}return;}
-  if(projIndex===0&&fromRep&&repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}
-  else if(projIndex>0){projIndex--;renderStanza();}
+  if(projSeqIndex===0&&fromRep&&repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}
+  else if(projSeqIndex>0){projSeqIndex--;renderSlide();}
 }
 
 function exitProjection(){
   $i('projection').classList.remove('open');
-  projHymn=null;projStanzas=[];projIndex=0;fromRep=false;repProjection=[];repProjIndex=0;currentProjHymnData=null;
+  projHymn=null;projSequence=[];projSeqIndex=0;fromRep=false;repProjection=[];repProjIndex=0;currentProjHymnData=null;
   closeAudioPanel();
   if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
 }
 
-function projectRepItem(item){if(item.type==='divider')showDivider(item);else startProjection(item);}
+function projectRepItem(item){
+  if(item.type==='divider')showDivider(item);
+  else{
+    // find the repItem to get repeatConfig
+    const ri=repItems.find(x=>x.hymnId===item.id&&currentRep&&x.repId===currentRep.id);
+    startProjection(item,ri?ri.repeatConfig:{});
+  }
+}
+
+// ── Repeat config modal ───────────────────────────────────────
+function openRepeatConfig(repItemId){
+  const item=repItems.find(i=>i.id===repItemId);if(!item)return;
+  const hymn=hymns.find(h=>h.id===item.hymnId);if(!hymn)return;
+  repeatConfigItem=item;
+  $i('repeat-modal-title').textContent='Repeats: '+hymn.title;
+  const raw=hymn.lyrics.split(/\n\s*\n/).filter(s=>s.trim());
+  const cfg=item.repeatConfig||{};
+  let html='';
+  raw.forEach((s,i)=>{
+    const stanzaKey='stanza_'+(i+1);
+    const firstLine=(s.split('\n')[0]||'').substring(0,40);
+    html+='<div class="repeat-section-row"><span class="repeat-section-label">Stanza '+(i+1)+(firstLine?' — <span style="font-weight:400;color:#64748b;font-size:12px">'+firstLine+'…</span>':'')+'</span><div class="repeat-count-wrap"><label>×</label><input type="number" class="repeat-count-input" data-key="'+stanzaKey+'" min="1" value="'+(cfg[stanzaKey]||1)+'"></div></div>';
+    if(hymn.chorus&&hymn.chorus.trim()){
+      const chorusKey='chorus_'+(i+1);
+      html+='<div class="repeat-section-row"><span class="repeat-section-label"><span class="repeat-section-type">Chorus</span>after stanza '+(i+1)+'</span><div class="repeat-count-wrap"><label>×</label><input type="number" class="repeat-count-input" data-key="'+chorusKey+'" min="1" value="'+(cfg[chorusKey]||1)+'"></div></div>';
+    }
+  });
+  $i('repeat-sections-list').innerHTML=html||'<p style="color:#94a3b8;font-size:13px;text-align:center;padding:16px">No sections found. Make sure lyrics are entered for this hymn.</p>';
+  openModal('repeat-modal');
+}
+
+function saveRepeats(){
+  if(!repeatConfigItem)return;
+  const inputs=$i('repeat-sections-list').querySelectorAll('.repeat-count-input');
+  const cfg={};
+  inputs.forEach(inp=>{const v=parseInt(inp.value)||1;cfg[inp.dataset.key]=v<1?1:v;});
+  repeatConfigItem.repeatConfig=cfg;
+  save();closeModal('repeat-modal');
+  if(currentRep)renderRepDetail(currentRep);
+  toast('Repeat settings saved','success');
+}
 
 // ── Repertoires ───────────────────────────────────────────────
 function renderRepList(){
@@ -833,10 +837,13 @@ function renderRepDetail(r){
   hideEl('rd-empty');startBtn.disabled=false;
   $i('rd-items').innerHTML=items.map((item,idx)=>{
     const h=hymns.find(x=>x.id===item.hymnId);if(!h)return'';
-    return'<div class="rep-item-row"><div class="rep-item-num">'+(idx+1)+'</div><div class="rep-item-info"><div class="rep-item-title">'+h.title+'</div><div class="rep-item-meta"><span class="badge '+(h.classification==='common'?'badge-common':'badge-uncommon')+'" style="font-size:10px;padding:2px 7px">'+(h.classification==='common'?'Common':'Uncommon')+'</span><span class="rep-item-sub">'+h.book+' #'+h.number+'</span>'+(item.key?'<span class="rep-item-sub">· Key: '+item.key+'</span>':'')+(hasMedia(h)?'<span class="rep-item-sub" style="color:#92400e">· Media</span>':'')+'</div></div><select class="key-select" data-id="'+item.id+'"><option value="">Key</option>'+KEYS.map(k=>'<option value="'+k+'"'+(item.key===k?' selected':'')+'>'+k+'</option>').join('')+'</select><button class="rep-remove" data-id="'+item.id+'" title="Remove"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div>';
+    const cfg=item.repeatConfig||{};
+    const hasRepeats=Object.values(cfg).some(v=>v>1);
+    return'<div class="rep-item-row"><div class="rep-item-num">'+(idx+1)+'</div><div class="rep-item-info"><div class="rep-item-title">'+h.title+'</div><div class="rep-item-meta"><span class="badge '+(h.classification==='common'?'badge-common':'badge-uncommon')+'" style="font-size:10px;padding:2px 7px">'+(h.classification==='common'?'Common':'Uncommon')+'</span><span class="rep-item-sub">'+h.book+' #'+h.number+'</span>'+(item.key?'<span class="rep-item-sub">· Key: '+item.key+'</span>':'')+(hasRepeats?'<span class="rep-item-sub" style="color:#7c3aed">· Repeats set</span>':'')+'</div></div><button class="rep-cfg-btn" data-id="'+item.id+'">Repeats</button><select class="key-select" data-id="'+item.id+'"><option value="">Key</option>'+KEYS.map(k=>'<option value="'+k+'"'+(item.key===k?' selected':'')+'>'+k+'</option>').join('')+'</select><button class="rep-remove" data-id="'+item.id+'" title="Remove"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div>';
   }).join('');
   $i('rd-items').querySelectorAll('.rep-remove').forEach(b=>b.addEventListener('click',()=>{repItems=repItems.filter(i=>i.id!==b.dataset.id);save();renderRepDetail(r);toast('Hymn removed','info');}));
   $i('rd-items').querySelectorAll('.key-select').forEach(s=>s.addEventListener('change',()=>{const item=repItems.find(i=>i.id===s.dataset.id);if(item){item.key=s.value;save();renderRepDetail(r);toast('Key updated','success');}}));
+  $i('rd-items').querySelectorAll('.rep-cfg-btn').forEach(b=>b.addEventListener('click',()=>openRepeatConfig(b.dataset.id)));
 }
 
 function showSelRepModal(){
@@ -848,7 +855,7 @@ function showSelRepModal(){
     return'<button class="sel-rep-item" data-id="'+r.id+'"'+(already?' disabled':'')+'><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="sel-rep-item-name">'+r.name+'</div><div class="sel-rep-item-count">'+repItems.filter(i=>i.repId===r.id).length+' hymns</div></div>'+(already?'<span class="sel-rep-added">✓ Added</span>':'<span style="color:#7c3aed;font-size:18px">→</span>')+'</div></button>';
   }).join('');
   list.querySelectorAll('.sel-rep-item:not(:disabled)').forEach(b=>b.addEventListener('click',()=>{
-    repItems.push({id:uid(),repId:b.dataset.id,hymnId:hymnToAddToRep.id,order:repItems.filter(i=>i.repId===b.dataset.id).length,key:'',createdAt:Date.now()});
+    repItems.push({id:uid(),repId:b.dataset.id,hymnId:hymnToAddToRep.id,order:repItems.filter(i=>i.repId===b.dataset.id).length,key:'',repeatConfig:{},createdAt:Date.now()});
     save();closeModal('sel-rep-modal');hymnToAddToRep=null;toast('Hymn added to repertoire','success');
     if(currentRep&&currentRep.id===b.dataset.id)renderRepDetail(currentRep);
   }));
@@ -860,9 +867,11 @@ function startRepProjection(){
   const items=repItems.filter(i=>i.repId===currentRep.id).sort((a,b)=>a.order-b.order);
   if(!items.length){toast('No hymns in this repertoire','error');return;}
   repProjection=[];
-  items.forEach(item=>{const h=hymns.find(x=>x.id===item.hymnId);if(h){repProjection.push({type:'divider',title:h.title,book:h.book,number:h.number,key:item.key||'Not set'});repProjection.push(h);}});
+  items.forEach(item=>{const h=hymns.find(x=>x.id===item.hymnId);if(h){repProjection.push({type:'divider',title:h.title,book:h.book,number:h.number,key:item.key||'Not set'});repProjection.push({...h,_repeatConfig:item.repeatConfig||{}});}});
   if(!repProjection.length){toast('No valid hymns found','error');return;}
-  fromRep=true;repProjIndex=0;closeModal('rep-detail-modal');projectRepItem(repProjection[0]);
+  fromRep=true;repProjIndex=0;closeModal('rep-detail-modal');
+  // first item is always divider
+  showDivider(repProjection[0]);
 }
 
 function deleteRep(){
@@ -873,13 +882,85 @@ function deleteRep(){
   closeModal('del-rep-modal');closeModal('rep-detail-modal');openModal('rep-list-modal');renderRepList();toast('Repertoire deleted','success');
 }
 
+// Override projectRepItem for rep projection with repeatConfig
+function projectRepItem(item){
+  if(item.type==='divider')showDivider(item);
+  else startProjection(item,item._repeatConfig||{});
+}
+
+// ── Voice commands ────────────────────────────────────────────
+let recognition=null,isListening=false;
+const voiceFeedback=$i('voice-feedback');
+
+function showVoiceFeedback(msg,duration=1800){
+  voiceFeedback.textContent=msg;voiceFeedback.classList.add('show');
+  setTimeout(()=>voiceFeedback.classList.remove('show'),duration);
+}
+
+function processVoiceCommand(transcript){
+  const t=transcript.toLowerCase().trim();
+  showVoiceFeedback('Heard: "'+transcript+'"',2200);
+  if(t.includes('next song')||t.includes('next hymn')){
+    if(fromRep&&projSeqIndex>=projSequence.length-1&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}
+    else nextSlide();
+  } else if(t.includes('next')||t.includes('forward')){nextSlide();}
+  else if(t.includes('previous')||t.includes('back')||t.includes('prev')){prevSlide();}
+  else if(t.includes('exit')||t.includes('close')){exitProjection();}
+  else if(t.includes('fullscreen')||t.includes('full screen')){$i('fullscreen-btn').click();}
+  else if(t.includes('youtube')||t.includes('video')){if(!$i('proj-yt-btn').disabled)$i('proj-yt-btn').click();}
+  else if(t.includes('vocal')||t.includes('voice')){if(!$i('proj-vocal-btn').disabled)$i('proj-vocal-btn').click();}
+  else if(t.includes('instrumental')||t.includes('backing')||t.includes('track')){if(!$i('proj-inst-btn').disabled)$i('proj-inst-btn').click();}
+  else if(t.includes('solfa')||t.includes('sol-fa')||t.includes('notation')){if(!$i('proj-solfa-btn').disabled)$i('proj-solfa-btn').click();}
+  else if(t.includes('repeat')||t.includes('again')){
+    // re-render current slide (visual repeat)
+    if(projSequence.length>0)renderSlide();
+  }
+  else{showVoiceFeedback('Command not recognised','2000');}
+}
+
+function initSpeechRecognition(){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){toast('Voice commands require Chrome or Edge','error');return false;}
+  recognition=new SpeechRecognition();
+  recognition.continuous=false;recognition.interimResults=false;recognition.lang='en-ZA';
+  recognition.onresult=e=>{const t=e.results[0][0].transcript;processVoiceCommand(t);};
+  recognition.onerror=e=>{if(e.error!=='no-speech')toast('Voice error: '+e.error,'error');stopListening();};
+  recognition.onend=()=>stopListening();
+  return true;
+}
+
+function startListening(){
+  if(!recognition&&!initSpeechRecognition())return;
+  try{recognition.start();isListening=true;$i('proj-mic-btn').classList.add('listening');showVoiceFeedback('Listening… speak now',3000);}
+  catch(e){}
+}
+
+function stopListening(){
+  if(recognition&&isListening){try{recognition.stop();}catch(e){}}
+  isListening=false;$i('proj-mic-btn').classList.remove('listening');
+}
+
+// Spacebar hold for voice — only in projection
+let spaceHeld=false;
+document.addEventListener('keydown',e=>{
+  if($i('projection').classList.contains('open')){
+    if(e.key===' '&&!spaceHeld){e.preventDefault();spaceHeld=true;startListening();return;}
+    if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();nextSlide();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}
+    else if(e.key==='Escape'){e.preventDefault();exitProjection();}
+    else if(e.key==='f'||e.key==='F'){e.preventDefault();$i('fullscreen-btn').click();}
+  }
+});
+document.addEventListener('keyup',e=>{
+  if(e.key===' '){spaceHeld=false;stopListening();}
+});
+
 // ── Event wiring ──────────────────────────────────────────────
 $i('add-hymn-btn').addEventListener('click',()=>openAddModal());
 $i('empty-add-btn').addEventListener('click',()=>openAddModal());
 $i('close-add-modal').addEventListener('click',()=>closeModal('add-modal'));
 $i('submit-hymn').addEventListener('click',saveHymn);
 $i('f-lang').addEventListener('change',e=>updateBookDropdown(e.target.value));
-
 $i('rep-btn').addEventListener('click',()=>{renderRepList();openModal('rep-list-modal')});
 $i('close-rep-list').addEventListener('click',()=>closeModal('rep-list-modal'));
 $i('create-rep-btn').addEventListener('click',showCreateRepModal);
@@ -889,12 +970,7 @@ $i('submit-rep').addEventListener('click',saveRep);
 $i('close-rep-detail').addEventListener('click',()=>{closeModal('rep-detail-modal');openModal('rep-list-modal');currentRep=null});
 $i('browse-hymns-btn').addEventListener('click',()=>closeModal('rep-detail-modal'));
 $i('start-proj-btn').addEventListener('click',startRepProjection);
-$i('edit-rep-btn').addEventListener('click',()=>{
-  if(!currentRep)return;editingRep=currentRep;
-  $i('rep-form-title').textContent='Edit repertoire';$i('submit-rep').textContent='Update repertoire';
-  $i('rf-name').value=currentRep.name;$i('rf-date').value=currentRep.date||'';
-  $i('rep-form-error').classList.remove('show');openModal('rep-form-modal');
-});
+$i('edit-rep-btn').addEventListener('click',()=>{if(!currentRep)return;editingRep=currentRep;$i('rep-form-title').textContent='Edit repertoire';$i('submit-rep').textContent='Update repertoire';$i('rf-name').value=currentRep.name;$i('rf-date').value=currentRep.date||'';$i('rep-form-error').classList.remove('show');openModal('rep-form-modal');});
 $i('del-rep-btn').addEventListener('click',()=>{repToDelete=currentRep;openModal('del-rep-modal')});
 $i('cancel-del-rep').addEventListener('click',()=>{closeModal('del-rep-modal');repToDelete=null});
 $i('confirm-del-rep').addEventListener('click',deleteRep);
@@ -905,48 +981,25 @@ $i('search').addEventListener('input',e=>{searchQ=e.target.value;renderAll()});
 $i('filter-type').addEventListener('change',e=>{filterType=e.target.value;renderAll()});
 $i('filter-chorus').addEventListener('change',e=>{filterChorus=e.target.value;renderAll()});
 $i('clear-filters').addEventListener('click',()=>{filterLang='All';filterType='all';filterChorus='all';searchQ='';$i('search').value='';$i('filter-type').value='all';$i('filter-chorus').value='all';renderAll();});
-
-// Projection controls
 $i('exit-proj').addEventListener('click',exitProjection);
 $i('fullscreen-btn').addEventListener('click',()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>toast('Fullscreen not available','error'));else document.exitFullscreen().catch(()=>{});});
-$i('next-stanza').addEventListener('click',nextStanza);
-$i('prev-stanza').addEventListener('click',prevStanza);
-
-// Media buttons in projection
+$i('next-stanza').addEventListener('click',nextSlide);
+$i('prev-stanza').addEventListener('click',prevSlide);
 $i('proj-yt-btn').addEventListener('click',()=>{if(currentProjHymnData)openYtModal(currentProjHymnData);});
-$i('proj-vocal-btn').addEventListener('click',()=>{
-  if(!currentProjHymnData||!currentProjHymnData.vocal)return;
-  const panel=$i('audio-panel');
-  if(panel.classList.contains('open')&&$i('audio-panel-title').textContent==='Vocals'){closeAudioPanel();return;}
-  openAudioPanel(currentProjHymnData.vocal,'Vocals');
-});
-$i('proj-inst-btn').addEventListener('click',()=>{
-  if(!currentProjHymnData||!currentProjHymnData.instrumental)return;
-  const panel=$i('audio-panel');
-  if(panel.classList.contains('open')&&$i('audio-panel-title').textContent==='Instrumental'){closeAudioPanel();return;}
-  openAudioPanel(currentProjHymnData.instrumental,'Instrumental');
-});
-$i('proj-solfa-btn').addEventListener('click',()=>{
-  if(!currentProjHymnData)return;
-  $i('solfa-modal-title').textContent=currentProjHymnData.title;
-  $i('solfa-modal-sub').textContent=currentProjHymnData.book+' #'+currentProjHymnData.number+' — Tonic Sol-fa (SATB)';
-  $i('solfa-render').innerHTML=renderSolfa(currentProjHymnData);
-  openModal('solfa-modal');
-});
-$i('close-yt-modal').addEventListener('click',closeYtModal);
+$i('proj-vocal-btn').addEventListener('click',()=>{if(!currentProjHymnData||!currentProjHymnData.vocal)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Vocals'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.vocal,'Vocals');});
+$i('proj-inst-btn').addEventListener('click',()=>{if(!currentProjHymnData||!currentProjHymnData.instrumental)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Instrumental'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.instrumental,'Instrumental');});
+$i('proj-solfa-btn').addEventListener('click',()=>{if(!currentProjHymnData)return;$i('solfa-modal-title').textContent=currentProjHymnData.title;$i('solfa-modal-sub').textContent=currentProjHymnData.book+' #'+currentProjHymnData.number+' — Tonic Sol-fa (SATB)';$i('solfa-render').innerHTML=renderSolfa(currentProjHymnData);openModal('solfa-modal');});
+$i('proj-mic-btn').addEventListener('mousedown',e=>{e.preventDefault();startListening();});
+$i('proj-mic-btn').addEventListener('mouseup',()=>stopListening());
+$i('proj-mic-btn').addEventListener('touchstart',e=>{e.preventDefault();startListening();},{passive:false});
+$i('proj-mic-btn').addEventListener('touchend',()=>stopListening());
+$i('yt-float-close').addEventListener('click',closeYtModal);
 $i('close-solfa-modal').addEventListener('click',()=>closeModal('solfa-modal'));
 $i('close-audio-panel').addEventListener('click',closeAudioPanel);
+$i('close-repeat-modal').addEventListener('click',()=>closeModal('repeat-modal'));
+$i('save-repeats').addEventListener('click',saveRepeats);
 
-document.addEventListener('keydown',e=>{
-  if($i('projection').classList.contains('open')){
-    if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();nextStanza();}
-    else if(e.key==='ArrowLeft'){e.preventDefault();prevStanza();}
-    else if(e.key==='Escape'){e.preventDefault();exitProjection();}
-    else if(e.key==='f'||e.key==='F'){e.preventDefault();$i('fullscreen-btn').click();}
-  }
-});
-
-['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','yt-modal','solfa-modal'].forEach(id=>{
+['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','solfa-modal','repeat-modal'].forEach(id=>{
   $i(id).addEventListener('click',e=>{if(e.target===$i(id)){if(id==='yt-modal')closeYtModal();else closeModal(id);}});
 });
 
