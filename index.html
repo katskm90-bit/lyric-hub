@@ -175,7 +175,7 @@ textarea.fi{resize:vertical}
 .proj-stanza-text{font-family:'Playfair Display',serif;color:#fff;line-height:1.55;white-space:pre-line}
 .proj-segment-badge{display:inline-block;padding:7px 22px;background:rgba(139,92,246,0.22);border:1px solid rgba(139,92,246,0.35);border-radius:10px;color:#FFD9B8;font-size:13px;font-weight:600;margin-bottom:22px;text-transform:uppercase;letter-spacing:0.1em}
 .proj-segment-name{font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,76px);font-weight:800;color:#fff;line-height:1.2;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,0.3)}
-.proj-segment-note{font-family:'Playfair Display',serif;font-size:clamp(16px,2.5vw,28px);color:#FFBB88;line-height:1.4}
+.proj-segment-note{font-family:'Playfair Display',serif;font-size:clamp(16px,2.5vw,28px);color:#FFBB88;line-height:1.4}.proj-ann-body{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,22px);color:#e2e8f0;line-height:1.7;max-width:880px;text-align:center;white-space:pre-line}
 .audio-panel{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.95);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 15px;min-width:290px;backdrop-filter:blur(16px);z-index:20;display:none}
 .audio-panel.open{display:block}
 .audio-panel-title{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px}
@@ -259,7 +259,7 @@ textarea.fi{resize:vertical}
 .rep-remove{background:transparent;border:none;color:#94a3b8;cursor:pointer;transition:color 0.15s;padding:3px;line-height:0;flex-shrink:0}
 .rep-remove:hover{color:#dc2626}
 .rep-remove svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
-.segment-tag{display:inline-block;padding:2px 6px;background:rgba(99,102,241,0.12);border-radius:4px;color:#4A5568;font-size:11px;font-weight:600;margin-right:4px}
+.segment-tag{display:inline-block;padding:2px 6px;background:rgba(99,102,241,0.12);border-radius:4px;color:#4A5568;font-size:11px;font-weight:600;margin-right:4px}.ann-tag{display:inline-block;padding:2px 6px;background:rgba(74,85,104,0.15);border-radius:4px;color:#4A5568;font-size:11px;font-weight:600;margin-right:4px}
 .banner-item{display:flex;align-items:flex-start;gap:9px;padding:11px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;margin-bottom:7px}
 .banner-item-preview{width:76px;height:43px;border-radius:6px;background:#e2e8f0;flex-shrink:0;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center}
 .banner-item-preview svg{width:18px;height:18px;stroke:#94a3b8;fill:none}
@@ -279,7 +279,7 @@ textarea.fi{resize:vertical}
 .del-icon-wrap svg{width:25px;height:25px;stroke:#dc2626;fill:none;stroke-width:2}
 .action-row{display:flex;gap:8px;margin-top:13px}
 .action-row .btn{flex:1;justify-content:center;padding:10px}
-#segment-modal{z-index:160}
+#segment-modal{z-index:260}#solfa-modal{z-index:260}
 .toast-container{position:fixed;bottom:14px;right:14px;z-index:400;display:flex;flex-direction:column;gap:5px;pointer-events:none}
 .toast{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:9px;color:#fff;font-weight:600;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,0.2);animation:slideIn 0.22s ease-out;pointer-events:auto;transition:opacity 0.3s,transform 0.3s}
 .toast-success{background:#065f46;border:1px solid #059669}
@@ -511,6 +511,18 @@ textarea.fi{resize:vertical}
   </div>
 </div>
 
+<!-- Announcement Modal -->
+<div class="modal-overlay" id="ann-modal" style="z-index:260">
+  <div class="modal-box narrow">
+    <button class="modal-close" id="close-ann-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title" id="ann-modal-title">Add announcement</h2>
+    <p class="modal-sub">A full-screen text slide for notices, events, or any message</p>
+    <div class="form-group"><label class="fl">Headline *</label><input type="text" id="ann-headline" placeholder="e.g. Prayer Meeting — Friday 7pm"></div>
+    <div class="form-group"><label class="fl">Body text <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(optional — shows below headline)</span></label><textarea id="ann-body" class="fi" rows="4" placeholder="Enter announcement details...&#10;&#10;All are welcome."></textarea></div>
+    <button class="btn btn-purple btn-full" id="submit-ann">Save announcement</button>
+  </div>
+</div>
+
 <!-- Backup -->
 <div class="modal-overlay" id="backup-modal">
   <div class="modal-box narrow">
@@ -564,7 +576,7 @@ textarea.fi{resize:vertical}
     <h2 class="modal-title" id="rd-name"></h2>
     <p class="modal-sub" id="rd-date"></p>
     <div class="browse-hint"><p>Close this panel and click <strong>+</strong> on any hymn card to add it here.</p><button class="btn btn-ghost" id="browse-hymns-btn" style="font-size:12px;padding:5px 9px">Browse hymns</button></div>
-    <div style="margin-bottom:11px"><button class="btn btn-teal" id="add-segment-btn">Add service segment</button></div>
+    <div style="margin-bottom:11px;display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-teal" id="add-segment-btn">Add service segment</button><button class="btn btn-blue" id="add-ann-btn">Add announcement</button></div>
     <div id="rd-items"></div>
     <div id="rd-empty" style="display:none;text-align:center;padding:20px 0"><p style="color:#64748b;font-size:14px">No items yet. Add hymns or service segments.</p></div>
     <div class="action-row">
@@ -625,7 +637,7 @@ function save(){
 function load(){
   try{hymns=JSON.parse(localStorage.getItem('lh_hymns')||'[]');repertoires=JSON.parse(localStorage.getItem('lh_reps')||'[]');repItems=JSON.parse(localStorage.getItem('lh_items')||'[]');bannerSlides=JSON.parse(localStorage.getItem('lh_slides')||'[]');}
   catch(e){hymns=[];repertoires=[];repItems=[];bannerSlides=[];}
-  repItems=repItems.filter(i=>i.itemType==='segment'||hymns.some(h=>h.id===i.hymnId));
+  repItems=repItems.filter(i=>i.itemType==='segment'||i.itemType==='announcement'||hymns.some(h=>h.id===i.hymnId));
   repItems=repItems.filter(i=>repertoires.some(r=>r.id===i.repId));
 }
 
@@ -1023,13 +1035,13 @@ function renderSlide(){
   $i('next-label').textContent='Next';
 }
 function nextSlide(){
-  if(projHymn&&(projHymn.type==='divider'||projHymn.type==='segment')){if(fromRep&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}return;}
+  if(projHymn&&(projHymn.type==='divider'||projHymn.type==='segment'||projHymn.type==='announcement')){if(fromRep&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}return;}
   const isLast=projSeqIndex>=projSequence.length-1;
   if(isLast&&fromRep&&repProjIndex<repProjection.length-1){repProjIndex++;projectRepItem(repProjection[repProjIndex]);}
   else if(!isLast){projSeqIndex++;renderSlide();}
 }
 function prevSlide(){
-  if(projHymn&&(projHymn.type==='divider'||projHymn.type==='segment')){if(fromRep&&repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}return;}
+  if(projHymn&&(projHymn.type==='divider'||projHymn.type==='segment'||projHymn.type==='announcement')){if(fromRep&&repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}return;}
   if(projSeqIndex===0&&fromRep&&repProjIndex>0){repProjIndex--;projectRepItem(repProjection[repProjIndex]);}
   else if(projSeqIndex>0){projSeqIndex--;renderSlide();}
 }
@@ -1040,6 +1052,7 @@ function exitProjection(){
 function projectRepItem(item){
   if(item.type==='divider')showDivider(item);
   else if(item.type==='segment')showSegmentSlide(item);
+  else if(item.type==='announcement')showAnnouncementSlide(item);
   else startProjection(item,item._repeatConfig||{});
 }
 function cycleProjBg(){const p=$i('projection');p.classList.remove(BG_CLASSES[projBgIndex]);projBgIndex=(projBgIndex+1)%BG_CLASSES.length;p.classList.add(BG_CLASSES[projBgIndex]);toast('BG: '+BG_LABELS[projBgIndex],'info');}
@@ -1080,6 +1093,49 @@ function saveSegment(){
 }
 $i('close-segment-modal').addEventListener('click',()=>closeModal('segment-modal'));
 $i('submit-segment').addEventListener('click',saveSegment);
+
+// ANNOUNCEMENT
+let editingAnnItem=null;
+function openAnnouncementModal(item){
+  editingAnnItem=item||null;
+  $i('ann-modal-title').textContent=item?'Edit announcement':'Add announcement';
+  $i('ann-headline').value=item?item.annHeadline:'';
+  $i('ann-body').value=item?item.annBody||'':'';
+  openModal('ann-modal');
+}
+function saveAnnouncement(){
+  const headline=$i('ann-headline').value.trim(),body=$i('ann-body').value.trim();
+  if(!headline){toast('Please enter a headline','error');return;}
+  if(!currentRep)return;
+  if(editingAnnItem){
+    editingAnnItem.annHeadline=headline;editingAnnItem.annBody=body;
+    toast('Announcement updated','success');
+  } else {
+    const maxO=repItems.filter(i=>i.repId===currentRep.id).reduce((m,i)=>Math.max(m,i.order),-1);
+    repItems.push({id:uid(),repId:currentRep.id,itemType:'announcement',annHeadline:headline,annBody:body,order:maxO+1,createdAt:Date.now()});
+    toast('Announcement added','success');
+  }
+  save();closeModal('ann-modal');renderRepDetail(currentRep);editingAnnItem=null;
+}
+function showAnnouncementSlide(item){
+  projHymn={type:'announcement'};currentProjHymnData=null;projSequence=[];projSeqIndex=0;
+  $i('proj-title').textContent=item.annHeadline;$i('proj-sub').textContent='Announcement';
+  if(fromRep){$i('proj-pos').textContent='Item '+(repProjIndex+1)+' of '+repProjection.length;$i('proj-pos').style.display='';}
+  $i('proj-content').innerHTML=`
+    <div class="proj-segment-wrap">
+      <div class="proj-segment-badge">Announcement</div>
+      <div class="proj-segment-name">${escHtml(item.annHeadline)}</div>
+      ${item.annBody?'<div class="proj-ann-body">'+escHtml(item.annBody)+'</div>':''}
+    </div>`;
+  $i('proj-indicator').textContent='Announcement slide';
+  $i('prev-stanza').disabled=!fromRep||repProjIndex===0;
+  $i('next-stanza').disabled=fromRep&&repProjIndex>=repProjection.length-1;
+  $i('next-label').textContent='Next';
+  updateProjMediaBtns(null);closeAudioPanel();$i('projection').classList.add('open');
+}
+$i('close-ann-modal').addEventListener('click',()=>closeModal('ann-modal'));
+$i('submit-ann').addEventListener('click',saveAnnouncement);
+$i('add-ann-btn').addEventListener('click',()=>openAnnouncementModal(null));
 
 // REPEAT CONFIG
 function openRepeatConfig(repItemId){
@@ -1141,6 +1197,21 @@ function renderRepDetail(r){
   if(!items.length){$i('rd-items').innerHTML='';$i('rd-empty').style.display='';startBtn.disabled=true;return;}
   $i('rd-empty').style.display='none';startBtn.disabled=false;
   $i('rd-items').innerHTML=items.map((item,idx)=>{
+    if(item.itemType==='announcement'){
+      return`<div class="rep-item-row" style="background:linear-gradient(135deg,#f0f4ff,#e8edf8);border:1px solid #c5cde0">
+        <div class="rep-item-num" style="background:linear-gradient(135deg,#4A5568,#2D3748)">${idx+1}</div>
+        <div class="rep-item-info">
+          <div class="rep-item-title"><span class="ann-tag">Announce</span>${escHtml(item.annHeadline)}</div>
+          ${item.annBody?'<div class="rep-item-meta"><span class="rep-item-sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">'+escHtml(item.annBody.substring(0,60))+(item.annBody.length>60?'...':'')+'</span></div>':''}
+        </div>
+        <div class="rep-item-controls">
+          <button class="rep-order-btn" data-id="${item.id}" data-dir="-1"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg></button>
+          <button class="rep-order-btn" data-id="${item.id}" data-dir="1"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button>
+          <button class="rep-cfg-btn" data-ann-edit="${item.id}">Edit</button>
+          <button class="rep-remove" data-id="${item.id}"><svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+      </div>`;
+    }
     if(item.itemType==='segment'){
       return`<div class="rep-item-row segment-row">
         <div class="rep-item-num segment-num">${idx+1}</div>
@@ -1182,6 +1253,7 @@ function renderRepDetail(r){
   $i('rd-items').querySelectorAll('.key-select').forEach(s=>s.addEventListener('change',()=>{const item=repItems.find(i=>i.id===s.dataset.id);if(item){item.key=s.value;save();}}));
   $i('rd-items').querySelectorAll('.rep-cfg-btn[data-id]').forEach(b=>b.addEventListener('click',()=>openRepeatConfig(b.dataset.id)));
   $i('rd-items').querySelectorAll('[data-seg-edit]').forEach(b=>b.addEventListener('click',()=>{const item=repItems.find(i=>i.id===b.dataset.segEdit);if(item)openSegmentModal(item);}));
+  $i('rd-items').querySelectorAll('[data-ann-edit]').forEach(b=>b.addEventListener('click',()=>{const item=repItems.find(i=>i.id===b.dataset.annEdit);if(item)openAnnouncementModal(item);}));
   $i('rd-items').querySelectorAll('.rep-order-btn').forEach(b=>b.addEventListener('click',()=>moveRepItem(b.dataset.id,parseInt(b.dataset.dir))));
 }
 function showSelRepModal(){
@@ -1206,7 +1278,8 @@ function startRepProjection(){
   if(!items.length){toast('No items in this repertoire','error');return;}
   repProjection=[];
   items.forEach(item=>{
-    if(item.itemType==='segment'){repProjection.push({type:'segment',name:item.segName,note:item.segNote||''});}
+    if(item.itemType==='announcement'){repProjection.push({type:'announcement',annHeadline:item.annHeadline,annBody:item.annBody||''});}
+    else if(item.itemType==='segment'){repProjection.push({type:'segment',name:item.segName,note:item.segNote||''});}
     else{const h=hymns.find(x=>x.id===item.hymnId);if(h){repProjection.push({type:'divider',title:h.title,book:h.book,number:h.number,key:item.key||'Not set'});repProjection.push({...h,_repeatConfig:item.repeatConfig||{}});}}
   });
   if(!repProjection.length){toast('No valid items','error');return;}
@@ -1250,7 +1323,11 @@ function importData(file){
       (data.repItems||[]).forEach(i=>{if(!repItems.find(x=>x.id===i.id))repItems.push(i);});
       (data.bannerSlides||[]).forEach(s=>{bannerSlides.push(s);});
       save();renderBookGrid();renderBanner();closeModal('backup-modal');
-      toast('Imported '+added+' hymns'+(skip?' ('+skip+' skipped)':''),'success');
+      if(skip>0){
+        toast('Imported '+added+' hymns — '+skip+' skipped (duplicates already exist)','info');
+      } else {
+        toast('Imported '+added+' hymns successfully','success');
+      }
     }catch(e){$i('import-error').textContent='Invalid backup file.';$i('import-error').classList.add('show');}
   };
   reader.readAsText(file);
@@ -1308,7 +1385,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('keyup',e=>{if(e.key===' '){spaceHeld=false;stopListening();}});
 
 // BACKDROP CLOSE
-['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','solfa-modal','repeat-modal','segment-modal','banner-modal','slide-modal','backup-modal'].forEach(id=>{
+['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','solfa-modal','repeat-modal','segment-modal','ann-modal','banner-modal','slide-modal','backup-modal'].forEach(id=>{
   $i(id).addEventListener('click',e=>{if(e.target===$i(id))closeModal(id);});
 });
 
