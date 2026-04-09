@@ -14,6 +14,10 @@
 #sync-banner.show{display:flex}
 .sync-spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}.toast{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:9px;color:#fff;font-weight:600;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,0.2);animation:slideIn 0.22s ease-out;pointer-events:auto;transition:opacity 0.3s,transform 0.3s}.toast-success{background:#065f46;border:1px solid #059669}.toast-error{background:#7f1d1d;border:1px solid #dc2626}.toast-info{background:#1e3a5f;border:1px solid #2563eb}.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+
+/* Star Rating CSS */
+.star-rating{display:flex;gap:5px;justify-content:center;margin:15px 0}.star{font-size:32px;color:#cbd5e1;cursor:pointer;transition:color 0.2s;line-height:1}.star.active{color:#f59e0b}
+
 /* ── MOBILE & TABLET RESPONSIVE ─────────────────────────────────────── */
 @media(max-width:480px){
   .app-header{padding:10px 12px;gap:8px}
@@ -121,6 +125,7 @@
     <span class="hymn-count" id="hymn-count">0 hymns</span>
     <button class="btn btn-amber" id="backup-btn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Backup</button>
     <button class="btn btn-blue" id="rep-btn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Repertoires</button>
+    <button class="btn btn-teal" id="app-info-btn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>Info</button>
     <button class="btn btn-green" id="add-hymn-btn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add Hymn</button>
   </div>
 </header>
@@ -172,6 +177,94 @@
   <div class="empty-state" id="book-empty" style="display:none">
     <div class="empty-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zm12-3c0 1.1-1.34 2-3 2s-3-.9-3-2 1.34-2 3-2 3 .9 3 2zM9 10l12-3"/></svg></div>
     <h3>No hymns found</h3><p>Try adjusting your search or filters</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="info-modal">
+  <div class="modal-box narrow">
+    <button class="modal-close" id="close-info-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title">Info & Contact</h2>
+    
+    <div id="info-view-mode">
+      <div style="margin-bottom:15px; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;">
+        <h3 style="font-size:13px; color:#C05A08; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">About</h3>
+        <p id="info-about-text" style="font-size:13px; color:#1e293b; line-height:1.5; white-space:pre-wrap;"></p>
+      </div>
+
+      <div style="margin-bottom:15px; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;">
+        <h3 style="font-size:13px; color:#C05A08; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Contact Info</h3>
+        <p id="info-contact-text" style="font-size:13px; color:#1e293b; line-height:1.5; white-space:pre-wrap;"></p>
+      </div>
+
+      <div style="margin-bottom:15px;">
+        <button class="btn btn-green btn-full" id="donate-toggle-btn">Donate Now</button>
+        <div id="eft-details" style="display:none; margin-top:8px; padding:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; font-size:13px; color:#166534; line-height:1.5;">
+          <strong>Bank name:</strong> FNB<br>
+          <strong>Account name:</strong> Serenza Deluxe Atelier<br>
+          <strong>Account number:</strong> 62864862852<br>
+          <strong>Branch code:</strong> 250 655
+        </div>
+      </div>
+
+      <button class="btn btn-purple btn-full" id="open-rate-btn">Rate Us</button>
+
+      <div id="admin-info-tools" style="display:none; margin-top:15px; padding-top:15px; border-top:1px solid #e2e8f0;">
+        <p style="font-size:11px; color:#94a3b8; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Admin Controls</p>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost" id="edit-info-btn" style="flex:1; justify-content:center;">Edit Info Text</button>
+          <button class="btn btn-blue" id="view-feedback-btn" style="flex:1; justify-content:center;">View Feedback</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="info-edit-mode" style="display:none;">
+      <div class="form-group">
+        <label class="fl">About Section</label>
+        <textarea id="edit-about-input" class="fi" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="fl">Contact Info</label>
+        <textarea id="edit-contact-input" class="fi" rows="3"></textarea>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-cancel" id="cancel-edit-info">Cancel</button>
+        <button class="btn btn-purple" id="save-info-btn" style="flex:2; justify-content:center;">Save Info</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rate-modal" style="z-index: 260;">
+  <div class="modal-box narrow" style="text-align: center;">
+    <button class="modal-close" id="close-rate-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title">Rate Your Experience</h2>
+    <p class="modal-sub">Let us know how we're doing!</p>
+    
+    <div class="star-rating">
+      <span class="star" data-val="1">☆</span>
+      <span class="star" data-val="2">☆</span>
+      <span class="star" data-val="3">☆</span>
+      <span class="star" data-val="4">☆</span>
+      <span class="star" data-val="5">☆</span>
+    </div>
+    
+    <div class="form-group" style="text-align: left; margin-top: 15px;">
+      <label class="fl">Feedback comment <span style="color:#94a3b8; font-weight:400; text-transform:none; letter-spacing:0">(optional)</span></label>
+      <textarea id="rate-comment-input" class="fi" rows="3" placeholder="Tell us what you love or what we can improve..."></textarea>
+    </div>
+    
+    <button class="btn btn-purple btn-full" id="submit-rating-btn">Submit Feedback</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal" style="z-index: 260;">
+  <div class="modal-box wide">
+    <button class="modal-close" id="close-feedback-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title">User Feedback</h2>
+    <p class="modal-sub">Recent ratings and comments submitted by users.</p>
+    
+    <div id="feedback-list" style="max-height: 400px; overflow-y: auto; -webkit-overflow-scrolling: touch;"></div>
+    <div id="feedback-empty" style="display:none; text-align:center; padding:30px 0; color:#64748b; font-size:14px;">No feedback received yet.</div>
   </div>
 </div>
 
@@ -475,26 +568,60 @@ const KEYS=['C','C#/Db','D','D#/Eb','E','F','F#/Gb','G','G#/Ab','A','A#/Bb','B']
 const BG_CLASSES=['bg-black','bg-navy','bg-purple'];
 const BG_LABELS=['Black','Navy','Purple'];
 const SEGMENT_PRESETS=['Sabbath School','Divine Service','Announcements','Special Music','Pastoral Prayer','Offering Appeal','Sermon','Mission Report','Closing','Welcome','Children\'s Story','Vespers','Prayer Meeting','Communion'];
+
+// --- Secure Admin Authentication ---
+let isAdmin = false;
+if (sessionStorage.getItem('lh_admin_auth') === 'true') {
+    isAdmin = true;
+} else if (new URLSearchParams(window.location.search).get('admin') === 'true') {
+    const pwd = window.prompt("Admin Access Required.\nPlease enter the master password:");
+    if (pwd === 'Mazibuko@26') {
+        isAdmin = true;
+        sessionStorage.setItem('lh_admin_auth', 'true');
+        window.history.replaceState({}, document.title, window.location.pathname); // Clean URL
+        toast('Admin access granted', 'success');
+    } else {
+        alert("Incorrect password. Accessing as standard user.");
+        window.history.replaceState({}, document.title, window.location.pathname); // Clean URL
+    }
+}
+
 function save(){
-  try{localStorage.setItem('lh_hymns',JSON.stringify(hymns));localStorage.setItem('lh_reps',JSON.stringify(repertoires));localStorage.setItem('lh_items',JSON.stringify(repItems));localStorage.setItem('lh_slides',JSON.stringify(bannerSlides));localStorage.setItem('lh_history',JSON.stringify(serviceHistory));}
+  try{
+    localStorage.setItem('lh_hymns',JSON.stringify(hymns));
+    localStorage.setItem('lh_reps',JSON.stringify(repertoires));
+    localStorage.setItem('lh_items',JSON.stringify(repItems));
+    localStorage.setItem('lh_slides',JSON.stringify(bannerSlides));
+    localStorage.setItem('lh_history',JSON.stringify(serviceHistory));
+    localStorage.setItem('lh_info',JSON.stringify(infoData));
+    localStorage.setItem('lh_feedback',JSON.stringify(feedbackList));
+  }
   catch(e){toast('Storage error — export a backup','error');}
 }
+
 function load(){
   try{hymns=JSON.parse(localStorage.getItem('lh_hymns')||'[]');repertoires=JSON.parse(localStorage.getItem('lh_reps')||'[]');repItems=JSON.parse(localStorage.getItem('lh_items')||'[]');bannerSlides=JSON.parse(localStorage.getItem('lh_slides')||'[]');serviceHistory=JSON.parse(localStorage.getItem('lh_history')||'[]');}
   catch(e){hymns=[];repertoires=[];repItems=[];bannerSlides=[];}
   repItems=repItems.filter(i=>i.itemType==='segment'||i.itemType==='announcement'||hymns.some(h=>h.id===i.hymnId));
   repItems=repItems.filter(i=>repertoires.some(r=>r.id===i.repId));
 }
-let hymns=[],repertoires=[],repItems=[],bannerSlides=[],serviceHistory=[];
-load();
 
-// --- NEW: Admin Control & YouTube Link Logic ---
-const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+let hymns=[],repertoires=[],repItems=[],bannerSlides=[],serviceHistory=[];
 let globalYtLink = localStorage.getItem('lh_header_yt') || '';
+
+// Load Info & Feedback
+let infoData = JSON.parse(localStorage.getItem('lh_info')) || {
+    about: "Brief explanation of project and its purpose",
+    contact: "Contact number: 011 568 2792\nEmail address: info@serenzadeluxeatelier.co.za"
+};
+let feedbackList = JSON.parse(localStorage.getItem('lh_feedback')) || [];
+
+load();
 
 function applyAccessControls() {
   if (isAdmin) {
     $i('manage-yt-btn').style.display = 'inline-flex';
+    $i('admin-info-tools').style.display = 'block';
   } else {
     if($i('backup-btn')) $i('backup-btn').style.display = 'none';
     if($i('banner-manage-btn')) $i('banner-manage-btn').style.display = 'none';
@@ -543,6 +670,118 @@ $i('delete-yt-link').addEventListener('click', () => {
   closeModal('yt-link-modal');
   toast('YouTube link removed', 'info');
 });
+
+// --- Info Section Logic ---
+function renderInfoText() {
+    $i('info-about-text').textContent = infoData.about;
+    $i('info-contact-text').textContent = infoData.contact;
+}
+
+$i('app-info-btn').addEventListener('click', () => {
+    renderInfoText();
+    $i('info-view-mode').style.display = 'block';
+    $i('info-edit-mode').style.display = 'none';
+    $i('eft-details').style.display = 'none';
+    openModal('info-modal');
+});
+$i('close-info-modal').addEventListener('click', () => closeModal('info-modal'));
+
+$i('donate-toggle-btn').addEventListener('click', () => {
+    const d = $i('eft-details');
+    d.style.display = d.style.display === 'none' ? 'block' : 'none';
+});
+
+$i('edit-info-btn').addEventListener('click', () => {
+    $i('edit-about-input').value = infoData.about;
+    $i('edit-contact-input').value = infoData.contact;
+    $i('info-view-mode').style.display = 'none';
+    $i('info-edit-mode').style.display = 'block';
+});
+
+$i('cancel-edit-info').addEventListener('click', () => {
+    $i('info-edit-mode').style.display = 'none';
+    $i('info-view-mode').style.display = 'block';
+});
+
+$i('save-info-btn').addEventListener('click', () => {
+    infoData.about = $i('edit-about-input').value.trim();
+    infoData.contact = $i('edit-contact-input').value.trim();
+    save();
+    renderInfoText();
+    $i('info-edit-mode').style.display = 'none';
+    $i('info-view-mode').style.display = 'block';
+    toast('Information updated', 'success');
+});
+
+// --- Rating & Feedback Logic ---
+let currentRating = 0;
+const stars = document.querySelectorAll('.star-rating .star');
+
+$i('open-rate-btn').addEventListener('click', () => {
+    currentRating = 0;
+    stars.forEach(s => s.classList.remove('active'));
+    $i('rate-comment-input').value = '';
+    closeModal('info-modal');
+    openModal('rate-modal');
+});
+$i('close-rate-modal').addEventListener('click', () => closeModal('rate-modal'));
+
+stars.forEach(star => {
+    star.addEventListener('click', () => {
+        currentRating = parseInt(star.dataset.val);
+        stars.forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.val) <= currentRating);
+        });
+    });
+});
+
+$i('submit-rating-btn').addEventListener('click', () => {
+    if (currentRating === 0) {
+        toast('Please select a star rating first', 'error');
+        return;
+    }
+    const comment = $i('rate-comment-input').value.trim();
+    feedbackList.unshift({
+        id: uid(),
+        rating: currentRating,
+        comment: comment,
+        date: Date.now()
+    });
+    save();
+    closeModal('rate-modal');
+    toast('Thank you for your feedback!', 'success');
+});
+
+// --- Admin Feedback View ---
+function renderFeedbackList() {
+    const list = $i('feedback-list');
+    if (feedbackList.length === 0) {
+        list.innerHTML = '';
+        $i('feedback-empty').style.display = 'block';
+        return;
+    }
+    $i('feedback-empty').style.display = 'none';
+    
+    list.innerHTML = feedbackList.map(f => {
+        const d = new Date(f.date).toLocaleDateString('en-ZA', {year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        const starsHtml = '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating);
+        return `<div style="padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="color:#f59e0b; font-size:16px; letter-spacing:2px;">${starsHtml}</span>
+                <span style="font-size:11px; color:#94a3b8;">${d}</span>
+            </div>
+            ${f.comment ? `<p style="font-size:13px; color:#1e293b; line-height:1.5;">"${escHtml(f.comment)}"</p>` : `<p style="font-size:13px; color:#94a3b8; font-style:italic;">No comment provided.</p>`}
+        </div>`;
+    }).join('');
+}
+
+$i('view-feedback-btn').addEventListener('click', () => {
+    renderFeedbackList();
+    closeModal('info-modal');
+    openModal('feedback-modal');
+});
+$i('close-feedback-modal').addEventListener('click', () => closeModal('feedback-modal'));
+
 // ---------------------------------------------
 
 let currentBook=null,bookSearchQ='',bFilterType='all',bFilterChorus='all',bFilterFav=false;
@@ -1323,7 +1562,7 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('keyup',e=>{if(e.key===' '){spaceHeld=false;stopListening();}});
 // BACKDROP CLOSE
-['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','solfa-modal','repeat-modal','segment-modal','ann-modal','banner-modal','slide-modal','backup-modal','history-modal','yt-link-modal'].forEach(id=>{
+['add-modal','rep-list-modal','rep-form-modal','rep-detail-modal','sel-rep-modal','del-modal','del-rep-modal','solfa-modal','repeat-modal','segment-modal','ann-modal','banner-modal','slide-modal','backup-modal','history-modal','yt-link-modal', 'info-modal', 'rate-modal', 'feedback-modal'].forEach(id=>{
   $i(id).addEventListener('click',e=>{if(e.target===$i(id))closeModal(id);});
 });
 // ── SERVICE HISTORY ─────────────────────────────────────────────────────────
