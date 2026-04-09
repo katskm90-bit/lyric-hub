@@ -109,10 +109,13 @@
     <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
     <span class="logo-title">Lyric Hub</span>
     
-    <a id="header-yt-link" target="_blank" style="display:none; color: #E8650A; margin-left: 10px; display: flex; align-items: center;" title="Visit our YouTube">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-    </a>
-    <button id="manage-yt-btn" class="btn btn-ghost" style="display:none; padding: 4px 6px; margin-left: 5px; font-size: 11px;" title="Manage YouTube Link">Edit Link</button>
+    <div style="display:flex; align-items:center; gap: 4px;">
+      <span id="yt-helper-text" style="display:none; font-size: 11px; color: #64748b; font-weight: 600; margin-left: 10px;">Click icon for Audio-Visual Hymns &rarr;</span>
+      <a id="header-yt-link" target="_blank" style="display:none; color: #E8650A; align-items: center;" title="Visit our YouTube">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+      <button id="manage-yt-btn" class="btn btn-ghost" style="display:none; padding: 4px 6px; margin-left: 5px; font-size: 11px;" title="Manage YouTube Link">Edit Link</button>
+    </div>
   </div>
   <div class="header-right">
     <span class="hymn-count" id="hymn-count">0 hymns</span>
@@ -507,11 +510,14 @@ function applyAccessControls() {
 
 function renderHeaderYtLink() {
   const a = $i('header-yt-link');
+  const helper = $i('yt-helper-text');
   if (globalYtLink) {
     a.href = globalYtLink;
     a.style.display = 'inline-flex';
+    helper.style.display = 'inline';
   } else {
     a.style.display = 'none';
+    helper.style.display = 'none';
   }
 }
 
@@ -709,7 +715,8 @@ function getBookHymns(){
     if(bFilterType!=='all'&&h.classification!==bFilterType)return false;
     if(bFilterChorus==='with'&&(!h.chorus||!h.chorus.trim()))return false;
     if(bFilterChorus==='without'&&h.chorus&&h.chorus.trim())return false;
-    if(bFilterFav&&!h.favourite)return false;
+    // Strict Favorites Filtering
+    if(bFilterFav&&!h.favourite)return false; 
     if(q&&!h.title.toLowerCase().includes(q)&&!String(h.number).includes(q)&&!h.lyrics.toLowerCase().includes(q))return false;
     return true;
   }).sort((a,b)=>a.number-b.number);
@@ -746,14 +753,23 @@ function renderHymnGrid(){
   grid.querySelectorAll('.del-h').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();hymnToDelete=hymns.find(h=>h.id===b.dataset.id);openModal('del-modal');}));
   grid.querySelectorAll('.edit-h').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openAddModal(hymns.find(h=>h.id===b.dataset.id));}));
   grid.querySelectorAll('.add-rep').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();hymnToAddToRep=hymns.find(h=>h.id===b.dataset.id);showSelRepModal();}));
-  grid.querySelectorAll('.fav-h').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const h=hymns.find(x=>x.id===b.dataset.id);if(h){h.favourite=!h.favourite;save();renderHymnGrid();renderBookGrid();toast(h.favourite?'Added to favourites':'Removed from favourites','info');}}));
+  grid.querySelectorAll('.fav-h').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const h=hymns.find(x=>x.id===b.dataset.id);
+    if(h){
+      h.favourite=!h.favourite;
+      save();
+      renderHymnGrid();
+      toast(h.favourite?'Added to favourites':'Removed from favourites','info');
+    }
+  }));
   grid.querySelectorAll('.qr-h').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const h=hymns.find(x=>x.id===b.dataset.id);if(h)showQrCode(h);}));
 }
 $i('breadcrumb-home').addEventListener('click',closeBook);
 $i('book-search').addEventListener('input',e=>{bookSearchQ=e.target.value;renderHymnGrid();});
 $i('bfilter-type').addEventListener('change',e=>{bFilterType=e.target.value;renderHymnGrid();});
 $i('bfilter-chorus').addEventListener('change',e=>{bFilterChorus=e.target.value;renderHymnGrid();});
-$i('bfilter-clear').addEventListener('click',()=>{bookSearchQ='';bFilterType='all';bFilterChorus='all';bFilterFav=false;$i('book-search').value='';$i('bfilter-type').value='all';$i('bfilter-chorus').value='all';renderHymnGrid();});
+$i('bfilter-clear').addEventListener('click',()=>{bookSearchQ='';bFilterType='all';bFilterChorus='all';bFilterFav=false;$i('book-search').value='';$i('bfilter-type').value='all';$i('bfilter-chorus').value='all';$i('bfilter-fav').classList.remove('active');renderHymnGrid();});
 $i('bfilter-fav').addEventListener('click',()=>{bFilterFav=!bFilterFav;$i('bfilter-fav').classList.toggle('active',bFilterFav);renderHymnGrid();});
 // ADD/EDIT HYMN
 function updateBookDropdown(lang,current){
@@ -1433,12 +1449,20 @@ function showSyncBanner(msg){
 }
 
 async function syncHymnsFromGithub(){
-  showSyncBanner('Syncing hymn library…');
+  showSyncBanner('Syncing library & banners…');
   try{
     const lastSync=localStorage.getItem('lh_last_sync')||'0';
     const res=await fetch(HYMNS_URL+'?t='+Date.now(),{cache:'no-cache'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
+    
+    // Auto-Sync Banners from Admin
+    if(data.bannerSlides && Array.isArray(data.bannerSlides)){
+      bannerSlides = data.bannerSlides;
+      renderBanner();
+      if($i('banner-modal').classList.contains('open')) renderBannerList();
+    }
+
     const remoteHymns=data.hymns||[];
     if(!remoteHymns.length){showSyncBanner(null);return;}
     let added=0,updated=0;
@@ -1448,7 +1472,6 @@ async function syncHymnsFromGithub(){
         hymns.push(rh);
         added++;
       } else {
-        // Update if remote version is newer (createdAt or has more fields)
         const remoteKeys=Object.keys(rh).length;
         const localKeys=Object.keys(existing).length;
         if(remoteKeys>localKeys){
@@ -1457,7 +1480,7 @@ async function syncHymnsFromGithub(){
         }
       }
     });
-    if(added||updated){
+    if(added||updated || data.bannerSlides){
       save();
       renderBookGrid();
       updateHymnCount();
@@ -1468,7 +1491,6 @@ async function syncHymnsFromGithub(){
     showSyncBanner(msg);
     setTimeout(()=>showSyncBanner(null),3000);
   }catch(e){
-    // Silently fail — app works from localStorage if offline or fetch fails
     showSyncBanner('Offline — using local library');
     setTimeout(()=>showSyncBanner(null),3000);
   }
