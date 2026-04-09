@@ -302,12 +302,12 @@
       <div><label class="fl">Instrumental URL</label><input type="url" id="f-inst" placeholder="Direct MP3 or Google Drive share link"></div>
     </div>
     <hr class="section-divider">
-    <p class="section-label">Tonic Sol-fa Notation <span style="font-weight:400;color:#cbd5e1">(SATB optional)</span></p>
-    <p style="font-size:12px;color:#64748b;margin-bottom:8px;line-height:1.5">Use | for bar lines, - for held notes, d1 upper octave, d, lower octave</p>
-    <div class="form-group"><label class="fl">Soprano</label><textarea id="f-soprano" class="fi" rows="2" placeholder="d  r  m  -  |  s  s  m  -"></textarea></div>
-    <div class="form-group"><label class="fl">Alto</label><textarea id="f-alto" class="fi" rows="2" placeholder="m  f  s  -  |  s  l  s  -"></textarea></div>
-    <div class="form-group"><label class="fl">Tenor</label><textarea id="f-tenor" class="fi" rows="2" placeholder="s  l  d1 -  |  d1 t  d1 -"></textarea></div>
-    <div class="form-group"><label class="fl">Bass</label><textarea id="f-bass" class="fi" rows="2" placeholder="d, d, d  -  |  m  f  d  -"></textarea></div>
+    <p class="section-label">Tonic Sol-fa Notation</p>
+    <div class="form-group">
+      <label class="fl">Sol-fa Image URL <span style="font-weight:400;color:#94a3b8;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input type="url" id="f-solfa-img" class="fi" placeholder="https://imgur.com/your-image.png">
+      <p style="font-size:11px;color:#94a3b8;margin-top:4px">For exact book formatting, take a screenshot of the notation, upload it, and paste the direct link here.</p>
+    </div>
     <hr class="section-divider">
     <p class="section-label">Conductor notes <span style="font-weight:400;color:#cbd5e1">(private — not shown in projection)</span></p>
     <div class="form-group"><textarea id="f-notes" class="fi" rows="3" placeholder="Internal notes for the worship leader or conductor only..."></textarea></div>
@@ -1029,10 +1029,7 @@ function openAddModal(hymn){
   $i('f-yt').value=hymn?(hymn.youtube||''):'';
   $i('f-vocal').value=hymn?(hymn.vocal||''):'';
   $i('f-inst').value=hymn?(hymn.instrumental||''):'';
-  $i('f-soprano').value=hymn?(hymn.soprano||''):'';
-  $i('f-alto').value=hymn?(hymn.alto||''):'';
-  $i('f-tenor').value=hymn?(hymn.tenor||''):'';
-  $i('f-bass').value=hymn?(hymn.bass||''):'';$i('f-notes').value=hymn?(hymn.conductorNotes||''):'';
+  if($i('f-solfa-img')) $i('f-solfa-img').value=hymn?(hymn.solfaImg||''):'';
   if(hymn&&hymn.classification==='uncommon')$i('f-uncommon').checked=true;else $i('f-common').checked=true;
   $i('form-error').classList.remove('show');
   updateBookDropdown(hymn?hymn.language:'',hymn?hymn.book:'');
@@ -1057,13 +1054,12 @@ function saveHymn(){
     num=parseInt($i('f-number').value),lyrics=$i('f-lyrics').value.trim(),chorus=$i('f-chorus').value.trim(),
     cls=$i('f-common').checked?'common':'uncommon',youtube=$i('f-yt').value.trim(),
     vocal=$i('f-vocal').value.trim(),instrumental=$i('f-inst').value.trim(),
-    soprano=$i('f-soprano').value.trim(),alto=$i('f-alto').value.trim(),
-    tenor=$i('f-tenor').value.trim(),bass=$i('f-bass').value.trim(),err=$i('form-error');
+    solfaImg=$i('f-solfa-img') ? $i('f-solfa-img').value.trim() : '',err=$i('form-error');
   if(!title||!lang||!book||!num||!lyrics){err.textContent='Please fill in all required fields.';err.classList.add('show');return;}
   if(isNaN(num)||num<1){err.textContent='Hymn number must be a positive number.';err.classList.add('show');return;}
   const dup=hymns.find(h=>h.language===lang&&h.book===book&&h.number===num&&(!editingHymn||h.id!==editingHymn.id));
   if(dup){err.textContent='Hymn #'+num+' already exists in '+book+'.';err.classList.add('show');return;}
-  const data={title,language:lang,book,number:num,lyrics,chorus,classification:cls,youtube,vocal,instrumental,soprano,alto,tenor,bass};
+  const data={title,language:lang,book,number:num,lyrics,chorus,classification:cls,youtube,vocal,instrumental,solfaImg};
   if(editingHymn){Object.assign(editingHymn,data);toast('Hymn updated','success');}
   else{hymns.push({id:uid(),createdAt:Date.now(),...data});toast('Hymn saved','success');}
   save();closeModal('add-modal');renderBookGrid();if(currentBook)renderHymnGrid();updateHymnCount();
@@ -1106,13 +1102,16 @@ function renderSolfaVoice(label,line){
   return html+'</div></div>';
 }
 function renderSolfa(h){
-  if(!h.soprano&&!h.alto&&!h.tenor&&!h.bass)return'<div class="no-solfa"><p>No sol-fa notation entered for this hymn.</p></div>';
+  if(!h.solfaImg && !h.soprano) return '<div class="no-solfa"><p>No sol-fa notation entered for this hymn.</p></div>';
+  if(h.solfaImg) {
+    return `<div style="text-align:center; padding:10px;"><img src="${h.solfaImg}" style="max-width:100%; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="Sol-fa notation"></div>`;
+  }
   let html='<div class="solfa-grid-wrap">';
   if(h.soprano)html+=renderSolfaVoice('S',h.soprano);
   if(h.alto){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('A',h.alto);}
   if(h.tenor){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('T',h.tenor);}
   if(h.bass){html+='<div class="solfa-part-divider"></div>';html+=renderSolfaVoice('B',h.bass);}
-  return html+'</div><p style="font-size:11px;color:#94a3b8;margin-top:6px">S=Soprano A=Alto T=Tenor B=Bass</p>';
+  return html+'</div>';
 }
 // YOUTUBE FLOAT
 function extractYtId(url){if(!url)return null;const m=url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);return m?m[1]:null;}
@@ -1159,7 +1158,7 @@ function updateProjMediaBtns(h){
   $i('proj-yt-btn').disabled=!(h&&h.youtube&&h.youtube.trim());
   $i('proj-vocal-btn').disabled=!(h&&h.vocal&&h.vocal.trim());
   $i('proj-inst-btn').disabled=!(h&&h.instrumental&&h.instrumental.trim());
-  $i('proj-solfa-btn').disabled=!(h&&(h.soprano||h.alto||h.tenor||h.bass));
+ $i('proj-solfa-btn').disabled=!(h&&(h.solfaImg||h.soprano||h.alto||h.tenor||h.bass));
 }
 function applyFontSize(){$i('proj-content').querySelectorAll('.proj-stanza-text').forEach(t=>t.style.fontSize=projFontSize+'px');}
 function buildSequence(h,cfg){
