@@ -1034,7 +1034,7 @@ function openAddModal(hymn){
   $i('form-error').classList.remove('show');
   updateBookDropdown(hymn?hymn.language:'',hymn?hymn.book:'');
 
-  const restrictedFields = ['f-title', 'f-lang', 'f-book', 'f-number', 'f-common', 'f-uncommon', 'f-yt', 'f-vocal', 'f-inst', 'f-soprano', 'f-alto', 'f-tenor', 'f-bass', 'f-notes'];
+  const restrictedFields = ['f-title', 'f-lang', 'f-book', 'f-number', 'f-common', 'f-uncommon', 'f-yt', 'f-vocal', 'f-inst', 'f-solfa-img', 'f-notes'];
   if (!isAdmin) {
     restrictedFields.forEach(id => {
       if($i(id)) $i(id).disabled = true;
