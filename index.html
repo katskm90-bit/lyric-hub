@@ -661,7 +661,7 @@ function save(){
     localStorage.setItem('lh_info',JSON.stringify(infoData));
     localStorage.setItem('lh_feedback',JSON.stringify(feedbackList));
   }
-  catch(e){ console.warn('Local storage full'); }
+  catch(e){toast('Storage error — export a backup','error');}
 }
 
 function load(){
@@ -742,9 +742,8 @@ on('delete-yt-link', 'click', () => {
 
 // --- Info Section Logic ---
 function renderInfoText() {
-    const savedInfo = JSON.parse(localStorage.getItem('lh_info')) || infoData;
-    document.getElementById('info-about-text').textContent = savedInfo.about;
-    document.getElementById('info-contact-text').textContent = savedInfo.contact;
+    $i('info-about-text').textContent = infoData.about;
+    $i('info-contact-text').textContent = infoData.contact;
 }
 
 on('app-info-btn', 'click', () => {
@@ -1764,11 +1763,6 @@ async function syncHymnsFromGithub(){
     if(data.bannerSlides&&Array.isArray(data.bannerSlides)){
       bannerSlides=data.bannerSlides;
       renderBanner();
-    }// Update Info/About section from GitHub
-    if(data.infoData){
-      infoData.about = data.infoData.about || infoData.about;
-      infoData.contact = data.infoData.contact || infoData.contact;
-      localStorage.setItem('lh_info', JSON.stringify(infoData));
     }
     if(data.donateCard){
       var dc=data.donateCard;
@@ -1839,10 +1833,6 @@ async function exportAndPublish(){
         title:   infoData.donateTitle,
         text:    infoData.donateText,
         visible: infoData.donateVisible
-      },
-      infoData: {
-        about: infoData.about,
-        contact: infoData.contact
       }
     }, null, 2);
     var encoded = btoa(unescape(encodeURIComponent(payload)));
@@ -2044,10 +2034,7 @@ renderHeaderYtLink();
         for (var name of names) {
           caches.delete(name);
           console.log('Cache cleared:', name);
-        }// Force iPhone to refresh data
-if (window.location.href.includes('lyric-hub')) {
-    window.location.replace(window.location.href.replace('lyric-hub', 'hymndesk'));
-}
+        }
       });
     }
   }
