@@ -1,7 +1,7 @@
 {
-  "name": "Lyric Hub",
-  "short_name": "Lyric Hub",
-  "description": "SDA Music Realm hymn library and service projection tool",
+  "name": "HymnDesk",
+  "short_name": "HymnDesk",
+  "description": "SDA hymn library, service projection and repertoire management — Serenza Music Realm",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
