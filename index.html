@@ -1743,7 +1743,7 @@ function importCsv(file){
 }
 on('csv-import-input', 'change',e=>{if(e.target.files[0])importCsv(e.target.files[0]);e.target.value='';});
 
-const HYMNS_URL='https://katskm90-bit.github.io/lyric-hub/hymns.json';
+const HYMNS_URL='https://katskm90-bit.github.io/hymndesk/hymns.json';
 
 function showSyncBanner(msg){
   const b=$i('sync-banner'),m=$i('sync-msg');
