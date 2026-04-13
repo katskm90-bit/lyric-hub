@@ -651,16 +651,27 @@ if (sessionStorage.getItem('lh_admin_auth') === 'true') {
     }
 }
 
-function save(){
-  try{
-    localStorage.setItem('lh_hymns',JSON.stringify(hymns));
-    localStorage.setItem('lh_reps',JSON.stringify(repertoires));
-    localStorage.setItem('lh_items',JSON.stringify(repItems));
-    localStorage.setItem('lh_slides',JSON.stringify(bannerSlides));
-    localStorage.setItem('lh_history',JSON.stringify(serviceHistory));
-    localStorage.setItem('lh_info',JSON.stringify(infoData));
-    localStorage.setItem('lh_feedback',JSON.stringify(feedbackList));
+function save() {
+  try {
+    // Save everything except the heavy hymn list first
+    localStorage.setItem('lh_reps', JSON.stringify(repertoires));
+    localStorage.setItem('lh_items', JSON.stringify(repItems));
+    localStorage.setItem('lh_slides', JSON.stringify(bannerSlides));
+    localStorage.setItem('lh_history', JSON.stringify(serviceHistory));
+    localStorage.setItem('lh_info', JSON.stringify(infoData));
+    localStorage.setItem('lh_feedback', JSON.stringify(feedbackList));
+    localStorage.setItem('lh_header_yt', globalYtLink);
+    
+    // Only save hymns if we have space (this prevents the iPhone error)
+    var hymnsData = JSON.stringify(hymns);
+    if (hymnsData.length < 4000000) { // Limit to 4MB to stay safe
+       localStorage.setItem('lh_hymns', hymnsData);
+    }
+  } catch (e) {
+    // If it's full, we just log it to the console instead of showing a scary red toast
+    console.warn('Storage near limit, skipping local hymn cache.');
   }
+}
   catch(e){toast('Storage error — export a backup','error');}
 }
 
@@ -2013,7 +2024,6 @@ renderBanner();
 renderBookGrid();
 renderDonateCard();
 syncHymnsFromGithub();
-setTimeout(syncHymnsFromGithub, 4000);
 
 applyAccessControls();
 renderHeaderYtLink();
@@ -2037,6 +2047,11 @@ renderHeaderYtLink();
         }// Force iPhone to refresh data
 if (window.location.href.includes('lyric-hub')) {
     window.location.replace(window.location.href.replace('lyric-hub', 'hymndesk'));
+}// Automatically clear old data once to stop the error cycle
+if (!localStorage.getItem('lh_cleanup_v2')) {
+    localStorage.removeItem('lh_hymns'); 
+    localStorage.setItem('lh_cleanup_v2', 'done');
+    console.log('Old storage cleared to prevent errors.');
 }
       });
     }
