@@ -2034,7 +2034,10 @@ renderHeaderYtLink();
         for (var name of names) {
           caches.delete(name);
           console.log('Cache cleared:', name);
-        }
+        }// Force iPhone to refresh data
+if (window.location.href.includes('lyric-hub')) {
+    window.location.replace(window.location.href.replace('lyric-hub', 'hymndesk'));
+}
       });
     }
   }
