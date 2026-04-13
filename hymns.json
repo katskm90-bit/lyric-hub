@@ -59909,5 +59909,11 @@
       "img": "https://cf-content.computicket.com/events/7351104/desktopbanner_testprefix_w7smiw21VciZuzRxCQnd17.jpg",
       "link": "https://computicket.com/event/omega-khunou-let-there-be-light-live-recording/f2ef6d02-bad2-4c0a-848d-f645cf635f84"
     }
-  ]
+  ],
+  "donateCard": {
+    "icon": "&#x1F4B5;",
+    "title": "Support This Ministry",
+    "text": "Your generosity fuels our mission; please consider supporting our ministry, knowing that every gift no matter the size makes a profound difference.\n\nThank You",
+    "visible": true
+  }
 }
