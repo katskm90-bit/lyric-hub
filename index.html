@@ -151,36 +151,8 @@
     <button class="btn btn-ghost" id="manage-banner-btn-2"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>Manage Banner</button>
   </div>
 
-  <!-- Donate Card — visible to all users on home screen -->
-  <div id="donate-home-card" style="margin:0 24px 20px;background:linear-gradient(135deg,#FFF8F3,#FFF0E6);border:2px solid #FFD9B8;border-radius:16px;padding:18px 20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
-      <div style="flex:1;min-width:180px;">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
-          <span style="font-size:20px;">🙏</span>
-          <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#1e293b;">Support This Ministry</span>
-        </div>
-        <div style="font-size:12px;color:#64748b;line-height:1.5;">Your contribution keeps this hymn library free and growing for everyone.</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <select id="donate-amount-select" style="padding:8px 10px;border:1px solid #FFD9B8;border-radius:8px;background:#fff;color:#1e293b;font-size:13px;font-weight:600;outline:none;cursor:pointer;-webkit-appearance:auto;">
-          <option value="">Choose amount</option>
-          <option value="20">R20</option>
-          <option value="50">R50</option>
-          <option value="100">R100</option>
-          <option value="200">R200</option>
-          <option value="500">R500</option>
-          <option value="custom">Other amount…</option>
-        </select>
-        <input type="number" id="donate-custom-input" placeholder="Amount (R)" min="1" style="display:none;width:130px;padding:8px 10px;border:1px solid #FFD9B8;border-radius:8px;background:#fff;color:#1e293b;font-size:13px;outline:none;">
-        <button class="btn btn-purple" id="donate-home-btn" style="padding:9px 18px;font-size:13px;">❤ Donate</button>
-      </div>
-    </div>
-    <div id="donate-eft-box" style="display:none;margin-top:14px;padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;font-size:13px;color:#166534;line-height:1.8;">
-      <strong>Bank:</strong> FNB &nbsp;|&nbsp; <strong>Account Name:</strong> Serenza Deluxe Atelier<br>
-      <strong>Account No:</strong> 62864862852 &nbsp;|&nbsp; <strong>Branch Code:</strong> 250 655<br>
-      <span style="font-size:11px;color:#4ade80;">Use your name as the payment reference. Thank you! 🙏</span>
-    </div>
-  </div>
+  <!-- Donate Card — rendered dynamically -->
+  <div id="donate-home-card" style="margin:0 24px 20px;"></div>
   <div class="book-grid" id="book-grid"></div>
   <div class="empty-state" id="home-empty" style="display:none">
     <div class="empty-icon"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
@@ -232,16 +204,6 @@
       <div style="margin-bottom:15px; padding:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;">
         <h3 style="font-size:13px; color:#C05A08; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Contact Info</h3>
         <p id="info-contact-text" style="font-size:13px; color:#1e293b; line-height:1.5; white-space:pre-wrap;"></p>
-      </div>
-
-      <div style="margin-bottom:15px;">
-        <button class="btn btn-green btn-full" id="donate-toggle-btn">Donate Now</button>
-        <div id="eft-details" style="display:none; margin-top:8px; padding:12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; font-size:13px; color:#166534; line-height:1.5;">
-          <strong>Bank name:</strong> FNB<br>
-          <strong>Account name:</strong> Serenza Deluxe Atelier<br>
-          <strong>Account number:</strong> 62864862852<br>
-          <strong>Branch code:</strong> 250 655
-        </div>
       </div>
 
       <button class="btn btn-purple btn-full" id="open-rate-btn">Rate Us</button>
@@ -653,6 +615,11 @@ let infoData = JSON.parse(localStorage.getItem('lh_info')) || {
     about: "Brief explanation of project and its purpose",
     contact: "Contact number: 011 568 2792\nEmail address: info@serenzadeluxeatelier.co.za"
 };
+// Ensure donate card fields exist on old saved data too
+if (!infoData.donateIcon)    infoData.donateIcon    = '&#x1F64F;';
+if (!infoData.donateTitle)   infoData.donateTitle   = 'Support This Ministry';
+if (!infoData.donateText)    infoData.donateText    = 'Your contribution keeps this hymn library free and growing for everyone.';
+if (infoData.donateVisible === undefined) infoData.donateVisible = true;
 let feedbackList = JSON.parse(localStorage.getItem('lh_feedback')) || [];
 
 load();
@@ -687,13 +654,13 @@ function renderHeaderYtLink() {
   }
 }
 
-$i('manage-yt-btn').addEventListener('click', () => {
+on('manage-yt-btn', 'click', () => {
   $i('yt-link-input').value = globalYtLink;
   openModal('yt-link-modal');
 });
-$i('close-yt-link-modal').addEventListener('click', () => closeModal('yt-link-modal'));
+on('close-yt-link-modal', 'click', () => closeModal('yt-link-modal'));
 
-$i('save-yt-link').addEventListener('click', () => {
+on('save-yt-link', 'click', () => {
   const val = $i('yt-link-input').value.trim();
   globalYtLink = val;
   localStorage.setItem('lh_header_yt', val);
@@ -702,7 +669,7 @@ $i('save-yt-link').addEventListener('click', () => {
   toast('YouTube link saved', 'success');
 });
 
-$i('delete-yt-link').addEventListener('click', () => {
+on('delete-yt-link', 'click', () => {
   globalYtLink = '';
   localStorage.removeItem('lh_header_yt');
   renderHeaderYtLink();
@@ -716,33 +683,27 @@ function renderInfoText() {
     $i('info-contact-text').textContent = infoData.contact;
 }
 
-$i('app-info-btn').addEventListener('click', () => {
+on('app-info-btn', 'click', () => {
     renderInfoText();
     $i('info-view-mode').style.display = 'block';
     $i('info-edit-mode').style.display = 'none';
-    $i('eft-details').style.display = 'none';
     openModal('info-modal');
 });
-$i('close-info-modal').addEventListener('click', () => closeModal('info-modal'));
+on('close-info-modal', 'click', () => closeModal('info-modal'));
 
-$i('donate-toggle-btn').addEventListener('click', () => {
-    const d = $i('eft-details');
-    d.style.display = d.style.display === 'none' ? 'block' : 'none';
-});
-
-$i('edit-info-btn').addEventListener('click', () => {
+on('edit-info-btn', 'click', () => {
     $i('edit-about-input').value = infoData.about;
     $i('edit-contact-input').value = infoData.contact;
     $i('info-view-mode').style.display = 'none';
     $i('info-edit-mode').style.display = 'block';
 });
 
-$i('cancel-edit-info').addEventListener('click', () => {
+on('cancel-edit-info', 'click', () => {
     $i('info-edit-mode').style.display = 'none';
     $i('info-view-mode').style.display = 'block';
 });
 
-$i('save-info-btn').addEventListener('click', () => {
+on('save-info-btn', 'click', () => {
     infoData.about = $i('edit-about-input').value.trim();
     infoData.contact = $i('edit-contact-input').value.trim();
     save();
@@ -756,14 +717,14 @@ $i('save-info-btn').addEventListener('click', () => {
 let currentRating = 0;
 const stars = document.querySelectorAll('.star-rating .star');
 
-$i('open-rate-btn').addEventListener('click', () => {
+on('open-rate-btn', 'click', () => {
     currentRating = 0;
     stars.forEach(s => s.classList.remove('active'));
     $i('rate-comment-input').value = '';
     closeModal('info-modal');
     openModal('rate-modal');
 });
-$i('close-rate-modal').addEventListener('click', () => closeModal('rate-modal'));
+on('close-rate-modal', 'click', () => closeModal('rate-modal'));
 
 stars.forEach(star => {
     star.addEventListener('click', () => {
@@ -774,7 +735,7 @@ stars.forEach(star => {
     });
 });
 
-$i('submit-rating-btn').addEventListener('click', () => {
+on('submit-rating-btn', 'click', () => {
     if (currentRating === 0) {
         toast('Please select a star rating first', 'error');
         return;
@@ -814,12 +775,12 @@ function renderFeedbackList() {
     }).join('');
 }
 
-$i('view-feedback-btn').addEventListener('click', () => {
+on('view-feedback-btn', 'click', () => {
     renderFeedbackList();
     closeModal('info-modal');
     openModal('feedback-modal');
 });
-$i('close-feedback-modal').addEventListener('click', () => closeModal('feedback-modal'));
+on('close-feedback-modal', 'click', () => closeModal('feedback-modal'));
 
 // ---------------------------------------------
 
@@ -833,9 +794,21 @@ let projFontSize=window.innerWidth<=480?26:48,projBgIndex=0;
 let bannerTimer=null,bannerCurrent=0;
 let nextId=Date.now();
 function uid(){return 'id_'+(nextId++);}
-function $i(id){return document.getElementById(id);}
-function openModal(id){$i(id).classList.add('open');}
-function closeModal(id){$i(id).classList.remove('open');}
+// Null-safe DOM helpers — never crash if an element is missing
+var _noop = new Proxy({}, {
+  get: function(t, k) {
+    if (k === 'addEventListener' || k === 'removeEventListener') return function(){};
+    if (k === 'classList') return {add:function(){},remove:function(){},toggle:function(){},contains:function(){return false;}};
+    if (k === 'style') return new Proxy({}, {set:function(){return true;},get:function(){return '';}});
+    if (k === 'focus' || k === 'click' || k === 'blur') return function(){};
+    return '';
+  },
+  set: function(t, k, v) { return true; }
+});
+function $i(id){return document.getElementById(id) || _noop;}
+function on(id,evt,fn){var el=document.getElementById(id);if(el)el.addEventListener(evt,fn);}
+function openModal(id){var el=$i(id);if(el&&el!==_noop)el.classList.add('open');}
+function closeModal(id){var el=$i(id);if(el&&el!==_noop)el.classList.remove('open');}
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(msg,type='info'){
   const el=document.createElement('div');el.className='toast toast-'+type;
@@ -878,8 +851,8 @@ function goBannerSlide(n){
   clearInterval(bannerTimer);
   if(bannerSlides.length>1)bannerTimer=setInterval(()=>goBannerSlide((bannerCurrent+1)%bannerSlides.length),6000);
 }
-$i('banner-prev').addEventListener('click',()=>goBannerSlide((bannerCurrent-1+bannerSlides.length)%bannerSlides.length));
-$i('banner-next').addEventListener('click',()=>goBannerSlide((bannerCurrent+1)%bannerSlides.length));
+on('banner-prev', 'click',()=>goBannerSlide((bannerCurrent-1+bannerSlides.length)%bannerSlides.length));
+on('banner-next', 'click',()=>goBannerSlide((bannerCurrent+1)%bannerSlides.length));
 // BANNER MANAGER
 function openBannerModal(){renderBannerList();openModal('banner-modal');}
 function renderBannerList(){
@@ -933,13 +906,13 @@ function saveSlide(){
   save();renderBanner();renderBannerList();closeModal('slide-modal');
   toast(editingSlide!==null?'Slide updated':'Slide added','success');editingSlide=null;
 }
-$i('sl-img').addEventListener('input',e=>updateSlidePreview(e.target.value.trim()));
-$i('add-slide-btn').addEventListener('click',()=>openSlideModal());
-$i('submit-slide').addEventListener('click',saveSlide);
-$i('banner-manage-btn').addEventListener('click',openBannerModal);
-$i('manage-banner-btn-2').addEventListener('click',openBannerModal);
-$i('close-banner-modal').addEventListener('click',()=>closeModal('banner-modal'));
-$i('close-slide-modal').addEventListener('click',()=>closeModal('slide-modal'));
+on('sl-img', 'input',e=>updateSlidePreview(e.target.value.trim()));
+on('add-slide-btn', 'click',()=>openSlideModal());
+on('submit-slide', 'click',saveSlide);
+on('banner-manage-btn', 'click',openBannerModal);
+on('manage-banner-btn-2', 'click',openBannerModal);
+on('close-banner-modal', 'click',()=>closeModal('banner-modal'));
+on('close-slide-modal', 'click',()=>closeModal('slide-modal'));
 // BOOK GRID
 function getBooks(){
   const map={};
@@ -1043,12 +1016,12 @@ function renderHymnGrid(){
   }));
   grid.querySelectorAll('.qr-h').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const h=hymns.find(x=>x.id===b.dataset.id);if(h)showQrCode(h);}));
 }
-$i('breadcrumb-home').addEventListener('click',closeBook);
-$i('book-search').addEventListener('input',e=>{bookSearchQ=e.target.value;renderHymnGrid();});
-$i('bfilter-type').addEventListener('change',e=>{bFilterType=e.target.value;renderHymnGrid();});
-$i('bfilter-chorus').addEventListener('change',e=>{bFilterChorus=e.target.value;renderHymnGrid();});
-$i('bfilter-clear').addEventListener('click',()=>{bookSearchQ='';bFilterType='all';bFilterChorus='all';bFilterFav=false;$i('book-search').value='';$i('bfilter-type').value='all';$i('bfilter-chorus').value='all';$i('bfilter-fav').classList.remove('active');renderHymnGrid();});
-$i('bfilter-fav').addEventListener('click',()=>{bFilterFav=!bFilterFav;$i('bfilter-fav').classList.toggle('active',bFilterFav);renderHymnGrid();});
+on('breadcrumb-home', 'click',closeBook);
+on('book-search', 'input',e=>{bookSearchQ=e.target.value;renderHymnGrid();});
+on('bfilter-type', 'change',e=>{bFilterType=e.target.value;renderHymnGrid();});
+on('bfilter-chorus', 'change',e=>{bFilterChorus=e.target.value;renderHymnGrid();});
+on('bfilter-clear', 'click',()=>{bookSearchQ='';bFilterType='all';bFilterChorus='all';bFilterFav=false;$i('book-search').value='';$i('bfilter-type').value='all';$i('bfilter-chorus').value='all';$i('bfilter-fav').classList.remove('active');renderHymnGrid();});
+on('bfilter-fav', 'click',()=>{bFilterFav=!bFilterFav;$i('bfilter-fav').classList.toggle('active',bFilterFav);renderHymnGrid();});
 // ADD/EDIT HYMN
 function updateBookDropdown(lang,current){
   const s=$i('f-book');
@@ -1109,14 +1082,14 @@ function deleteHymn(){
   hymnToDelete=null;save();closeModal('del-modal');toast('Hymn deleted','success');
   renderBookGrid();if(currentBook)renderHymnGrid();updateHymnCount();
 }
-$i('f-lang').addEventListener('change',e=>updateBookDropdown(e.target.value));
-$i('add-hymn-btn').addEventListener('click',()=>openAddModal());
-$i('book-add-hymn-btn').addEventListener('click',()=>openAddModal());
-$i('empty-add-btn').addEventListener('click',()=>openAddModal());
-$i('close-add-modal').addEventListener('click',()=>closeModal('add-modal'));
-$i('submit-hymn').addEventListener('click',saveHymn);
-$i('cancel-del').addEventListener('click',()=>{closeModal('del-modal');hymnToDelete=null;});
-$i('confirm-del').addEventListener('click',deleteHymn);
+on('f-lang', 'change',e=>updateBookDropdown(e.target.value));
+on('add-hymn-btn', 'click',()=>openAddModal());
+on('book-add-hymn-btn', 'click',()=>openAddModal());
+on('empty-add-btn', 'click',()=>openAddModal());
+on('close-add-modal', 'click',()=>closeModal('add-modal'));
+on('submit-hymn', 'click',saveHymn);
+on('cancel-del', 'click',()=>{closeModal('del-modal');hymnToDelete=null;});
+on('confirm-del', 'click',deleteHymn);
 // SOL-FA
 function parseSolfaLine(line){
   if(!line||!line.trim())return[];
@@ -1174,9 +1147,9 @@ function closeYtFloat(){$i('yt-iframe').src='';$i('yt-float').classList.remove('
   document.addEventListener('touchmove',e=>{if(!drag)return;const t=e.touches[0];moveD(t.clientX,t.clientY);},{passive:true});
   document.addEventListener('touchend',()=>{drag=false;});
 })();
-$i('yt-float-small').addEventListener('click',()=>{const p=$i('yt-float'),W=260;p.style.width=W+'px';p.style.height=(Math.round(W*9/16)+40)+'px';});
-$i('yt-float-large').addEventListener('click',()=>{const p=$i('yt-float'),W=Math.min(680,window.innerWidth-28);p.style.width=W+'px';p.style.height=(Math.round(W*9/16)+40)+'px';});
-$i('yt-float-close').addEventListener('click',closeYtFloat);
+on('yt-float-small', 'click',()=>{const p=$i('yt-float'),W=260;p.style.width=W+'px';p.style.height=(Math.round(W*9/16)+40)+'px';});
+on('yt-float-large', 'click',()=>{const p=$i('yt-float'),W=Math.min(680,window.innerWidth-28);p.style.width=W+'px';p.style.height=(Math.round(W*9/16)+40)+'px';});
+on('yt-float-close', 'click',closeYtFloat);
 // AUDIO PANEL
 function convertGDriveUrl(url){
   if(!url)return url;
@@ -1190,7 +1163,7 @@ function convertGDriveUrl(url){
 }
 function openAudioPanel(url,label){url=convertGDriveUrl(url);$i('audio-player').src=url;$i('audio-panel-title').textContent=label;$i('audio-panel').classList.add('open');$i('audio-player').play().catch(()=>{});}
 function closeAudioPanel(){$i('audio-panel').classList.remove('open');$i('audio-player').pause();$i('audio-player').src='';}
-$i('close-audio-panel').addEventListener('click',closeAudioPanel);
+on('close-audio-panel', 'click',closeAudioPanel);
 // PROJECTION
 function updateProjMediaBtns(h){
   $i('proj-yt-btn').disabled=!(h&&h.youtube&&h.youtube.trim());
@@ -1275,9 +1248,9 @@ function projectRepItem(item){
 function cycleProjBg(){const p=$i('projection');p.style.background='';p.classList.remove(...BG_CLASSES);projBgIndex=(projBgIndex+1)%BG_CLASSES.length;p.classList.add(BG_CLASSES[projBgIndex]);toast('BG: '+BG_LABELS[projBgIndex],'info');}
 // Swipe
 let swX=0;
-$i('projection').addEventListener('touchstart',e=>{swX=e.touches[0].clientX;},{passive:true});
-$i('projection').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-swX;if(Math.abs(dx)>44){if(dx<0)nextSlide();else prevSlide();}},{passive:true});
-$i('exit-proj').addEventListener('click',exitProjection);
+on('projection', 'touchstart',e=>{swX=e.touches[0].clientX;},{passive:true});
+on('projection', 'touchend',e=>{const dx=e.changedTouches[0].clientX-swX;if(Math.abs(dx)>44){if(dx<0)nextSlide();else prevSlide();}},{passive:true});
+on('exit-proj', 'click',exitProjection);
 // Cross-device fullscreen (iOS Safari does not support the Fullscreen API)
 function toggleFullscreen(){
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
@@ -1304,18 +1277,18 @@ document.addEventListener('fullscreenchange',updateFullscreenIcon);
 document.addEventListener('webkitfullscreenchange',updateFullscreenIcon);
 document.addEventListener('mozfullscreenchange',updateFullscreenIcon);
 document.addEventListener('MSFullscreenChange',updateFullscreenIcon);
-$i('fullscreen-btn').addEventListener('click',toggleFullscreen);
-$i('proj-bg-btn').addEventListener('click',cycleProjBg);
-if($i('proj-color-picker')) { $i('proj-color-picker').addEventListener('input', function(e) { const p=$i('projection'); p.classList.remove(...BG_CLASSES); p.style.background=e.target.value; }); }
-$i('next-stanza').addEventListener('click',nextSlide);
-$i('prev-stanza').addEventListener('click',prevSlide);
-$i('font-inc').addEventListener('click',()=>{projFontSize=Math.min(96,projFontSize+4);applyFontSize();});
-$i('font-dec').addEventListener('click',()=>{projFontSize=Math.max(22,projFontSize-4);applyFontSize();});
-$i('proj-yt-btn').addEventListener('click',()=>{if(currentProjHymnData)openYtFloat(currentProjHymnData);});
-$i('proj-vocal-btn').addEventListener('click',()=>{if(!currentProjHymnData||!currentProjHymnData.vocal)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Vocals'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.vocal,'Vocals');});
-$i('proj-inst-btn').addEventListener('click',()=>{if(!currentProjHymnData||!currentProjHymnData.instrumental)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Instrumental'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.instrumental,'Instrumental');});
-$i('proj-solfa-btn').addEventListener('click',()=>{if(!currentProjHymnData)return;$i('solfa-modal-title').textContent=currentProjHymnData.title;$i('solfa-modal-sub').textContent=currentProjHymnData.book+' #'+currentProjHymnData.number+' — Tonic Sol-fa (SATB)';$i('solfa-render').innerHTML=renderSolfa(currentProjHymnData);openModal('solfa-modal');});
-$i('close-solfa-modal').addEventListener('click',()=>closeModal('solfa-modal'));
+on('fullscreen-btn', 'click',toggleFullscreen);
+on('proj-bg-btn', 'click',cycleProjBg);
+if($i('proj-color-picker')) { on('proj-color-picker', 'input', function(e) { const p=$i('projection'); p.classList.remove(...BG_CLASSES); p.style.background=e.target.value; }); }
+on('next-stanza', 'click',nextSlide);
+on('prev-stanza', 'click',prevSlide);
+on('font-inc', 'click',()=>{projFontSize=Math.min(96,projFontSize+4);applyFontSize();});
+on('font-dec', 'click',()=>{projFontSize=Math.max(22,projFontSize-4);applyFontSize();});
+on('proj-yt-btn', 'click',()=>{if(currentProjHymnData)openYtFloat(currentProjHymnData);});
+on('proj-vocal-btn', 'click',()=>{if(!currentProjHymnData||!currentProjHymnData.vocal)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Vocals'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.vocal,'Vocals');});
+on('proj-inst-btn', 'click',()=>{if(!currentProjHymnData||!currentProjHymnData.instrumental)return;if($i('audio-panel').classList.contains('open')&&$i('audio-panel-title').textContent==='Instrumental'){closeAudioPanel();return;}openAudioPanel(currentProjHymnData.instrumental,'Instrumental');});
+on('proj-solfa-btn', 'click',()=>{if(!currentProjHymnData)return;$i('solfa-modal-title').textContent=currentProjHymnData.title;$i('solfa-modal-sub').textContent=currentProjHymnData.book+' #'+currentProjHymnData.number+' — Tonic Sol-fa (SATB)';$i('solfa-render').innerHTML=renderSolfa(currentProjHymnData);openModal('solfa-modal');});
+on('close-solfa-modal', 'click',()=>closeModal('solfa-modal'));
 // SEGMENT
 function openSegmentModal(item){
   editingSegmentItem=item||null;
@@ -1333,8 +1306,8 @@ function saveSegment(){
   else{const maxO=repItems.filter(i=>i.repId===currentRep.id).reduce((m,i)=>Math.max(m,i.order),-1);repItems.push({id:uid(),repId:currentRep.id,itemType:'segment',segName:name,segNote:note,order:maxO+1,createdAt:Date.now()});toast('Segment added','success');}
   save();closeModal('segment-modal');renderRepDetail(currentRep);editingSegmentItem=null;
 }
-$i('close-segment-modal').addEventListener('click',()=>closeModal('segment-modal'));
-$i('submit-segment').addEventListener('click',saveSegment);
+on('close-segment-modal', 'click',()=>closeModal('segment-modal'));
+on('submit-segment', 'click',saveSegment);
 // ANNOUNCEMENT
 let editingAnnItem=null;
 function openAnnouncementModal(item){
@@ -1374,9 +1347,9 @@ function showAnnouncementSlide(item){
   $i('next-label').textContent='Next';
   updateProjMediaBtns(null);closeAudioPanel();$i('projection').classList.add('open');
 }
-$i('close-ann-modal').addEventListener('click',()=>closeModal('ann-modal'));
-$i('submit-ann').addEventListener('click',saveAnnouncement);
-$i('add-ann-btn').addEventListener('click',()=>openAnnouncementModal(null));
+on('close-ann-modal', 'click',()=>closeModal('ann-modal'));
+on('submit-ann', 'click',saveAnnouncement);
+on('add-ann-btn', 'click',()=>openAnnouncementModal(null));
 // REPEAT CONFIG
 function openRepeatConfig(repItemId){
   const item=repItems.find(i=>i.id===repItemId);if(!item)return;
@@ -1397,8 +1370,8 @@ function saveRepeats(){
   const cfg={};$i('repeat-sections-list').querySelectorAll('.repeat-count-input').forEach(inp=>{cfg[inp.dataset.key]=Math.max(1,parseInt(inp.value)||1);});
   repeatConfigItem.repeatConfig=cfg;save();closeModal('repeat-modal');if(currentRep)renderRepDetail(currentRep);toast('Repeats saved','success');
 }
-$i('close-repeat-modal').addEventListener('click',()=>closeModal('repeat-modal'));
-$i('save-repeats').addEventListener('click',saveRepeats);
+on('close-repeat-modal', 'click',()=>closeModal('repeat-modal'));
+on('save-repeats', 'click',saveRepeats);
 // REPERTOIRES
 function renderRepList(){
   const grid=$i('rep-grid');
@@ -1535,21 +1508,21 @@ function deleteRep(){
   repItems=repItems.filter(i=>i.repId!==repToDelete.id);repertoires=repertoires.filter(r=>r.id!==repToDelete.id);
   repToDelete=null;currentRep=null;save();closeModal('del-rep-modal');closeModal('rep-detail-modal');openModal('rep-list-modal');renderRepList();toast('Repertoire deleted','success');
 }
-$i('rep-btn').addEventListener('click',()=>{renderRepList();openModal('rep-list-modal');});
-$i('close-rep-list').addEventListener('click',()=>closeModal('rep-list-modal'));
-$i('create-rep-btn').addEventListener('click',showCreateRepModal);
-$i('create-first-rep').addEventListener('click',()=>{closeModal('sel-rep-modal');showCreateRepModal();});
-$i('close-rep-form').addEventListener('click',()=>closeModal('rep-form-modal'));
-$i('submit-rep').addEventListener('click',saveRep);
-$i('close-rep-detail').addEventListener('click',()=>{closeModal('rep-detail-modal');openModal('rep-list-modal');currentRep=null;});
-$i('browse-hymns-btn').addEventListener('click',()=>closeModal('rep-detail-modal'));
-$i('start-proj-btn').addEventListener('click',startRepProjection);
-$i('add-segment-btn').addEventListener('click',()=>openSegmentModal(null));
-$i('edit-rep-btn').addEventListener('click',()=>{if(!currentRep)return;editingRep=currentRep;$i('rep-form-title').textContent='Edit repertoire';$i('submit-rep').textContent='Update repertoire';$i('rf-name').value=currentRep.name;$i('rf-date').value=currentRep.date||'';$i('rep-form-error').classList.remove('show');openModal('rep-form-modal');});
-$i('del-rep-btn').addEventListener('click',()=>{repToDelete=currentRep;openModal('del-rep-modal');});
-$i('cancel-del-rep').addEventListener('click',()=>{closeModal('del-rep-modal');repToDelete=null;});
-$i('confirm-del-rep').addEventListener('click',deleteRep);
-$i('close-sel-rep').addEventListener('click',()=>{closeModal('sel-rep-modal');hymnToAddToRep=null;});
+on('rep-btn', 'click',()=>{renderRepList();openModal('rep-list-modal');});
+on('close-rep-list', 'click',()=>closeModal('rep-list-modal'));
+on('create-rep-btn', 'click',showCreateRepModal);
+on('create-first-rep', 'click',()=>{closeModal('sel-rep-modal');showCreateRepModal();});
+on('close-rep-form', 'click',()=>closeModal('rep-form-modal'));
+on('submit-rep', 'click',saveRep);
+on('close-rep-detail', 'click',()=>{closeModal('rep-detail-modal');openModal('rep-list-modal');currentRep=null;});
+on('browse-hymns-btn', 'click',()=>closeModal('rep-detail-modal'));
+on('start-proj-btn', 'click',startRepProjection);
+on('add-segment-btn', 'click',()=>openSegmentModal(null));
+on('edit-rep-btn', 'click',()=>{if(!currentRep)return;editingRep=currentRep;$i('rep-form-title').textContent='Edit repertoire';$i('submit-rep').textContent='Update repertoire';$i('rf-name').value=currentRep.name;$i('rf-date').value=currentRep.date||'';$i('rep-form-error').classList.remove('show');openModal('rep-form-modal');});
+on('del-rep-btn', 'click',()=>{repToDelete=currentRep;openModal('del-rep-modal');});
+on('cancel-del-rep', 'click',()=>{closeModal('del-rep-modal');repToDelete=null;});
+on('confirm-del-rep', 'click',deleteRep);
+on('close-sel-rep', 'click',()=>{closeModal('sel-rep-modal');hymnToAddToRep=null;});
 // EXPORT / IMPORT
 function exportData(){
   const blob=new Blob([JSON.stringify({hymns,repertoires,repItems,bannerSlides,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
@@ -1576,12 +1549,12 @@ function importData(file){
   };
   reader.readAsText(file);
 }
-$i('backup-btn').addEventListener('click',()=>{$i('import-error').classList.remove('show');openModal('backup-modal');});
-$i('close-backup-modal').addEventListener('click',()=>closeModal('backup-modal'));
-$i('do-export').addEventListener('click',exportData);
-$i('do-import').addEventListener('click',()=>$i('import-file-input').click());
-$i('do-csv-import').addEventListener('click',()=>$i('csv-import-input').click());
-$i('import-file-input').addEventListener('change',e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value='';});
+on('backup-btn', 'click',()=>{$i('import-error').classList.remove('show');openModal('backup-modal');});
+on('close-backup-modal', 'click',()=>closeModal('backup-modal'));
+on('do-export', 'click',exportData);
+on('do-import', 'click',()=>$i('import-file-input').click());
+on('do-csv-import', 'click',()=>$i('csv-import-input').click());
+on('import-file-input', 'change',e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value='';});
 // VOICE
 let recognition=null,isListening=false,spaceHeld=false;
 function showVoiceFeedback(msg){const vf=$i('voice-feedback');vf.textContent=msg;vf.classList.add('show');setTimeout(()=>vf.classList.remove('show'),2400);}
@@ -1609,10 +1582,10 @@ function initRecognition(){
 }
 function startListening(){if(!recognition&&!initRecognition())return;try{recognition.start();isListening=true;$i('proj-mic-btn').classList.add('listening');showVoiceFeedback('Listening...');}catch(e){}}
 function stopListening(){if(recognition&&isListening){try{recognition.stop();}catch(e){}}isListening=false;$i('proj-mic-btn').classList.remove('listening');}
-$i('proj-mic-btn').addEventListener('mousedown',e=>{e.preventDefault();startListening();});
-$i('proj-mic-btn').addEventListener('mouseup',stopListening);
-$i('proj-mic-btn').addEventListener('touchstart',e=>{e.preventDefault();startListening();},{passive:false});
-$i('proj-mic-btn').addEventListener('touchend',stopListening);
+on('proj-mic-btn', 'mousedown',e=>{e.preventDefault();startListening();});
+on('proj-mic-btn', 'mouseup',stopListening);
+on('proj-mic-btn', 'touchstart',e=>{e.preventDefault();startListening();},{passive:false});
+on('proj-mic-btn', 'touchend',stopListening);
 // KEYBOARD
 document.addEventListener('keydown',e=>{
   if($i('projection').classList.contains('open')){
@@ -1647,8 +1620,8 @@ function renderHistoryList(){
  </div>`;
   }).join('');
 }
-$i('view-history-btn').addEventListener('click',()=>{renderHistoryList();openModal('history-modal');});
-$i('close-history-modal').addEventListener('click',()=>closeModal('history-modal'));
+on('view-history-btn', 'click',()=>{renderHistoryList();openModal('history-modal');});
+on('close-history-modal', 'click',()=>closeModal('history-modal'));
 // ── AUTO-ADVANCE TIMER ───────────────────────────────────────────────────────
 let autoAdvTimer=null,autoAdvSeconds=0,autoAdvActive=false,autoAdvInterval=30;
 function startAutoAdv(){
@@ -1667,8 +1640,8 @@ function toggleAutoAdv(){
   toast(autoAdvActive?'Auto-advance on ('+autoAdvInterval+'s)':'Auto-advance off','info');
 }
 function setTimerInterval(s){autoAdvInterval=s;if(autoAdvActive){stopAutoAdv();startAutoAdv();}toast('Timer: '+s+'s per slide','info');}
-$i('timer-btn').addEventListener('click',toggleAutoAdv);
-$i('timer-btn').addEventListener('contextmenu',e=>{e.preventDefault();const s=parseInt(prompt('Seconds per slide (5-120):',autoAdvInterval));if(s>=5&&s<=120)setTimerInterval(s);});
+on('timer-btn', 'click',toggleAutoAdv);
+on('timer-btn', 'contextmenu',e=>{e.preventDefault();const s=parseInt(prompt('Seconds per slide (5-120):',autoAdvInterval));if(s>=5&&s<=120)setTimerInterval(s);});
 // ── CONGREGATION MODE ────────────────────────────────────────────────────────
 let congMode=false;
 function toggleCongMode(){
@@ -1680,7 +1653,7 @@ function toggleCongMode(){
   $i('cong-btn').classList.toggle('active-cong',congMode);
   
 }
-$i('cong-btn').addEventListener('click',toggleCongMode);
+on('cong-btn', 'click',toggleCongMode);
 // ── QR CODE ──────────────────────────────────────────────────────────────────
 function showQrCode(h){
   if(!h.youtube||!h.youtube.trim()){toast('No YouTube URL for this hymn','error');return;}
@@ -1740,7 +1713,7 @@ function importCsv(file){
   };
   reader.readAsText(file);
 }
-$i('csv-import-input').addEventListener('change',e=>{if(e.target.files[0])importCsv(e.target.files[0]);e.target.value='';});
+on('csv-import-input', 'change',e=>{if(e.target.files[0])importCsv(e.target.files[0]);e.target.value='';});
 // ── PUBLIC DISPLAY WINDOW ────────────────────────────────────────────────────
 
 // INIT
@@ -1820,38 +1793,158 @@ if(isAdmin){
 }
 
 // ── DONATE HOME CARD ─────────────────────────────────────────────────
-(function(){
-  const sel=$i('donate-amount-select');
-  const customInput=$i('donate-custom-input');
-  const btn=$i('donate-home-btn');
-  const eftBox=$i('donate-eft-box');
-  if(!sel||!btn)return;
 
-  sel.addEventListener('change',function(){
-    customInput.style.display=this.value==='custom'?'inline-block':'none';
-    if(this.value!=='custom')customInput.value='';
-  });
+function renderDonateCard() {
+  var card = $i('donate-home-card');
+  if (!card) return;
 
-  btn.addEventListener('click',function(){
-    const selVal=sel.value;
-    const amount=selVal==='custom'?customInput.value.trim():selVal;
-    if(!amount){toast('Please choose or enter a donation amount first','error');return;}
-    // Show EFT banking details (replace with a PayFast/payment link if you have one)
-    eftBox.style.display=eftBox.style.display==='none'?'block':'none';
-    if(eftBox.style.display==='block'){
-      toast('Banking details shown below — thank you for your generosity!','success');
+  // If hidden by admin: users see nothing, admin sees a dashed placeholder
+  if (!infoData.donateVisible) {
+    if (isAdmin) {
+      card.innerHTML = '<div style="border:2px dashed #e2e8f0;border-radius:16px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;">'
+        + '<span style="font-size:12px;color:#94a3b8;font-style:italic;">Support card is hidden from users</span>'
+        + '<button class="btn btn-ghost" id="donate-edit-btn" style="font-size:12px;padding:5px 10px;">Edit Card</button>'
+        + '</div>';
+      on('donate-edit-btn', 'click', openDonateEditModal);
+    } else {
+      card.innerHTML = '';
     }
+    return;
+  }
+
+  var icon  = infoData.donateIcon  || '&#x1F64F;';
+  var title = infoData.donateTitle || 'Support This Ministry';
+  var text  = infoData.donateText  || 'Your contribution keeps this hymn library free and growing for everyone.';
+
+  var editBtn = isAdmin
+    ? '<button id="donate-edit-btn" title="Edit this card (admin only)" style="position:absolute;top:10px;right:10px;background:#fff;border:1px solid #FFD9B8;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#C05A08;cursor:pointer;">Edit Card</button>'
+    : '';
+
+  card.innerHTML =
+    '<div style="background:linear-gradient(135deg,#FFF8F3,#FFF0E6);border:2px solid #FFD9B8;border-radius:16px;padding:18px 20px;position:relative;">'
+    + editBtn
+    + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;' + (isAdmin ? 'padding-right:90px;' : '') + '">'
+    +   '<div style="flex:1;min-width:180px;">'
+    +     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">'
+    +       '<span style="font-size:22px;">' + icon + '</span>'
+    +       '<span style="font-family:\'Playfair Display\',serif;font-size:16px;font-weight:700;color:#1e293b;">' + title + '</span>'
+    +     '</div>'
+    +     '<div style="font-size:12px;color:#64748b;line-height:1.5;">' + text + '</div>'
+    +   '</div>'
+    +   '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'
+    +     '<select id="donate-amount-select" style="padding:8px 10px;border:1px solid #FFD9B8;border-radius:8px;background:#fff;color:#1e293b;font-size:13px;font-weight:600;outline:none;cursor:pointer;-webkit-appearance:auto;">'
+    +       '<option value="">Choose amount</option>'
+    +       '<option value="20">R20</option>'
+    +       '<option value="50">R50</option>'
+    +       '<option value="100">R100</option>'
+    +       '<option value="200">R200</option>'
+    +       '<option value="500">R500</option>'
+    +       '<option value="custom">Other amount...</option>'
+    +     '</select>'
+    +     '<input type="number" id="donate-custom-input" placeholder="Amount (R)" min="1" style="display:none;width:130px;padding:8px 10px;border:1px solid #FFD9B8;border-radius:8px;background:#fff;color:#1e293b;font-size:13px;outline:none;">'
+    +     '<button class="btn btn-purple" id="donate-home-btn" style="padding:9px 18px;font-size:13px;">&#x2764; Donate</button>'
+    +   '</div>'
+    + '</div>'
+    + '<div id="donate-eft-box" style="display:none;margin-top:14px;padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;font-size:13px;color:#166534;line-height:1.9;">'
+    +   '<strong>Bank:</strong> FNB &nbsp;|&nbsp; <strong>Account Name:</strong> Serenza Deluxe Atelier<br>'
+    +   '<strong>Account No:</strong> 62864862852 &nbsp;|&nbsp; <strong>Branch Code:</strong> 250 655<br>'
+    +   '<span style="font-size:11px;color:#059669;">Use your name as the payment reference. Thank you!</span>'
+    + '</div>'
+    + '</div>';
+
+  // Bind admin edit button
+  if (isAdmin && $i('donate-edit-btn')) {
+    on('donate-edit-btn', 'click', openDonateEditModal);
+  }
+
+  // Bind amount selector
+  var sel         = $i('donate-amount-select');
+  var customInput = $i('donate-custom-input');
+  var btn         = $i('donate-home-btn');
+  var eftBox      = $i('donate-eft-box');
+
+  sel.addEventListener('change', function() {
+    customInput.style.display = this.value === 'custom' ? 'inline-block' : 'none';
+    if (this.value !== 'custom') customInput.value = '';
   });
-})();
+
+  btn.addEventListener('click', function() {
+    var amount = sel.value === 'custom' ? customInput.value.trim() : sel.value;
+    if (!amount) { toast('Please choose or enter a donation amount first', 'error'); return; }
+    eftBox.style.display = eftBox.style.display === 'none' ? 'block' : 'none';
+    if (eftBox.style.display === 'block') toast('Banking details shown below — thank you for your generosity!', 'success');
+  });
+}
+
+function openDonateEditModal() {
+  $i('dc-icon-input').value  = infoData.donateIcon  || '';
+  $i('dc-title-input').value = infoData.donateTitle || 'Support This Ministry';
+  $i('dc-text-input').value  = infoData.donateText  || '';
+  $i('dc-visible-yes').checked = infoData.donateVisible !== false;
+  $i('dc-visible-no').checked  = infoData.donateVisible === false;
+  openModal('donate-edit-modal');
+}
+
+on('close-donate-edit-modal', 'click', function() { closeModal('donate-edit-modal'); });
+on('dc-cancel-btn', 'click', function() { closeModal('donate-edit-modal'); });
+on('dc-save-btn', 'click', function() {
+  var icon    = $i('dc-icon-input').value.trim();
+  var title   = $i('dc-title-input').value.trim();
+  var text    = $i('dc-text-input').value.trim();
+  var visible = $i('dc-visible-yes').checked;
+  if (!title) { toast('Please enter a heading for the card', 'error'); return; }
+  infoData.donateIcon    = icon || '&#x1F64F;';
+  infoData.donateTitle   = title;
+  infoData.donateText    = text;
+  infoData.donateVisible = visible;
+  save();
+  renderDonateCard();
+  closeModal('donate-edit-modal');
+  toast('Support card updated — click Publish to push to all users', 'success');
+});
 
 renderBanner();
 renderBookGrid();
+renderDonateCard();
 syncHymnsFromGithub();
 
 // Run access controls and header render after all UI binds are ready
 applyAccessControls();
 renderHeaderYtLink();
 </script>
+
+<!-- Admin: Edit Donate Card Modal -->
+<div class="modal-overlay" id="donate-edit-modal">
+  <div class="modal-box narrow">
+    <button class="modal-close" id="close-donate-edit-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    <h2 class="modal-title">Edit Support Card</h2>
+    <p class="modal-sub">Changes are saved locally. Click Publish after saving to push to all users.</p>
+    <div class="form-group">
+      <label class="fl">Icon (paste any emoji here)</label>
+      <input type="text" id="dc-icon-input" maxlength="8" placeholder="e.g. heart, music note" style="font-size:22px;text-align:center;width:80px;padding:8px;">
+      <p style="font-size:11px;color:#94a3b8;margin-top:5px;">Examples: &#x1F64F; &#x2764;&#xFE0F; &#x1F3B5; &#x1F31F; &#x271D;&#xFE0F; &#x1F4D6;</p>
+    </div>
+    <div class="form-group">
+      <label class="fl">Heading</label>
+      <input type="text" id="dc-title-input" maxlength="60" placeholder="Support This Ministry">
+    </div>
+    <div class="form-group">
+      <label class="fl">Description (shown below the heading)</label>
+      <textarea id="dc-text-input" class="fi" rows="3" placeholder="Your contribution keeps this hymn library free and growing for everyone."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="fl">Card visibility</label>
+      <div class="radio-row">
+        <label><input type="radio" name="dc-visible" id="dc-visible-yes" value="yes"> Show card on home screen</label>
+        <label><input type="radio" name="dc-visible" id="dc-visible-no" value="no"> Hide card from users</label>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-cancel" id="dc-cancel-btn">Cancel</button>
+      <button class="btn btn-purple" id="dc-save-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 <script>
