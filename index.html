@@ -723,24 +723,58 @@ if (sessionStorage.getItem('lh_admin_auth') === 'true') {
     }
 }
 
+// ── STORAGE HELPERS ──────────────────────────────────────────────────────────
+// Hymns come from GitHub on every load — no need to persist them locally.
+// We only store user-generated data: repertoires, items, slides, history,
+// info and feedback. This keeps localStorage well under quota on all devices.
+
+function safeLSSet(key, val){
+  try{ localStorage.setItem(key, val); return true; }
+  catch(e){ return false; }
+}
+
 function save(){
-  try{
-    localStorage.setItem('lh_hymns',JSON.stringify(hymns));
-    localStorage.setItem('lh_reps',JSON.stringify(repertoires));
-    localStorage.setItem('lh_items',JSON.stringify(repItems));
-    localStorage.setItem('lh_slides',JSON.stringify(bannerSlides));
-    localStorage.setItem('lh_history',JSON.stringify(serviceHistory));
-    localStorage.setItem('lh_info',JSON.stringify(infoData));
-    localStorage.setItem('lh_feedback',JSON.stringify(feedbackList));
-  }
-  catch(e){toast('Storage error — export a backup','error');}
+  // Hymns are NOT saved to localStorage — they sync fresh from GitHub each load.
+  // Favourites are preserved in the favMap during sync.
+  safeLSSet('lh_reps',      JSON.stringify(repertoires));
+  safeLSSet('lh_items',     JSON.stringify(repItems));
+  safeLSSet('lh_slides',    JSON.stringify(bannerSlides));
+  // Cap service history at 50 entries before saving to limit storage use
+  var trimmedHistory = (serviceHistory||[]).slice(0,50);
+  safeLSSet('lh_history',   JSON.stringify(trimmedHistory));
+  safeLSSet('lh_info',      JSON.stringify(infoData));
+  // Cap feedback at 100 entries
+  var trimmedFeedback = (feedbackList||[]).slice(0,100);
+  safeLSSet('lh_feedback',  JSON.stringify(trimmedFeedback));
+}
+
+function saveFavourites(){
+  // Persist only hymn IDs that are favourited — tiny footprint
+  var favIds = hymns.filter(h=>h.favourite).map(h=>h.id);
+  safeLSSet('lh_favs', JSON.stringify(favIds));
 }
 
 function load(){
-  try{hymns=JSON.parse(localStorage.getItem('lh_hymns')||'[]');repertoires=JSON.parse(localStorage.getItem('lh_reps')||'[]');repItems=JSON.parse(localStorage.getItem('lh_items')||'[]');bannerSlides=JSON.parse(localStorage.getItem('lh_slides')||'[]');serviceHistory=JSON.parse(localStorage.getItem('lh_history')||'[]');}
-  catch(e){hymns=[];repertoires=[];repItems=[];bannerSlides=[];}
-  repItems=repItems.filter(i=>i.itemType==='segment'||i.itemType==='announcement'||hymns.some(h=>h.id===i.hymnId));
-  repItems=repItems.filter(i=>repertoires.some(r=>r.id===i.repId));
+  // Hymns are not loaded from localStorage — they come from GitHub on every sync.
+  // Only user-generated data is loaded from local storage.
+  hymns = [];
+  try{
+    repertoires   = JSON.parse(localStorage.getItem('lh_reps')     || '[]');
+    repItems      = JSON.parse(localStorage.getItem('lh_items')    || '[]');
+    bannerSlides  = JSON.parse(localStorage.getItem('lh_slides')   || '[]');
+    serviceHistory= JSON.parse(localStorage.getItem('lh_history')  || '[]');
+  } catch(e){
+    repertoires=[];repItems=[];bannerSlides=[];serviceHistory=[];
+  }
+  // Clean up orphaned rep items (will be re-validated after hymns sync)
+  repItems = repItems.filter(i=>
+    i.itemType==='segment' ||
+    i.itemType==='announcement' ||
+    i.hymnId  // keep hymn rows — validated after sync
+  );
+  repItems = repItems.filter(i=>repertoires.some(r=>r.id===i.repId));
+  // Remove stale lh_hymns from localStorage if present (legacy cleanup)
+  try{ localStorage.removeItem('lh_hymns'); }catch(e){}
 }
 
 let hymns=[],repertoires=[],repItems=[],bannerSlides=[],serviceHistory=[];
@@ -1139,7 +1173,7 @@ function renderHymnGrid(){
     const h=hymns.find(x=>x.id===b.dataset.id);
     if(h){
       h.favourite=!h.favourite;
-      save();
+      saveFavourites(); // lightweight — only saves favourite IDs
       renderHymnGrid();
       toast(h.favourite?'Added to favourites':'Removed from favourites','info');
     }
@@ -1634,8 +1668,22 @@ on('cancel-del-rep', 'click',()=>{closeModal('del-rep-modal');repToDelete=null;}
 on('confirm-del-rep', 'click',deleteRep);
 on('close-sel-rep', 'click',()=>{closeModal('sel-rep-modal');hymnToAddToRep=null;});
 function exportData(){
-  const blob=new Blob([JSON.stringify({hymns,repertoires,repItems,bannerSlides,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hymndesk-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);toast('Backup exported','success');
+  // Export user data + current hymns from memory (not from localStorage)
+  const payload = {
+    hymns: hymns,
+    repertoires: repertoires,
+    repItems: repItems,
+    bannerSlides: bannerSlides,
+    favourites: hymns.filter(h=>h.favourite).map(h=>h.id),
+    exportedAt: new Date().toISOString()
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='hymndesk-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Backup exported','success');
 }
 function importData(file){
   const reader=new FileReader();
@@ -1648,11 +1696,17 @@ function importData(file){
       (data.repertoires||[]).forEach(r=>{if(!repertoires.find(x=>x.id===r.id))repertoires.push(r);});
       (data.repItems||[]).forEach(i=>{if(!repItems.find(x=>x.id===i.id))repItems.push(i);});
       (data.bannerSlides||[]).forEach(s=>{bannerSlides.push(s);});
+      // Restore favourites from backup
+      if(data.favourites&&Array.isArray(data.favourites)){
+        const favSet=new Set(data.favourites);
+        hymns=hymns.map(h=>favSet.has(h.id)?{...h,favourite:true}:h);
+        saveFavourites();
+      }
       save();renderBookGrid();renderBanner();closeModal('backup-modal');
       if(skip>0){
-        toast('Imported '+added+' hymns — '+skip+' skipped (duplicates already exist)','info');
+        toast('Imported — '+skip+' hymns already existed, '+added+' merged','info');
       } else {
-        toast('Imported '+added+' hymns successfully','success');
+        toast('Backup restored successfully','success');
       }
     }catch(e){$i('import-error').textContent='Invalid backup file.';$i('import-error').classList.add('show');}
   };
@@ -1847,12 +1901,23 @@ async function syncHymnsFromGithub(){
     }
     const remoteHymns=data.hymns||[];
     if(remoteHymns.length){
-      const favMap={};
-      hymns.forEach(h=>{if(h.favourite)favMap[h.id]=true;});
-      hymns=remoteHymns.map(h=>favMap[h.id]?{...h,favourite:true}:h);
+      hymns=remoteHymns;
     }
-    repItems=repItems.filter(i=>i.itemType==='segment'||i.itemType==='announcement'||hymns.some(h=>h.id===i.hymnId));
-    try{save();}catch(qe){localStorage.removeItem('lh_hymns');try{localStorage.setItem('lh_hymns',JSON.stringify(hymns));}catch(e2){}}
+    // Restore favourites from the lightweight favs store
+    var storedFavs = [];
+    try{ storedFavs = JSON.parse(localStorage.getItem('lh_favs')||'[]'); }catch(e){}
+    if(storedFavs.length){
+      var favSet = new Set(storedFavs);
+      hymns = hymns.map(h=>favSet.has(h.id)?{...h,favourite:true}:h);
+    }
+    // Clean orphaned rep items now that hymns are loaded
+    repItems = repItems.filter(i=>
+      i.itemType==='segment' ||
+      i.itemType==='announcement' ||
+      hymns.some(h=>h.id===i.hymnId)
+    );
+    // Save user data only (hymns never stored locally — avoids quota errors)
+    save();
     renderBookGrid();
     updateHymnCount();
     if(currentBook)renderHymnGrid();
@@ -1983,7 +2048,7 @@ function renderDonateCard(){
   if(!card)return;
   if(!infoData.donateVisible){
     card.innerHTML=isAdmin
-      ?'<div style="border:2px dashed #e2e8f0;border-radius:16px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;">'
+      ?'<div style="border:2px dashed #d0d3d6;border-radius:16px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;">'
         +'<span style="font-size:12px;color:var(--text4);font-style:italic;">Support card is hidden from users</span>'
         +'<button onclick="openDonateEditModal()" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;">Edit Card</button>'
         +'</div>'
@@ -1997,7 +2062,7 @@ function renderDonateCard(){
     ? '<button onclick="openDonateEditModal()" style="position:absolute;top:10px;right:10px;background:var(--bg);border:1px solid #FFD9B8;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;color:#C05A08;cursor:pointer;">Edit Card</button>'
     : '';
   card.innerHTML =
-    '<div style="background:linear-gradient(135deg,#FFF8F3,#FFF0E6);border:2px solid #FFD9B8;border-radius:16px;padding:18px 20px;position:relative;">'
+    '<div id="donate-card-inner" style="background:#f4f5f6 !important;border:1px solid #e2e4e6 !important;border-radius:16px;padding:18px 20px;position:relative;">'
     + editBtn
     + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">'
     +   '<div style="flex:1;min-width:180px;">'
