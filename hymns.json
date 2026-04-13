@@ -59884,69 +59884,6 @@
       "favourite": false
     }
   ],
-  "repertoires": [
-    {
-      "id": "id_1775636302578",
-      "name": "Sabbath",
-      "date": "2026-04-11",
-      "createdAt": 1775636387429
-    }
-  ],
-  "repItems": [
-    {
-      "id": "id_1775636302579",
-      "repId": "id_1775636302578",
-      "hymnId": "id_1775551904303",
-      "itemType": "hymn",
-      "order": 1,
-      "key": "C#/Db",
-      "repeatConfig": {
-        "stanza_1": 3,
-        "stanza_2": 1,
-        "stanza_3": 2,
-        "stanza_4": 1
-      },
-      "createdAt": 1775636441549
-    },
-    {
-      "id": "id_1775636302580",
-      "repId": "id_1775636302578",
-      "hymnId": "id_1775589632402",
-      "itemType": "hymn",
-      "order": 2,
-      "key": "C#/Db",
-      "repeatConfig": {},
-      "createdAt": 1775636444149
-    },
-    {
-      "id": "id_1775636302581",
-      "repId": "id_1775636302578",
-      "hymnId": "id_1775589632404",
-      "itemType": "hymn",
-      "order": 4,
-      "key": "E",
-      "repeatConfig": {},
-      "createdAt": 1775636454237
-    },
-    {
-      "id": "id_1775636302582",
-      "repId": "id_1775636302578",
-      "itemType": "segment",
-      "segName": "Sabbath School",
-      "segNote": "",
-      "order": 0,
-      "createdAt": 1775636504669
-    },
-    {
-      "id": "id_1775656178895",
-      "repId": "id_1775636302578",
-      "itemType": "segment",
-      "segName": "Announcements",
-      "segNote": "Elder Khathide",
-      "order": 3,
-      "createdAt": 1775663531976
-    }
-  ],
   "bannerSlides": [
     {
       "headline": "Spirit Of Praise NEXT Level Tour",
@@ -59972,6 +59909,5 @@
       "img": "https://cf-content.computicket.com/events/7351104/desktopbanner_testprefix_w7smiw21VciZuzRxCQnd17.jpg",
       "link": "https://computicket.com/event/omega-khunou-let-there-be-light-live-recording/f2ef6d02-bad2-4c0a-848d-f645cf635f84"
     }
-  ],
-  "exportedAt": "2026-04-11T07:08:15.486Z"
+  ]
 }
