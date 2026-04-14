@@ -298,7 +298,7 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 
 <div id="sync-banner"><div class="sync-spinner"></div><span id="sync-msg">Syncing hymn library…</span></div>
 <header class="app-header">
-  <div class="logo">
+  <div class="logo" id="logo-home-btn" style="cursor:pointer" title="Go to home">
     <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
     <span class="logo-title">HymnDesk</span>
     
@@ -1078,6 +1078,9 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 
     <!-- Logged-in state -->
     <div id="auth-logged-in" style="display:none">
+      <button id="close-account-modal" onclick="closeModal('auth-modal')" style="position:absolute;top:13px;right:13px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;transition:all 0.15s" title="Close">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
       <h2 class="modal-title">My Account</h2>
       <div class="user-profile-card">
         <div class="user-profile-avatar" id="profile-avatar-letter">?</div>
@@ -3205,8 +3208,8 @@ async function loadStats(){
         return '<div class="pie-legend-item"><div class="pie-legend-dot" style="background:'+PIE_COLORS[i%PIE_COLORS.length]+'"></div><div class="pie-legend-label">'+escHtml(e[0])+'</div><div class="pie-legend-val">'+e[1]+'</div></div>';
       }).join('');
     }
-    drawPie('country-pie','country-pie-legend', s.countries, 8);
-    drawPie('conf-pie','conf-pie-legend', s.conferences, 8);
+    drawPie('country-pie','country-pie-legend', res.countries, 8);
+    drawPie('conf-pie','conf-pie-legend', res.conferences, 8);
 
     // ── Countries bar chart ───────────────────────────────────────────────
     var cDiv = document.getElementById('stats-countries');
@@ -3323,7 +3326,7 @@ function resetDrillDown(){
   document.getElementById('drill-country').value    = '';
   document.getElementById('drill-church').value     = '';
   document.getElementById('drill-conference').value = '';
-  if(_rawStats) renderStatsContent(_rawStats);
+  if(_rawStats) loadStats();
 }
 
 // ── PDF EXPORT ────────────────────────────────────────────────────────────────
