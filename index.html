@@ -24,12 +24,12 @@
   --shadow:rgba(0,0,0,0.05);--shadow2:rgba(0,0,0,0.15);
 }
 html.dark{
-  --bg:#0f172a;--bg2:#1e293b;--bg3:#334155;
-  --border:#334155;--border2:#475569;
-  --text:#f1f5f9;--text2:#cbd5e1;--text3:#94a3b8;--text4:#64748b;
-  --card:#1e293b;--modal:#1e293b;
-  --input-bg:#0f172a;--input-focus:#1e293b;
-  --shadow:rgba(0,0,0,0.3);--shadow2:rgba(0,0,0,0.5);
+  --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;
+  --border:#383838;--border2:#505050;
+  --text:#f0f0f0;--text2:#c0c0c0;--text3:#909090;--text4:#606060;
+  --card:#242424;--modal:#242424;
+  --input-bg:#1a1a1a;--input-focus:#242424;
+  --shadow:rgba(0,0,0,0.4);--shadow2:rgba(0,0,0,0.6);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background 0.2s,color 0.2s}
@@ -210,6 +210,74 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 .stats-list-item{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg2);border-radius:7px;margin-bottom:5px;font-size:12px}
 .stats-list-item span:first-child{color:var(--text);font-weight:500}
 .stats-list-item span:last-child{color:#E8650A;font-weight:700}
+
+
+/* ── ANALYTICS DASHBOARD ─────────────────────────────────────────────────── */
+.dash-section{margin-bottom:20px}
+.dash-section-title{font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dash-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:560px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#E8650A,#d45a08)}
+.kpi-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#E8650A;line-height:1}
+.kpi-label{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
+.kpi-change{font-size:11px;font-weight:600;margin-top:3px}
+.kpi-change.up{color:#059669}.kpi-change.down{color:#dc2626}.kpi-change.flat{color:var(--text4)}
+.trend-bar-row{display:flex;align-items:flex-end;gap:3px;height:60px;margin-bottom:4px}
+.trend-bar{flex:1;background:linear-gradient(180deg,#E8650A,#d45a08);border-radius:3px 3px 0 0;min-height:2px;transition:height 0.3s;position:relative;cursor:default}
+.trend-bar:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:10px;padding:3px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10}
+.trend-label-row{display:flex;gap:3px}
+.trend-label{flex:1;text-align:center;font-size:9px;color:var(--text4);overflow:hidden}
+.activity-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:5px;font-size:12px}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.activity-dot.login{background:#E8650A}
+.activity-dot.reg{background:#059669}
+.activity-info{flex:1;color:var(--text)}
+.activity-time{color:var(--text4);font-size:11px;white-space:nowrap}
+.dash-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.dash-two-col{grid-template-columns:1fr}}
+.country-bar-item{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.country-bar-item span:first-child{width:80px;flex-shrink:0;color:var(--text2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.country-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.country-bar-fill{height:100%;background:linear-gradient(90deg,#E8650A,#d45a08);border-radius:3px;transition:width 0.4s}
+.country-bar-count{width:28px;text-align:right;color:var(--text3);font-size:11px;font-weight:600}
+
+
+/* ── READING MODE (phone & tablet — no projection overlay) ──────────────── */
+#reading-view{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column}
+#reading-view.open{display:flex}
+.reading-header{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.reading-back{background:transparent;border:none;color:#E8650A;cursor:pointer;padding:4px;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600}
+.reading-back svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5}
+.reading-hymn-meta{flex:1;min-width:0}
+.reading-hymn-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reading-hymn-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.reading-font-btns{display:flex;gap:4px;flex-shrink:0}
+.reading-font-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.reading-media-row{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.reading-media-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all 0.15s}
+.reading-media-btn:disabled{opacity:0.35;cursor:not-allowed}
+.reading-media-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.reading-body{flex:1;padding:18px 16px 40px;max-width:680px;margin:0 auto;width:100%}
+.reading-stanza{margin-bottom:22px}
+.reading-stanza-label{font-size:11px;font-weight:700;color:#E8650A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.reading-stanza-text{font-family:'Playfair Display',serif;color:var(--text);line-height:1.7;white-space:pre-line}
+.reading-chorus{margin-bottom:22px;padding:14px 16px;background:var(--bg2);border-left:3px solid #E8650A;border-radius:0 10px 10px 0}
+.reading-chorus .reading-stanza-label{color:#E8650A}
+.reading-nav-bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:8px}
+.reading-nav-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.reading-nav-btn:disabled{opacity:0.3;cursor:not-allowed}
+.reading-nav-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+.reading-pos{font-size:12px;color:var(--text3);text-align:center}
+/* Tablet-specific larger reading view */
+@media(min-width:600px) and (max-width:1199px){
+  .reading-body{padding:24px 32px 60px;max-width:100%}
+  .reading-stanza-text{font-size:1.05em}
+  .reading-header{padding:14px 24px}
+  .reading-media-row{padding:12px 24px}
+  .reading-nav-bar{padding:14px 24px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+}
 
 </style>
 </head>
@@ -618,7 +686,8 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
     <div id="rd-empty" style="display:none;text-align:center;padding:20px 0"><p style="color:var(--text3);font-size:14px">No items yet. Add hymns or service segments.</p></div>
     <div class="action-row">
       <button class="btn btn-green" id="start-proj-btn" style="flex:2;padding:10px;justify-content:center">Start projection</button>
-      <button class="btn btn-ghost" id="edit-rep-btn" style="padding:10px;justify-content:center">Edit info</button>
+      <button class="btn btn-teal" id="share-rep-btn" style="padding:10px;justify-content:center"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+      <button class="btn btn-ghost" id="edit-rep-btn" style="padding:10px;justify-content:center">Edit</button>
       <button class="btn btn-red" id="del-rep-btn" style="padding:10px;justify-content:center">Delete</button>
     </div>
   </div>
@@ -778,6 +847,35 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 </div>
 
 
+<!-- ── READING VIEW (phone & tablet) ──────────────────────────────────────── -->
+<div id="reading-view">
+  <div class="reading-header">
+    <button class="reading-back" id="reading-back-btn">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>
+      Back
+    </button>
+    <div class="reading-hymn-meta">
+      <div class="reading-hymn-title" id="reading-title"></div>
+      <div class="reading-hymn-sub" id="reading-sub"></div>
+    </div>
+    <div class="reading-font-btns">
+      <button class="reading-font-btn" id="reading-font-dec">A-</button>
+      <button class="reading-font-btn" id="reading-font-inc">A+</button>
+    </div>
+  </div>
+  <div class="reading-media-row" id="reading-media-row"></div>
+  <div class="reading-body" id="reading-body"></div>
+  <div class="reading-nav-bar" id="reading-nav-bar" style="display:none">
+    <button class="reading-nav-btn" id="reading-prev-btn">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>Prev
+    </button>
+    <div class="reading-pos" id="reading-pos"></div>
+    <button class="reading-nav-btn" id="reading-next-btn">
+      Next<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
 <!-- ── AUTH MODAL ─────────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="auth-modal">
   <div class="modal-box narrow">
@@ -786,7 +884,7 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
     <!-- Logged-out state -->
     <div id="auth-logged-out">
       <h2 class="modal-title">Welcome to HymnDesk</h2>
-      <p class="modal-sub">Sign in or register — your email serves as your username.</p>
+      <p class="modal-sub">Your email is your username. You only need to sign in once.</p>
       <div class="auth-tab-row">
         <div class="auth-tab active" id="tab-login">Sign In</div>
         <div class="auth-tab" id="tab-register">Register</div>
@@ -795,30 +893,55 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
       <!-- LOGIN PANEL -->
       <div class="auth-panel active" id="panel-login">
         <div class="auth-msg" id="login-msg"></div>
-        <div class="auth-field"><label>Email address (your username)</label><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"></div>
-        <div class="auth-field"><label>Password</label><input type="password" id="login-pw" placeholder="Your password" autocomplete="current-password"></div>
+        <div class="auth-field"><label>Email address</label><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"></div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="login-pw" placeholder="Your password" autocomplete="current-password">
+        </div>
         <button class="auth-btn" id="do-login-btn">Sign In</button>
-        <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--text3)">No account? <span style="color:#E8650A;cursor:pointer;font-weight:600" id="go-register">Register here</span></p>
+        <p style="text-align:center;margin-top:11px;font-size:12px;color:var(--text3)">
+          <span style="color:#E8650A;cursor:pointer;font-weight:600" id="go-forgot">Forgot password?</span>
+          &nbsp;·&nbsp;
+          No account? <span style="color:#E8650A;cursor:pointer;font-weight:600" id="go-register">Register here</span>
+        </p>
       </div>
 
       <!-- REGISTER PANEL -->
       <div class="auth-panel" id="panel-register">
         <div class="auth-msg" id="reg-msg"></div>
         <div class="auth-field"><label>Your name *</label><input type="text" id="reg-name" placeholder="e.g. Thabo" autocomplete="given-name"></div>
-        <div class="auth-field"><label>Email address *</label><input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email"></div>
+        <div class="auth-field"><label>Church name *</label><input type="text" id="reg-church" placeholder="e.g. Johannesburg Central SDA" autocomplete="organization"></div>
+        <div class="auth-field"><label>Conference *</label><input type="text" id="reg-conference" placeholder="e.g. Central Conference" autocomplete="off"></div>
         <div class="auth-field"><label>Country *</label>
           <select id="reg-country" style="width:100%;padding:9px 11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit">
             <option value="">Select your country</option>
             <option>South Africa</option><option>Zimbabwe</option><option>Zambia</option><option>Botswana</option><option>Namibia</option><option>Malawi</option><option>Mozambique</option><option>Tanzania</option><option>Kenya</option><option>Uganda</option><option>Rwanda</option><option>Nigeria</option><option>Ghana</option><option>Ethiopia</option><option>Other</option>
           </select>
         </div>
-        <div class="auth-field"><label>Password *</label><input type="password" id="reg-pw" placeholder="Min 6 characters" autocomplete="new-password"></div>
+        <div class="auth-field"><label>Email address *</label><input type="email" id="reg-email" placeholder="you@example.com — this is your username" autocomplete="email"></div>
+        <div class="auth-field"><label>Create password *</label><input type="password" id="reg-pw" placeholder="Min 6 characters" autocomplete="new-password"></div>
         <button class="auth-btn" id="do-register-btn">Create Account</button>
-        <!-- POPIA notice -->
         <div style="margin-top:12px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text3);line-height:1.6;">
           <strong style="color:var(--text2);">&#x1F512; Your privacy is protected.</strong> Your personal information is collected solely to personalise your HymnDesk experience and is not shared with third parties. This is in compliance with the <strong>Protection of Personal Information Act (POPIA)</strong>, Act 4 of 2013. You may request deletion of your data at any time by contacting us.
         </div>
         <p style="text-align:center;margin-top:10px;font-size:12px;color:var(--text3)">Already registered? <span style="color:#E8650A;cursor:pointer;font-weight:600" id="go-login">Sign in</span></p>
+      </div>
+
+      <!-- FORGOT PASSWORD PANEL -->
+      <div class="auth-panel" id="panel-forgot">
+        <div class="auth-msg" id="forgot-msg"></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Enter your registered email address. We will send a temporary reset code to that address.</p>
+        <div class="auth-field"><label>Email address</label><input type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email"></div>
+        <button class="auth-btn" id="do-forgot-btn">Send Reset Code</button>
+        <!-- Reset code entry — shown after code is sent -->
+        <div id="reset-code-section" style="display:none;margin-top:14px">
+          <hr style="border:none;border-top:1px solid var(--border);margin-bottom:14px">
+          <p style="font-size:12px;color:var(--text3);margin-bottom:10px;">Check your email for a 6-digit code and enter it below with your new password.</p>
+          <div class="auth-field"><label>Reset code</label><input type="text" id="reset-code" placeholder="6-digit code" maxlength="6" autocomplete="one-time-code" style="letter-spacing:4px;font-size:18px;text-align:center"></div>
+          <div class="auth-field"><label>New password</label><input type="password" id="reset-new-pw" placeholder="Min 6 characters" autocomplete="new-password"></div>
+          <button class="auth-btn" id="do-reset-btn">Set New Password</button>
+        </div>
+        <p style="text-align:center;margin-top:11px;font-size:12px;color:var(--text3)"><span style="color:#E8650A;cursor:pointer;font-weight:600" id="back-to-login">Back to Sign In</span></p>
       </div>
     </div>
 
@@ -839,33 +962,96 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 
 <!-- ── ADMIN STATS MODAL ────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="stats-modal">
-  <div class="modal-box wide">
+  <div class="modal-box wide" style="max-width:860px">
     <button class="modal-close" id="close-stats-modal"><svg viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
-    <h2 class="modal-title">User Statistics</h2>
-    <p class="modal-sub" id="stats-updated"></p>
-    <div id="stats-loading" style="text-align:center;padding:30px 0;color:var(--text3)">Loading statistics…</div>
-    <div id="stats-content" style="display:none">
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-box-num" id="stat-total-users">0</div><div class="stat-box-label">Registered users</div></div>
-        <div class="stat-box"><div class="stat-box-num" id="stat-total-logins">0</div><div class="stat-box-label">Total sign-ins</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+      <h2 class="modal-title" style="margin-bottom:0">Usage Analytics</h2>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button id="export-pdf-btn" class="btn btn-amber" style="font-size:12px;padding:6px 10px">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Export PDF
+        </button>
+        <button id="refresh-stats-btn" class="btn btn-ghost" style="font-size:12px;padding:6px 10px">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Refresh
+        </button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <select id="drill-country" class="fi" style="flex:1;min-width:120px;font-size:12px;padding:6px 8px"><option value="">All countries</option></select>
+      <select id="drill-church" class="fi" style="flex:1;min-width:120px;font-size:12px;padding:6px 8px"><option value="">All churches</option></select>
+      <select id="drill-conference" class="fi" style="flex:1;min-width:120px;font-size:12px;padding:6px 8px"><option value="">All conferences</option></select>
+      <button id="drill-apply-btn" class="btn btn-purple" style="font-size:12px;padding:6px 12px">Filter</button>
+      <button id="drill-reset-btn" class="btn btn-ghost" style="font-size:12px;padding:6px 10px">Reset</button>
+    </div>
+    <p class="modal-sub" id="stats-updated" style="margin-bottom:16px"></p>
+
+    <div id="stats-loading" style="text-align:center;padding:40px 0;color:var(--text3)">
+      <svg viewBox="0 0 24 24" width="28" height="28" stroke="#E8650A" fill="none" stroke-width="2" style="animation:spin 1s linear infinite;display:block;margin:0 auto 10px"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+      Loading analytics…
+    </div>
+
+    <div id="stats-content" style="display:none;max-height:74vh;overflow-y:auto;padding-right:4px">
+
+      <!-- KPI row -->
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-num" id="kpi-total-users">—</div><div class="kpi-label">Total users</div><div class="kpi-change flat" id="kpi-users-change"></div></div>
+        <div class="kpi-card"><div class="kpi-num" id="kpi-new-7d">—</div><div class="kpi-label">New this week</div><div class="kpi-change flat" id="kpi-new-change"></div></div>
+        <div class="kpi-card"><div class="kpi-num" id="kpi-logins-7d">—</div><div class="kpi-label">Sign-ins this week</div><div class="kpi-change flat" id="kpi-logins-change"></div></div>
+        <div class="kpi-card"><div class="kpi-num" id="kpi-active-30d">—</div><div class="kpi-label">Active last 30 days</div><div class="kpi-change flat" id="kpi-active-change"></div></div>
+      </div>
+
+      <!-- Daily logins chart — last 14 days -->
+      <div class="dash-section">
+        <div class="dash-section-title">Daily sign-ins — last 14 days</div>
+        <div class="trend-bar-row" id="logins-bar-chart"></div>
+        <div class="trend-label-row" id="logins-bar-labels"></div>
+      </div>
+
+      <!-- New registrations chart — last 14 days -->
+      <div class="dash-section">
+        <div class="dash-section-title">New registrations — last 14 days</div>
+        <div class="trend-bar-row" id="reg-bar-chart" style="--bar-color:#059669"></div>
+        <div class="trend-label-row" id="reg-bar-labels"></div>
+      </div>
+
+      <!-- Two-column: countries + recent activity -->
+      <div class="dash-two-col">
         <div>
-          <p class="section-label" style="margin-bottom:8px">Top countries</p>
+          <div class="dash-section-title">Users by country</div>
           <div id="stats-countries"></div>
         </div>
         <div>
-          <p class="section-label" style="margin-bottom:8px">Top churches</p>
-          <div id="stats-churches"></div>
+          <div class="dash-section-title">Recent activity</div>
+          <div id="stats-activity" style="max-height:220px;overflow-y:auto"></div>
         </div>
       </div>
-      <p class="section-label" style="margin:14px 0 8px">Recent registrations</p>
-      <div id="stats-recent" style="max-height:220px;overflow-y:auto"></div>
+
+      <!-- Recent registrations -->
+      <div class="dash-section" style="margin-top:16px">
+        <div class="dash-section-title">Recent registrations</div>
+        <div id="stats-recent" style="max-height:200px;overflow-y:auto"></div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<script>const LANG_BOOKS={'English':['Christ In Song'],'SDA Hymnal (English)':['SDA Hymnal'],'Tswana':['Kereste Mo Kopelong'],'Sotho':['Keresete Pineng'],'Chichewa':['Khristu Mu Nyimbo'],'Tonga':['Kristu MuNzwiyo'],'Venda':['Ngosha YaDzingosha'],'Shona':['Nyimbo Za Kristo'],'Swahili':['Nyimbo Za Kristo'],'Isizulu':['Ukrestu Esihlabelelweni'],'Isixhosa':['Ukrestu Engomeni'],'Xitsonga':['Risima Ra Vuyimbeleri'],'Kikuyu':['Nyimbo cia Agendi'],'Abagusii':["Ogotera Kw'ogotogia Nyasae"],'Dholuo':['Wende Nyasaye'],'Kinyarwanda':['Indirimbo Zo Guhimbaza Imana'],'Portuguesa':['Hinario Adventusta'],'Espanol':['Himnario Adventista'],'Tumbuka':['Nyimbo za Mpingo wa SDA'],'Sepedi':['Kreste Ka Kopelong']};
+<script>
+// ── DEVICE TYPE ───────────────────────────────────────────────────────────────
+// isMobile  = phone (touch, narrow)
+// isTablet  = tablet (touch, wider)
+// isDesktop = mouse-primary device
+const UA = navigator.userAgent;
+const isMobile  = /iPhone|Android.*Mobile|iPod|BlackBerry|IEMobile|Opera Mini/i.test(UA);
+const isTablet  = !isMobile && (/iPad|Android/i.test(UA) || (navigator.maxTouchPoints > 1 && window.innerWidth >= 600 && window.innerWidth < 1200));
+const isDesktop = !isMobile && !isTablet;
+
+// Phone & tablet get reading mode (no projection overlay)
+// Desktop gets full projection with fullscreen
+const READING_MODE = isMobile || isTablet;
+
+const LANG_BOOKS={'English':['Christ In Song'],'SDA Hymnal (English)':['SDA Hymnal'],'Tswana':['Kereste Mo Kopelong'],'Sotho':['Keresete Pineng'],'Chichewa':['Khristu Mu Nyimbo'],'Tonga':['Kristu MuNzwiyo'],'Venda':['Ngosha YaDzingosha'],'Shona':['Nyimbo Za Kristo'],'Swahili':['Nyimbo Za Kristo'],'Isizulu':['Ukrestu Esihlabelelweni'],'Isixhosa':['Ukrestu Engomeni'],'Xitsonga':['Risima Ra Vuyimbeleri'],'Kikuyu':['Nyimbo cia Agendi'],'Abagusii':["Ogotera Kw'ogotogia Nyasae"],'Dholuo':['Wende Nyasaye'],'Kinyarwanda':['Indirimbo Zo Guhimbaza Imana'],'Portuguesa':['Hinario Adventusta'],'Espanol':['Himnario Adventista'],'Tumbuka':['Nyimbo za Mpingo wa SDA'],'Sepedi':['Kreste Ka Kopelong']};
 const KEYS=['C','C#/Db','D','D#/Eb','E','F','F#/Gb','G','G#/Ab','A','A#/Bb','B'];
 const BG_CLASSES=['bg-black','bg-navy','bg-purple','bg-vignette','bg-carbon'];
 const BG_LABELS=['Black','Navy','Purple','Vignette','Carbon'];
@@ -959,6 +1145,11 @@ let feedbackList = JSON.parse(localStorage.getItem('lh_feedback')) || [];
 load();
 
 function applyAccessControls() {
+  // Hide fullscreen on phone and tablet
+  if(READING_MODE){
+    var fsBtn = document.getElementById('fullscreen-btn');
+    if(fsBtn) fsBtn.style.display = 'none';
+  }
   if (isAdmin) {
     $i('manage-yt-btn').style.display = 'inline-flex';
     $i('admin-info-tools').style.display = 'block';
@@ -1504,6 +1695,8 @@ function buildSequence(h,cfg){
   return seq;
 }
 function startProjection(h,cfg){
+  // Phone and tablet: use reading view, not projection overlay
+  if(READING_MODE){ openReadingView(h, cfg); return; }
   projHymn=h;currentProjHymnData=h;projSequence=buildSequence(h,cfg||{});projSeqIndex=0;
   $i('proj-title').textContent=h.title;$i('proj-sub').textContent=h.book+' #'+h.number+' · '+h.language;
   if(fromRep){$i('proj-pos').textContent='Item '+(repProjIndex+1)+' of '+repProjection.length;$i('proj-pos').style.display='';}else $i('proj-pos').style.display='none';
@@ -1806,8 +1999,8 @@ function startRepProjection(){
   });
   if(!repProjection.length){toast('No valid items','error');return;}
   fromRep=true;repProjIndex=0;
-  const hymnNames=items.filter(i=>i.itemType==='hymn').map(i=>{const h=hymns.find(x=>x.id===i.hymnId);return h?h.title:null;}).filter(Boolean);
-  serviceHistory.unshift({id:uid(),repId:currentRep.id,repName:currentRep.name,date:currentRep.date||new Date().toISOString().slice(0,10),projectedAt:Date.now(),hymnCount:hymnNames.length,hymns:hymnNames.slice(0,8)});
+  const hymnRefs=items.filter(i=>i.itemType==='hymn').map(i=>{const h=hymns.find(x=>x.id===i.hymnId);return h?('#'+h.number+' ('+h.language+')'):null;}).filter(Boolean);
+  serviceHistory.unshift({id:uid(),repId:currentRep.id,repName:currentRep.name,date:currentRep.date||new Date().toISOString().slice(0,10),projectedAt:Date.now(),hymnCount:hymnRefs.length,hymns:hymnRefs.slice(0,12)});
   if(serviceHistory.length>100)serviceHistory=serviceHistory.slice(0,100);
   save();
   closeModal('rep-detail-modal');projectRepItem(repProjection[0]);
@@ -1938,7 +2131,7 @@ function renderHistoryList(){
  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
  <div><div style="font-weight:700;font-size:13px;color:var(--text)">${escHtml(h.repName)}</div>
  <div style="font-size:11px;color:#E8650A;margin-top:2px">${d}</div></div>
- <div style="flex-shrink:0;padding:3px 9px;background:#FFF0E6;border-radius:6px;font-size:12px;color:#C05A08;font-weight:600">${h.hymnCount} hymns</div>
+ <div style="flex-shrink:0;padding:3px 9px;background:#FFF0E6;border-radius:6px;font-size:12px;color:#C05A08;font-weight:600">${h.hymnCount} hymn${h.hymnCount!==1?'s':''}</div>
  </div>
  ${h.hymns&&h.hymns.length?`<div style="margin-top:7px;font-size:11px;color:var(--text3);line-height:1.6">${h.hymns.map(n=>escHtml(n)).join(' &middot; ')}${h.hymnCount>8?' &middot; +more':''}</div>`:''}
  </div>`;
@@ -2088,6 +2281,7 @@ async function syncHymnsFromGithub(){
     if(currentBook)renderHymnGrid();
     localStorage.setItem('lh_last_sync',Date.now().toString());
     showSyncBanner('Library up to date — '+hymns.length+' hymns loaded');
+    flushUsageQueue();
     setTimeout(()=>showSyncBanner(null),4000);
   }catch(e){
     showSyncBanner('Offline — using saved library');
@@ -2453,10 +2647,55 @@ function submitPayFastPayment(amount){
 })();
 
 
+
+// ── OFFLINE USAGE TRACKING ────────────────────────────────────────────────────
+// Records app-open events locally. When online, flushes the queue to the sheet.
+// This ensures usage is tracked even when the user has no connectivity.
+
+var USAGE_QUEUE_KEY = 'hd_usage_queue';
+
+function recordUsageEvent(type){
+  // type: 'open' | 'login' | 'projection'
+  // Use window.currentUser as safe guard — avoids TDZ issues with let/var ordering
+  var uid = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.id : 'anonymous';
+  var queue = [];
+  try{ queue = JSON.parse(localStorage.getItem(USAGE_QUEUE_KEY)||'[]'); }catch(e){}
+  queue.push({
+    type      : type || 'open',
+    userId    : uid,
+    device    : (typeof getDeviceInfo === 'function') ? getDeviceInfo() : 'unknown',
+    timestamp : new Date().toISOString()
+  });
+  // Cap queue at 200 events
+  if(queue.length > 200) queue = queue.slice(-200);
+  localStorage.setItem(USAGE_QUEUE_KEY, JSON.stringify(queue));
+}
+
+async function flushUsageQueue(){
+  var queue = [];
+  try{ queue = JSON.parse(localStorage.getItem(USAGE_QUEUE_KEY)||'[]'); }catch(e){}
+  if(!queue.length) return;
+  try{
+    var res = await gasCall({ action: 'trackUsage', events: queue });
+    if(res && res.success){
+      localStorage.removeItem(USAGE_QUEUE_KEY);
+    }
+  } catch(e){
+    // Offline — leave queue intact for next sync
+  }
+}
+
+// Flush queue when connectivity is restored
+window.addEventListener('online', function(){
+  flushUsageQueue();
+});
+
+// Also flush after successful hymn sync (we know we are online)
+
 // ── USER AUTH SYSTEM ─────────────────────────────────────────────────────────
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxUNUnt_DGi-_6BrozpzNPUWYuem_kobs5q1M0vj7MzRQHko1ImG4FrX7cECod-IYt1Kw/exec';
 
-let currentUser = null;
+var currentUser = null;
 
 // Device fingerprint for the Logins sheet
 function getDeviceInfo(){
@@ -2532,8 +2771,11 @@ function openAuthModal(){
     document.getElementById('profile-avatar-letter').textContent =
       (currentUser.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('profile-name').textContent = currentUser.name || '';
-    document.getElementById('profile-detail').textContent =
-      (currentUser.church||'') + (currentUser.country ? ' · ' + currentUser.country : '');
+    var pd = [];
+    if(currentUser.church)     pd.push(currentUser.church);
+    if(currentUser.conference) pd.push(currentUser.conference);
+    if(currentUser.country)    pd.push(currentUser.country);
+    document.getElementById('profile-detail').textContent = pd.join(' · ');
   } else {
     loggedOut.style.display = 'block';
     loggedIn.style.display  = 'none';
@@ -2561,7 +2803,23 @@ function switchAuthTab(tab){
   document.getElementById('tab-register').classList.toggle('active', tab==='register');
   document.getElementById('panel-login').classList.toggle('active', tab==='login');
   document.getElementById('panel-register').classList.toggle('active', tab==='register');
+  var fp = document.getElementById('panel-forgot');
+  if(fp) fp.classList.toggle('active', tab==='forgot');
+  // Hide tab bar when showing forgot panel (it has its own back link)
+  var tabRow = document.querySelector('.auth-tab-row');
+  if(tabRow) tabRow.style.display = tab==='forgot' ? 'none' : '';
   clearAuthMsgs();
+  // Clear reset section when re-opening forgot
+  if(tab==='forgot'){
+    var rs = document.getElementById('reset-code-section');
+    if(rs) rs.style.display='none';
+    var fi = document.getElementById('forgot-email');
+    if(fi) fi.value='';
+    var rc = document.getElementById('reset-code');
+    if(rc) rc.value='';
+    var rp = document.getElementById('reset-new-pw');
+    if(rp) rp.value='';
+  }
 }
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
@@ -2577,6 +2835,7 @@ async function doLogin(){
       saveUserSession(res.user);
       renderUserBtn();
       closeModal('auth-modal');
+      recordUsageEvent('login');
       toast('Welcome back, '+(res.user.name.split(' ')[0])+'!','success');
     } else {
       showMsg('login-msg', res.message||'Sign in failed.');
@@ -2590,23 +2849,24 @@ async function doLogin(){
 
 // ── REGISTER ─────────────────────────────────────────────────────────────────
 async function doRegister(){
-  var name    = (document.getElementById('reg-name').value||'').trim();
-  var email   = (document.getElementById('reg-email').value||'').trim();
-  var country = (document.getElementById('reg-country').value||'').trim();
-  var pw      = (document.getElementById('reg-pw').value||'').trim();
-  if(!name||!email||!country||!pw){ showMsg('reg-msg','Please fill in all fields.'); return; }
+  var name       = (document.getElementById('reg-name').value||'').trim();
+  var church     = (document.getElementById('reg-church').value||'').trim();
+  var conference = (document.getElementById('reg-conference').value||'').trim();
+  var country    = (document.getElementById('reg-country').value||'').trim();
+  var email      = (document.getElementById('reg-email').value||'').trim();
+  var pw         = (document.getElementById('reg-pw').value||'').trim();
+  if(!name||!church||!conference||!country||!email||!pw){ showMsg('reg-msg','Please fill in all fields.'); return; }
   if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)){ showMsg('reg-msg','Please enter a valid email address.'); return; }
   if(pw.length < 6){ showMsg('reg-msg','Password must be at least 6 characters.'); return; }
   var btn = document.getElementById('do-register-btn');
   btn.disabled = true; btn.textContent = 'Creating account…';
   try{
-    // church field sent as empty string — Apps Script accepts optional
-    var res = await gasCall({ action:'register', name, email, church:'', country, password:pw, device:getDeviceInfo() });
+    var res = await gasCall({ action:'register', name, email, church, conference, country, password:pw, device:getDeviceInfo() });
     if(res.success){
       saveUserSession(res.user);
       renderUserBtn();
       closeModal('auth-modal');
-      toast('Welcome to HymnDesk, '+name.split(' ')[0]+'!','success');
+      toast('Welcome to HymnDesk, '+name+'!','success');
     } else {
       showMsg('reg-msg', res.message||'Registration failed.');
     }
@@ -2629,74 +2889,712 @@ function doLogout(){
 }
 
 // ── ADMIN STATS ───────────────────────────────────────────────────────────────
+// ── ANALYTICS HELPERS ────────────────────────────────────────────────────────
+function statsDateKey(iso){
+  // Returns 'YYYY-MM-DD' in local time
+  var d = new Date(iso);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function last14Days(){
+  var days = [];
+  for(var i=13; i>=0; i--){
+    var d = new Date(); d.setDate(d.getDate()-i);
+    days.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+  }
+  return days;
+}
+
+function dayLabel(isoDate){
+  var parts = isoDate.split('-');
+  var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  return d.toLocaleDateString('en-ZA',{day:'numeric',month:'short'}).replace(' ',' ');
+}
+
+function renderBarChart(containerId, labelId, dayCounts, days, color){
+  var maxVal = Math.max(1, Math.max.apply(null, days.map(function(d){ return dayCounts[d]||0; })));
+  var bars = document.getElementById(containerId);
+  var labels = document.getElementById(labelId);
+  if(!bars||!labels) return;
+  bars.innerHTML = days.map(function(d){
+    var val = dayCounts[d]||0;
+    var pct = Math.round((val/maxVal)*100);
+    return '<div class="trend-bar" style="height:'+Math.max(pct,2)+'%;background:'+(color||'linear-gradient(180deg,#E8650A,#d45a08)')+'" data-tip="'+dayLabel(d)+': '+val+'"></div>';
+  }).join('');
+  labels.innerHTML = days.map(function(d,i){
+    return '<div class="trend-label">'+(i%2===0?dayLabel(d).split(' ')[0]:'')+'</div>';
+  }).join('');
+}
+
+function changeArrow(val, prev){
+  if(!prev || prev===0) return '';
+  var pct = Math.round(((val-prev)/prev)*100);
+  if(pct>0) return '<span class="kpi-change up">▲ '+pct+'% vs prev week</span>';
+  if(pct<0) return '<span class="kpi-change down">▼ '+Math.abs(pct)+'% vs prev week</span>';
+  return '<span class="kpi-change flat">→ No change</span>';
+}
+
+// ── OPEN STATS MODAL ──────────────────────────────────────────────────────────
 async function openStatsModal(){
   document.getElementById('stats-loading').style.display = 'block';
   document.getElementById('stats-content').style.display = 'none';
   document.getElementById('stats-updated').textContent = '';
   openModal('stats-modal');
+  await loadStats();
+}
+
+async function loadStats(){
+  document.getElementById('stats-loading').style.display = 'block';
+  document.getElementById('stats-content').style.display = 'none';
   try{
     var res = await gasCall({ action:'stats' });
     if(!res.success) throw new Error(res.message);
-    document.getElementById('stat-total-users').textContent  = res.totalUsers || 0;
-    document.getElementById('stat-total-logins').textContent = res.totalLogins || 0;
-    // Countries
+    var days14 = last14Days();
+    var now    = new Date();
+
+    // ── Build daily buckets from login history ────────────────────────────
+    var loginsByDay = {};
+    var regsByDay   = {};
+    (res.loginHistory||[]).forEach(function(l){
+      if(!l.timestamp) return;
+      var k = statsDateKey(l.timestamp);
+      loginsByDay[k] = (loginsByDay[k]||0) + 1;
+    });
+    (res.allUsers||[]).forEach(function(u){
+      if(!u.createdAt) return;
+      var k = statsDateKey(u.createdAt);
+      regsByDay[k] = (regsByDay[k]||0) + 1;
+    });
+
+    // ── KPIs ──────────────────────────────────────────────────────────────
+    var totalUsers  = res.totalUsers || 0;
+    var totalLogins = res.totalLogins || 0;
+
+    // This week vs last week
+    var thisWeekStart = new Date(now); thisWeekStart.setDate(now.getDate()-6);
+    var lastWeekStart = new Date(now); lastWeekStart.setDate(now.getDate()-13);
+    var lastWeekEnd   = new Date(now); lastWeekEnd.setDate(now.getDate()-7);
+
+    function inRange(iso, from, to){
+      var d = new Date(iso); return d>=from && d<=to;
+    }
+
+    var newThis7  = (res.allUsers||[]).filter(function(u){ return u.createdAt && inRange(u.createdAt, thisWeekStart, now); }).length;
+    var newLast7  = (res.allUsers||[]).filter(function(u){ return u.createdAt && inRange(u.createdAt, lastWeekStart, lastWeekEnd); }).length;
+    var logThis7  = (res.loginHistory||[]).filter(function(l){ return l.timestamp && inRange(l.timestamp, thisWeekStart, now); }).length;
+    var logLast7  = (res.loginHistory||[]).filter(function(l){ return l.timestamp && inRange(l.timestamp, lastWeekStart, lastWeekEnd); }).length;
+    var active30  = new Set((res.loginHistory||[]).filter(function(l){
+      if(!l.timestamp) return false;
+      var d=new Date(l.timestamp), ago=new Date(now); ago.setDate(now.getDate()-30);
+      return d>=ago;
+    }).map(function(l){ return l.userId; })).size;
+
+    document.getElementById('kpi-total-users').textContent = totalUsers;
+    document.getElementById('kpi-new-7d').textContent      = newThis7;
+    document.getElementById('kpi-logins-7d').textContent   = logThis7;
+    document.getElementById('kpi-active-30d').textContent  = active30;
+    document.getElementById('kpi-users-change').innerHTML  = '';
+    document.getElementById('kpi-new-change').innerHTML    = changeArrow(newThis7, newLast7);
+    document.getElementById('kpi-logins-change').innerHTML = changeArrow(logThis7, logLast7);
+    document.getElementById('kpi-active-change').innerHTML = '';
+
+    // ── Bar charts ────────────────────────────────────────────────────────
+    renderBarChart('logins-bar-chart','logins-bar-labels', loginsByDay, days14, 'linear-gradient(180deg,#E8650A,#d45a08)');
+    renderBarChart('reg-bar-chart',   'reg-bar-labels',    regsByDay,   days14, 'linear-gradient(180deg,#059669,#0d9488)');
+
+    // ── Countries bar chart ───────────────────────────────────────────────
     var cDiv = document.getElementById('stats-countries');
-    var countries = Object.entries(res.countries||{}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    var countries = Object.entries(res.countries||{}).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+    var maxC = countries.length ? countries[0][1] : 1;
     cDiv.innerHTML = countries.map(function(c){
-      return '<div class="stats-list-item"><span>'+escHtml(c[0])+'</span><span>'+c[1]+'</span></div>';
+      var pct = Math.round((c[1]/maxC)*100);
+      return '<div class="country-bar-item">'
+        +'<span title="'+escHtml(c[0])+'">'+escHtml(c[0])+'</span>'
+        +'<div class="country-bar-track"><div class="country-bar-fill" style="width:'+pct+'%"></div></div>'
+        +'<span class="country-bar-count">'+c[1]+'</span>'
+        +'</div>';
     }).join('') || '<p style="color:var(--text3);font-size:13px">No data yet.</p>';
-    // Churches
-    var chDiv = document.getElementById('stats-churches');
-    chDiv.innerHTML = (res.churches||[]).map(function(c){
-      return '<div class="stats-list-item"><span>'+escHtml(c.name)+'</span><span>'+c.count+'</span></div>';
-    }).join('') || '<p style="color:var(--text3);font-size:13px">No data yet.</p>';
-    // Recent
+
+    // ── Recent activity feed (logins + registrations merged) ─────────────
+    var actDiv = document.getElementById('stats-activity');
+    var actItems = [];
+    (res.loginHistory||[]).slice(0,30).forEach(function(l){
+      actItems.push({ type:'login', name:l.name||l.email, time:l.timestamp });
+    });
+    (res.allUsers||[]).slice(0,10).forEach(function(u){
+      actItems.push({ type:'reg', name:u.name, time:u.createdAt });
+    });
+    actItems.sort(function(a,b){ return new Date(b.time)-new Date(a.time); });
+    actDiv.innerHTML = actItems.slice(0,20).map(function(a){
+      var d = a.time ? new Date(a.time).toLocaleDateString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+      var label = a.type==='reg' ? 'Registered' : 'Signed in';
+      return '<div class="activity-row">'
+        +'<div class="activity-dot '+a.type+'"></div>'
+        +'<div class="activity-info"><strong>'+escHtml(a.name||'User')+'</strong> '+label+'</div>'
+        +'<div class="activity-time">'+d+'</div>'
+        +'</div>';
+    }).join('') || '<p style="color:var(--text3);font-size:13px">No activity yet.</p>';
+
+    // ── Recent registrations ──────────────────────────────────────────────
     var rDiv = document.getElementById('stats-recent');
     rDiv.innerHTML = (res.recent||[]).map(function(u){
       var d = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}) : '';
-      return '<div class="stats-list-item" style="flex-direction:column;align-items:flex-start;gap:2px">'
-        +'<div style="display:flex;justify-content:space-between;width:100%"><span style="font-weight:600">'+escHtml(u.name)+'</span><span style="color:var(--text3);font-size:11px">'+d+'</span></div>'
-        +'<div style="color:var(--text3);font-size:11px">'+escHtml(u.church)+' · '+escHtml(u.country)+'</div>'
+      return '<div class="activity-row">'
+        +'<div class="activity-dot reg"></div>'
+        +'<div class="activity-info"><strong>'+escHtml(u.name)+'</strong>'
+        +(u.country?' <span style="color:var(--text3)">· '+escHtml(u.country)+'</span>':'')
+        +'</div>'
+        +'<div class="activity-time">'+d+'</div>'
         +'</div>';
     }).join('') || '<p style="color:var(--text3);font-size:13px">No registrations yet.</p>';
-    document.getElementById('stats-updated').textContent = 'Live data from Google Sheets · ' + new Date().toLocaleTimeString('en-ZA');
+
+    document.getElementById('stats-updated').textContent = 'Live · Google Sheets · ' + new Date().toLocaleTimeString('en-ZA');
+    populateDrillDowns(res);
     document.getElementById('stats-loading').style.display = 'none';
     document.getElementById('stats-content').style.display = 'block';
   } catch(e){
-    document.getElementById('stats-loading').textContent = 'Failed to load stats: ' + e.message;
+    document.getElementById('stats-loading').innerHTML = '<p style="color:#dc2626;font-size:13px">Failed to load: '+escHtml(e.message)+'</p>';
   }
+}
+
+on('refresh-stats-btn','click', loadStats);
+on('drill-apply-btn','click', applyDrillDown);
+on('drill-reset-btn','click', resetDrillDown);
+on('export-pdf-btn','click', exportStatsPDF);
+
+// ── DRILL-DOWN FILTER ─────────────────────────────────────────────────────────
+var _rawStats = null; // cache last loaded stats
+
+// Populate filter dropdowns after stats load
+function populateDrillDowns(res){
+  _rawStats = res;
+  var dc = document.getElementById('drill-country');
+  var dch= document.getElementById('drill-church');
+  var dcf= document.getElementById('drill-conference');
+  if(!dc) return;
+
+  var countries    = Object.keys(res.countries||{}).sort();
+  var churches     = Object.keys(res.churches||{}).sort();
+  var conferences  = Object.keys(res.conferences||{}).sort();
+
+  dc.innerHTML  = '<option value="">All countries</option>'  + countries.map(function(c){ return '<option>'+escHtml(c)+'</option>'; }).join('');
+  dch.innerHTML = '<option value="">All churches</option>'   + churches.map(function(c){ return '<option>'+escHtml(c)+'</option>'; }).join('');
+  dcf.innerHTML = '<option value="">All conferences</option>'+ conferences.map(function(c){ return '<option>'+escHtml(c)+'</option>'; }).join('');
+}
+
+function applyDrillDown(){
+  if(!_rawStats) return;
+  var filterCountry    = (document.getElementById('drill-country').value||'').trim();
+  var filterChurch     = (document.getElementById('drill-church').value||'').trim();
+  var filterConference = (document.getElementById('drill-conference').value||'').trim();
+
+  var filtered = (_rawStats.allUsers||[]).filter(function(u){
+    if(filterCountry    && u.country    !== filterCountry)    return false;
+    if(filterChurch     && u.church     !== filterChurch)     return false;
+    if(filterConference && u.conference !== filterConference) return false;
+    return true;
+  });
+
+  document.getElementById('kpi-total-users').textContent  = filtered.length;
+  document.getElementById('kpi-users-change').innerHTML   = '<span class="kpi-change flat">Filtered view</span>';
+
+  // Recompute filtered countries
+  var fc = {}; filtered.forEach(function(u){ var c=u.country||'Unknown'; fc[c]=(fc[c]||0)+1; });
+  var cDiv = document.getElementById('stats-countries');
+  var countries = Object.entries(fc).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+  var maxC = countries.length ? countries[0][1] : 1;
+  cDiv.innerHTML = countries.map(function(c){
+    var pct = Math.round((c[1]/maxC)*100);
+    return '<div class="country-bar-item"><span title="'+escHtml(c[0])+'">'+escHtml(c[0])+'</span>'
+      +'<div class="country-bar-track"><div class="country-bar-fill" style="width:'+pct+'%"></div></div>'
+      +'<span class="country-bar-count">'+c[1]+'</span></div>';
+  }).join('') || '<p style="color:var(--text3);font-size:13px">No matches.</p>';
+
+  toast('Showing '+filtered.length+' user'+(filtered.length!==1?'s':'')+' matching filter', 'info');
+}
+
+function resetDrillDown(){
+  document.getElementById('drill-country').value    = '';
+  document.getElementById('drill-church').value     = '';
+  document.getElementById('drill-conference').value = '';
+  if(_rawStats) renderStatsContent(_rawStats);
+}
+
+// ── PDF EXPORT ────────────────────────────────────────────────────────────────
+function exportStatsPDF(){
+  if(!_rawStats){ toast('Load stats first before exporting','error'); return; }
+  var s = _rawStats;
+  var now = new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // Build printable HTML report
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<title>HymnDesk Usage Report</title>'
+    + '<style>'
+    + 'body{font-family:Arial,sans-serif;margin:30px;color:#1a1a1a;font-size:13px}'
+    + 'h1{color:#E8650A;font-size:22px;margin-bottom:4px}'
+    + 'h2{color:#374151;font-size:15px;margin:20px 0 8px;border-bottom:2px solid #E8650A;padding-bottom:4px}'
+    + '.kpi-row{display:flex;gap:20px;margin:14px 0;flex-wrap:wrap}'
+    + '.kpi{flex:1;min-width:120px;background:#f4f5f6;border-radius:8px;padding:14px;text-align:center}'
+    + '.kpi-num{font-size:28px;font-weight:700;color:#E8650A}'
+    + '.kpi-label{font-size:11px;color:#6b7280;margin-top:4px}'
+    + '.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}'
+    + '.bar-label{width:140px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    + '.bar-track{flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}'
+    + '.bar-fill{height:100%;background:#E8650A;border-radius:4px}'
+    + '.bar-count{width:30px;text-align:right;font-size:12px;font-weight:600;color:#E8650A}'
+    + '.footer{margin-top:40px;font-size:11px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:10px}'
+    + 'table{width:100%;border-collapse:collapse;font-size:12px}'
+    + 'th{background:#f4f5f6;padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#6b7280}'
+    + 'td{padding:7px 10px;border-bottom:1px solid #f0f0f0}'
+    + '@media print{body{margin:0}}'
+    + '</style></head><body>';
+
+  html += '<h1>HymnDesk Usage Analytics Report</h1>';
+  html += '<p style="color:#6b7280;margin-bottom:20px">Generated: ' + now + ' &nbsp;·&nbsp; Serenza Music Realm</p>';
+
+  // KPIs
+  html += '<h2>Key Metrics</h2><div class="kpi-row">';
+  html += '<div class="kpi"><div class="kpi-num">'+s.totalUsers+'</div><div class="kpi-label">Total Users</div></div>';
+  html += '<div class="kpi"><div class="kpi-num">'+s.totalLogins+'</div><div class="kpi-label">Total Sign-ins</div></div>';
+  var countries30 = Object.keys(s.countries||{}).length;
+  html += '<div class="kpi"><div class="kpi-num">'+countries30+'</div><div class="kpi-label">Countries</div></div>';
+  html += '</div>';
+
+  // Countries
+  html += '<h2>Users by Country</h2>';
+  var countries = Object.entries(s.countries||{}).sort(function(a,b){return b[1]-a[1];});
+  var maxC = countries.length ? countries[0][1] : 1;
+  countries.forEach(function(c){
+    var pct = Math.round((c[1]/maxC)*100);
+    html += '<div class="bar-row"><div class="bar-label">'+escHtml(c[0])+'</div>'
+      +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div>'
+      +'<div class="bar-count">'+c[1]+'</div></div>';
+  });
+
+  // Conferences
+  if(s.conferences){
+    html += '<h2>Users by Conference</h2>';
+    var confs = Object.entries(s.conferences).sort(function(a,b){return b[1]-a[1];});
+    var maxCF = confs.length ? confs[0][1] : 1;
+    confs.forEach(function(c){
+      var pct = Math.round((c[1]/maxCF)*100);
+      html += '<div class="bar-row"><div class="bar-label">'+escHtml(c[0])+'</div>'
+        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:#059669"></div></div>'
+        +'<div class="bar-count" style="color:#059669">'+c[1]+'</div></div>';
+    });
+  }
+
+  // Recent registrations
+  html += '<h2>Recent Registrations (last 20)</h2>';
+  html += '<table><thead><tr><th>Name</th><th>Church</th><th>Conference</th><th>Country</th><th>Registered</th></tr></thead><tbody>';
+  (s.recent||[]).forEach(function(u){
+    var d = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-ZA') : '';
+    html += '<tr><td>'+escHtml(u.name)+'</td><td>'+escHtml(u.church||'')+'</td><td>'+escHtml(u.conference||'')+'</td><td>'+escHtml(u.country||'')+'</td><td>'+d+'</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  html += '<div class="footer">HymnDesk · Serenza Music Realm · hymndesk.co.za &nbsp;·&nbsp; Report generated ' + new Date().toISOString() + '</div>';
+  html += '</body></html>';
+
+  // Open in new tab and trigger print
+  var w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 500);
+}
+
+
+// ── FORGOT / RESET PASSWORD ───────────────────────────────────────────────────
+async function doForgotPassword(){
+  var email = (document.getElementById('forgot-email').value||'').trim();
+  if(!email){ showMsg('forgot-msg','Please enter your email address.'); return; }
+  var btn = document.getElementById('do-forgot-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try{
+    var res = await gasCall({ action:'forgotPassword', email, device:getDeviceInfo() });
+    if(res.success){
+      showMsg('forgot-msg', 'A reset code has been sent to '+email+'. Check your inbox (and spam folder).', 'ok');
+      document.getElementById('reset-code-section').style.display = 'block';
+      btn.textContent = 'Resend Code';
+    } else {
+      showMsg('forgot-msg', res.message || 'No account found with that email address.');
+    }
+  } catch(e){
+    showMsg('forgot-msg','Connection error — please check your internet and try again.');
+  } finally {
+    btn.disabled = false;
+    if(btn.textContent === 'Sending…') btn.textContent = 'Send Reset Code';
+  }
+}
+
+async function doResetPassword(){
+  var email  = (document.getElementById('forgot-email').value||'').trim();
+  var code   = (document.getElementById('reset-code').value||'').trim();
+  var newpw  = (document.getElementById('reset-new-pw').value||'').trim();
+  if(!code){ showMsg('forgot-msg','Please enter the reset code from your email.'); return; }
+  if(newpw.length < 6){ showMsg('forgot-msg','New password must be at least 6 characters.'); return; }
+  var btn = document.getElementById('do-reset-btn');
+  btn.disabled = true; btn.textContent = 'Updating…';
+  try{
+    var res = await gasCall({ action:'resetPassword', email, code, newPassword:newpw });
+    if(res.success){
+      showMsg('forgot-msg', 'Password updated successfully. Signing you in…', 'ok');
+      setTimeout(function(){
+        // Auto-login after successful reset
+        document.getElementById('login-email').value = email;
+        document.getElementById('login-pw').value = newpw;
+        switchAuthTab('login');
+        doLogin();
+      }, 1200);
+    } else {
+      showMsg('forgot-msg', res.message || 'Invalid or expired reset code. Please request a new one.');
+    }
+  } catch(e){
+    showMsg('forgot-msg','Connection error — please try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Set New Password';
+  }
+}
+
+// ── FIRST LAUNCH PROMPT ────────────────────────────────────────────────────────
+// Show sign-in modal automatically on first install/visit, but only once.
+// Never shown again once a session exists or the user dismisses it.
+function checkFirstLaunch(){
+  if(currentUser) return; // already logged in — never prompt
+  var seen = localStorage.getItem('hd_auth_prompted');
+  if(seen) return; // already prompted before
+  // Mark as prompted immediately so refresh never shows it again
+  localStorage.setItem('hd_auth_prompted', '1');
+  // Small delay so the app renders first
+  setTimeout(function(){
+    openAuthModal();
+  }, 1200);
 }
 
 // ── Wire up events ────────────────────────────────────────────────────────────
 on('user-login-btn',    'click',  openAuthModal);
-on('close-auth-modal',  'click',  function(){ closeModal('auth-modal'); });
+on('close-auth-modal',  'click',  function(){
+  closeModal('auth-modal');
+  // Restore tab bar visibility when closing
+  var tabRow = document.querySelector('.auth-tab-row');
+  if(tabRow) tabRow.style.display = '';
+});
 on('close-stats-modal', 'click',  function(){ closeModal('stats-modal'); });
 on('tab-login',         'click',  function(){ switchAuthTab('login'); });
 on('tab-register',      'click',  function(){ switchAuthTab('register'); });
 on('go-register',       'click',  function(){ switchAuthTab('register'); });
 on('go-login',          'click',  function(){ switchAuthTab('login'); });
+on('go-forgot',         'click',  function(){ switchAuthTab('forgot'); });
+on('back-to-login',     'click',  function(){ switchAuthTab('login'); });
 on('do-login-btn',      'click',  doLogin);
 on('do-register-btn',   'click',  doRegister);
 on('do-logout-btn',     'click',  doLogout);
+on('do-forgot-btn',     'click',  doForgotPassword);
+on('do-reset-btn',      'click',  doResetPassword);
 
-// Enter key support in login/register forms
+// Enter key support
 document.addEventListener('keydown', function(e){
   if(e.key !== 'Enter') return;
   var m = document.getElementById('auth-modal');
   if(!m || !m.classList.contains('open')) return;
-  if(document.getElementById('panel-login').classList.contains('active')) doLogin();
-  else doRegister();
+  var active = document.querySelector('.auth-panel.active');
+  if(!active) return;
+  if(active.id === 'panel-login')    doLogin();
+  else if(active.id === 'panel-register') doRegister();
+  else if(active.id === 'panel-forgot'){
+    var rs = document.getElementById('reset-code-section');
+    if(rs && rs.style.display !== 'none') doResetPassword();
+    else doForgotPassword();
+  }
 });
 
 // Backdrop close
 var authModal = document.getElementById('auth-modal');
-if(authModal) authModal.addEventListener('click', function(e){ if(e.target===authModal) closeModal('auth-modal'); });
+if(authModal) authModal.addEventListener('click', function(e){
+  if(e.target===authModal){
+    closeModal('auth-modal');
+    var tabRow = document.querySelector('.auth-tab-row');
+    if(tabRow) tabRow.style.display = '';
+  }
+});
 var statsModal = document.getElementById('stats-modal');
 if(statsModal) statsModal.addEventListener('click', function(e){ if(e.target===statsModal) closeModal('stats-modal'); });
 
-// Restore session on load
+// Restore session — persistent login (no expiry unless user logs out)
 loadUserSession();
 renderUserBtn();
+// Record app open now that currentUser is initialised
+recordUsageEvent('open');
+// Trigger first-launch prompt after app initialises
+setTimeout(checkFirstLaunch, 100);
+
+
+
+// ── REPERTOIRE SHARING ────────────────────────────────────────────────────────
+function shareRepertoire(){
+  if(!currentRep) return;
+  var items = repItems.filter(function(i){ return i.repId === currentRep.id; })
+    .sort(function(a,b){ return a.order-b.order; });
+  if(!items.length){ toast('No items in this repertoire to share','error'); return; }
+
+  // Build a compact shareable payload — hymn refs only (number + book + language)
+  var hymnRefs = items
+    .filter(function(i){ return i.itemType==='hymn'; })
+    .map(function(i){
+      var h = hymns.find(function(x){ return x.id===i.hymnId; });
+      return h ? { num: h.number, book: h.book, lang: h.language, key: i.key||'' } : null;
+    }).filter(Boolean);
+
+  var payload = {
+    v   : 1,                    // version
+    name: currentRep.name,
+    date: currentRep.date || '',
+    refs: hymnRefs
+  };
+
+  var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  var shareUrl = window.location.origin + window.location.pathname + '?rep=' + encoded;
+
+  // Use native share sheet if available (Android/iOS), else copy to clipboard
+  if(navigator.share){
+    navigator.share({
+      title : 'HymnDesk Repertoire: ' + currentRep.name,
+      text  : 'Join me in ' + currentRep.name + ' — tap the link to add this repertoire to HymnDesk.',
+      url   : shareUrl
+    }).catch(function(){});
+  } else {
+    // Fallback: copy link to clipboard
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(shareUrl).then(function(){
+        toast('Repertoire link copied — paste it anywhere to share','success');
+      });
+    } else {
+      // Final fallback: show link in prompt
+      window.prompt('Copy this repertoire link:', shareUrl);
+    }
+  }
+}
+
+on('share-rep-btn','click', shareRepertoire);
+
+// ── Handle incoming shared repertoire link ────────────────────────────────────
+function checkIncomingRepLink(){
+  var params = new URLSearchParams(window.location.search);
+  var repParam = params.get('rep');
+  if(!repParam) return;
+
+  // Clean URL immediately
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  try{
+    var payload = JSON.parse(decodeURIComponent(escape(atob(repParam))));
+    if(!payload || !payload.refs || !payload.refs.length) throw new Error('Empty');
+
+    // Ask user to confirm before adding
+    var msg = 'You received a shared repertoire:\n\n"' + (payload.name||'Untitled') + '"\n'
+      + payload.refs.length + ' hymn(s)\n\nAdd it to your repertoires?';
+    if(!confirm(msg)) return;
+
+    // Create the repertoire locally
+    var newRep = {
+      id       : uid(),
+      name     : (payload.name||'Shared Repertoire'),
+      date     : payload.date || '',
+      createdAt: Date.now(),
+      shared   : true
+    };
+    repertoires.push(newRep);
+
+    // Match hymn refs to local hymn library and add items
+    var order = 0;
+    payload.refs.forEach(function(ref){
+      var h = hymns.find(function(x){
+        return x.number === ref.num &&
+               x.book   === ref.book &&
+               x.language === ref.lang;
+      });
+      if(h){
+        repItems.push({
+          id          : uid(),
+          repId       : newRep.id,
+          hymnId      : h.id,
+          itemType    : 'hymn',
+          order       : order++,
+          key         : ref.key || '',
+          repeatConfig: {},
+          createdAt   : Date.now()
+        });
+      }
+    });
+
+    save();
+    var matched = repItems.filter(function(i){ return i.repId===newRep.id; }).length;
+    var skipped = payload.refs.length - matched;
+    toast('Repertoire added: ' + matched + ' hymn' + (matched!==1?'s':'') + (skipped?' ('+skipped+' not found in your library)':''), 'success');
+
+    // Open the new repertoire
+    setTimeout(function(){
+      renderRepList();
+      openModal('rep-list-modal');
+      var r = repertoires.find(function(x){ return x.id===newRep.id; });
+      if(r) setTimeout(function(){ openRepDetail(r); }, 200);
+    }, 500);
+
+  } catch(e){
+    toast('Could not read the shared repertoire link.', 'error');
+  }
+}
+
+// ── READING VIEW (phone & tablet) ─────────────────────────────────────────────
+var readingHymn = null;
+var readingFontSize = 18;
+var readingRepMode = false;
+var readingRepIndex = 0;
+
+function openReadingView(h, cfg){
+  readingHymn = h;
+  readingRepMode = fromRep;
+  readingRepIndex = repProjIndex;
+
+  var rv = document.getElementById('reading-view');
+  document.getElementById('reading-title').textContent = h.title;
+  document.getElementById('reading-sub').textContent = h.book + ' #' + h.number + ' · ' + h.language;
+
+  // Build media buttons
+  var mr = document.getElementById('reading-media-row');
+  mr.innerHTML = '';
+  if(h.youtube){
+    var yb = document.createElement('button');
+    yb.className = 'reading-media-btn';
+    yb.style.background='rgba(255,0,0,0.12)';yb.style.color='#dc2626';yb.style.border='1px solid rgba(220,38,38,0.3)';
+    yb.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="13" height="13"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg> YouTube';
+    yb.addEventListener('click', function(){ window.open(h.youtube,'_blank'); });
+    mr.appendChild(yb);
+  }
+  if(h.vocal){
+    var vb = document.createElement('button');
+    vb.className = 'reading-media-btn';
+    vb.style.background='rgba(14,165,233,0.12)';vb.style.color='#0284c7';vb.style.border='1px solid rgba(14,165,233,0.3)';
+    vb.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="19" r="3"/><circle cx="18" cy="16" r="3"/></svg> Vocals';
+    vb.addEventListener('click', function(){ openAudioPanel(h.vocal,'Vocals'); });
+    mr.appendChild(vb);
+  }
+  if(h.instrumental){
+    var ib = document.createElement('button');
+    ib.className = 'reading-media-btn';
+    ib.style.background='rgba(245,158,11,0.12)';ib.style.color='#d97706';ib.style.border='1px solid rgba(245,158,11,0.3)';
+    ib.innerHTML = '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="19" r="3"/><circle cx="18" cy="16" r="3"/></svg> Instr.';
+    ib.addEventListener('click', function(){ openAudioPanel(h.instrumental,'Instrumental'); });
+    mr.appendChild(ib);
+  }
+  mr.style.display = mr.children.length ? 'flex' : 'none';
+
+  // Render lyrics
+  renderReadingBody(h);
+
+  // Nav bar for repertoire mode
+  var nav = document.getElementById('reading-nav-bar');
+  if(readingRepMode && repProjection.length > 1){
+    nav.style.display = 'flex';
+    updateReadingNav();
+  } else {
+    nav.style.display = 'none';
+  }
+
+  rv.classList.add('open');
+  rv.scrollTop = 0;
+}
+
+function renderReadingBody(h){
+  var body = document.getElementById('reading-body');
+  var stanzas = h.lyrics.split(/\n\s*\n/).filter(function(s){ return s.trim(); });
+  var html = '';
+  stanzas.forEach(function(s, i){
+    html += '<div class="reading-stanza">'
+      + '<div class="reading-stanza-label">Stanza ' + (i+1) + '</div>'
+      + '<div class="reading-stanza-text" style="font-size:'+readingFontSize+'px">'+escHtml(s)+'</div>'
+      + '</div>';
+    if(h.chorus && h.chorus.trim()){
+      html += '<div class="reading-chorus">'
+        + '<div class="reading-stanza-label">Chorus</div>'
+        + '<div class="reading-stanza-text" style="font-size:'+readingFontSize+'px">'+escHtml(h.chorus)+'</div>'
+        + '</div>';
+    }
+  });
+  body.innerHTML = html;
+}
+
+function updateReadingNav(){
+  var prevBtn = document.getElementById('reading-prev-btn');
+  var nextBtn = document.getElementById('reading-next-btn');
+  var pos     = document.getElementById('reading-pos');
+  if(!prevBtn) return;
+  prevBtn.disabled = readingRepIndex <= 0;
+  nextBtn.disabled = readingRepIndex >= repProjection.length - 1;
+  pos.textContent  = (readingRepIndex+1) + ' of ' + repProjection.length;
+}
+
+function closeReadingView(){
+  document.getElementById('reading-view').classList.remove('open');
+  closeAudioPanel();
+  readingHymn = null;
+  fromRep = false;
+  repProjection = [];
+  repProjIndex  = 0;
+}
+
+on('reading-back-btn', 'click', closeReadingView);
+on('reading-font-inc', 'click', function(){
+  readingFontSize = Math.min(28, readingFontSize + 2);
+  if(readingHymn) renderReadingBody(readingHymn);
+});
+on('reading-font-dec', 'click', function(){
+  readingFontSize = Math.max(13, readingFontSize - 2);
+  if(readingHymn) renderReadingBody(readingHymn);
+});
+on('reading-prev-btn', 'click', function(){
+  if(readingRepIndex <= 0) return;
+  readingRepIndex--; repProjIndex = readingRepIndex;
+  var item = repProjection[readingRepIndex];
+  if(item && item.type !== 'divider' && item.type !== 'segment' && item.type !== 'announcement'){
+    readingHymn = item;
+    document.getElementById('reading-title').textContent = item.title;
+    document.getElementById('reading-sub').textContent = item.book+' #'+item.number+' · '+item.language;
+    renderReadingBody(item);
+    document.getElementById('reading-view').scrollTop = 0;
+    updateReadingNav();
+  } else {
+    // skip non-hymn items
+    if(readingRepIndex > 0){ readingRepIndex--; repProjIndex = readingRepIndex;
+      var it2 = repProjection[readingRepIndex];
+      if(it2){ readingHymn=it2; document.getElementById('reading-title').textContent=it2.title||'';
+        renderReadingBody(it2); updateReadingNav(); }
+    }
+  }
+});
+on('reading-next-btn', 'click', function(){
+  if(readingRepIndex >= repProjection.length-1) return;
+  readingRepIndex++; repProjIndex = readingRepIndex;
+  var item = repProjection[readingRepIndex];
+  // Skip divider/segment/announcement items
+  while(item && (item.type==='divider'||item.type==='segment'||item.type==='announcement') && readingRepIndex < repProjection.length-1){
+    readingRepIndex++; repProjIndex = readingRepIndex;
+    item = repProjection[readingRepIndex];
+  }
+  if(item && item.title){
+    readingHymn = item;
+    document.getElementById('reading-title').textContent = item.title;
+    document.getElementById('reading-sub').textContent = item.book+' #'+item.number+' · '+item.language;
+    renderReadingBody(item);
+    document.getElementById('reading-view').scrollTop = 0;
+    updateReadingNav();
+  }
+});
+
+// Also patch startRepProjection for reading mode
+// The original startRepProjection calls projectRepItem which calls startProjection
+// startProjection already routes to reading view — so it works automatically.
 
 // ── DARK MODE ────────────────────────────────────────────────────────────────
 function applyTheme(dark){
@@ -2728,7 +3626,10 @@ if(window.matchMedia){
 renderBanner();
 renderBookGrid();
 renderDonateCard();
-syncHymnsFromGithub();
+syncHymnsFromGithub().then(function(){
+  // Check for incoming shared repertoire link after hymns are loaded
+  checkIncomingRepLink();
+});
 setTimeout(syncHymnsFromGithub, 4000);
 
 applyAccessControls();
