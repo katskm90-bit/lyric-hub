@@ -1518,8 +1518,8 @@ function renderBanner(){
     if(sl.img)el.style.backgroundImage='url('+sl.img+')';
     el.style.backgroundColor='#1e1b4b';
     var ctaBtnHtml = '';
-    if(sl.btnText){ var bLink=sl.btnLink||sl.link||'#'; ctaBtnHtml+='<a href="'+escHtml(bLink)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 20px;background:#E8650A;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.3)">'+escHtml(sl.btnText)+'</a>'; }
-    if(sl.isAd){ ctaBtnHtml+='<button onclick="event.stopPropagation();openAdEnquiry('+i+')" style="display:inline-block;margin-top:10px;margin-left:8px;padding:8px 18px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;backdrop-filter:blur(8px)">Enquire</button>'; }
+    if(sl.btnText){ var bLink=sl.btnLink||sl.link||'#'; ctaBtnHtml+='<a href="'+escHtml(bLink)+'" target="_blank" rel="noopener" onclick="event.stopPropagation();event.preventDefault();window.open(this.href,\'_blank\')" style="display:inline-block;margin-top:10px;padding:8px 20px;background:#E8650A;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.3)">'+escHtml(sl.btnText)+'</a>'; }
+    if(sl.isAd){ ctaBtnHtml+='<button onclick="event.stopPropagation();event.preventDefault();openAdEnquiry('+i+')" style="display:inline-block;margin-top:10px;margin-left:8px;padding:8px 18px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;backdrop-filter:blur(8px)">Enquire</button>'; }
     el.innerHTML='<div class="banner-overlay"></div><div class="banner-content"><div class="banner-headline">'+escHtml(sl.headline)+'</div>'+(sl.sub?'<div class="banner-sub">'+escHtml(sl.sub)+'</div>':'')+ctaBtnHtml+'</div>';
     ratio.insertBefore(el,ratio.querySelector('.banner-prev'));
     const dot=document.createElement('button');
@@ -3980,8 +3980,9 @@ function openProfileEdit(){
   if(existingEdit){ existingEdit.remove(); return; } // toggle off
   var form = document.createElement('div');
   form.id = 'profile-edit-form';
-  form.style.cssText = 'margin-top:14px;padding-top:14px;border-top:1px solid var(--border)';
-  form.innerHTML = '<p class="section-label" style="margin-bottom:10px">Edit my details</p>'
+  form.style.cssText = 'margin-top:14px;padding-top:14px;border-top:1px solid var(--border);position:relative';
+  form.innerHTML = '<button id="pe-close-x" title="Back" style="position:absolute;top:0;right:0;background:var(--bg3);border:1px solid var(--border);border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;font-size:16px;line-height:1">&times;</button>'
+    + '<p class="section-label" style="margin-bottom:10px">Edit my details</p>'
     + '<div class="auth-field"><label>Name</label><input type="text" id="pe-name" value="'+escHtml(currentUser.name||'')+'"></div>'
     + '<div class="auth-field"><label>Church name</label><input type="text" id="pe-church" value="'+escHtml(currentUser.church||'')+'"></div>'
     + '<div class="auth-field"><label>Conference</label><input type="text" id="pe-conference" value="'+escHtml(currentUser.conference||'')+'"></div>'
@@ -3998,9 +3999,8 @@ function openProfileEdit(){
     + '</div>';
   loggedIn.appendChild(form);
 
-  document.getElementById('pe-cancel-btn').addEventListener('click', function(){
-    form.remove();
-  });
+  document.getElementById('pe-cancel-btn').addEventListener('click', function(){ form.remove(); });
+  document.getElementById('pe-close-x').addEventListener('click', function(){ form.remove(); });
   document.getElementById('pe-save-btn').addEventListener('click', async function(){
     var name       = (document.getElementById('pe-name').value||'').trim();
     var church     = (document.getElementById('pe-church').value||'').trim();
@@ -4287,10 +4287,14 @@ renderDonateCard();
 // Logo click goes home
 on('logo-home-btn','click',function(){
   if(currentBook) closeBook();
-  // close any open modals
-  ['rep-list-modal','rep-detail-modal','info-modal','auth-modal','backup-modal','stats-modal'].forEach(function(id){
+  // Close all modals — but only close auth-modal if user is already signed in
+  ['rep-list-modal','rep-detail-modal','info-modal','backup-modal','stats-modal'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.classList.remove('open');
   });
+  // Only dismiss auth modal if signed in — auth gate stays if not signed in
+  if(currentUser){
+    var am=document.getElementById('auth-modal'); if(am) am.classList.remove('open');
+  }
   var rv=document.getElementById('reading-view'); if(rv) rv.classList.remove('open');
   var pj=document.getElementById('projection'); if(pj) pj.classList.remove('open');
 });
