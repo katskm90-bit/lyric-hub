@@ -59889,7 +59889,10 @@
       "headline": "Spirit Of Praise NEXT Level Tour",
       "sub": "Saturday, 25 April 2026 at 18:00 From R390",
       "img": "https://cf-content.computicket.com/events/7326373/desktopbanner_testprefix_3uM46jzLdZ4bWpxhKN4pyi.jpg",
-      "link": "https://computicket.com/event/spirit-of-praise-next-level-tour/9b9b5431-63a4-4c8d-aaa5-f58e6d801ddf"
+      "link": "https://computicket.com/event/spirit-of-praise-next-level-tour/9b9b5431-63a4-4c8d-aaa5-f58e6d801ddf",
+      "btnText": "Book Now",
+      "btnLink": "https://computicket.com/event/spirit-of-praise-next-level-tour/9b9b5431-63a4-4c8d-aaa5-f58e6d801ddf",
+      "isAd": false
     },
     {
       "headline": "Faith Faith Music 20 Anniversary",
@@ -59915,9 +59918,5 @@
     "title": "Support This Ministry",
     "text": "Your generosity fuels our mission; please consider supporting our ministry, knowing that every gift no matter the size makes a profound difference.",
     "visible": true
-  },
-  "infoData": {
-    "about": "Lyric Hub is a modern solution designed for dynamic and spiritually uplifting worship services. Our mission is to preserve and share the rich musical tradition of the church through digital innovation. This platform provides the praise team and members with instant access to multi-language lyrics, tonic sol-fa notations, and audio-visual hymns and backing tracks. From Sabbath School to Divine Service, Lyric Hub equips you with the tools to easily plan, project, and sing with joy and reverence.",
-    "contact": "Contact number: 011 568 2792\nEmail address: info@serenzadeluxeatelier.co.za"
   }
 }
