@@ -700,6 +700,31 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
     <div class="form-group"><label class="fl">Subtext</label><input type="text" id="sl-sub" placeholder="e.g. Join us at 6pm  All welcome"></div>
     <div class="form-group"><label class="fl">Image URL</label><input type="url" id="sl-img" placeholder="https://i.imgur.com/...  (2560x1440 recommended)"><p style="font-size:11px;color:var(--text4);margin-top:4px">Upload to Imgur, Cloudinary, or Google Drive and paste the direct image link here.</p></div>
     <div id="sl-preview" style="width:100%;padding-bottom:28%;border-radius:8px;background:#e2e8f0;margin-bottom:11px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center"><span style="color:var(--text4);font-size:13px">Image preview</span></div>
+    <div id="sl-focal-wrap" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <p style="font-size:11px;font-weight:700;color:#C05A08;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">Image focal point — drag to focus on the right area</p>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <label style="font-size:11px;color:var(--text3);font-weight:600">Horizontal</label>
+          <span id="sl-focal-x-val" style="font-size:11px;color:var(--orange,#E8650A);font-weight:700">50%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--text4)">Left</span>
+          <input type="range" id="sl-focal-x" min="0" max="100" value="50" style="flex:1;accent-color:#E8650A;cursor:pointer">
+          <span style="font-size:10px;color:var(--text4)">Right</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <label style="font-size:11px;color:var(--text3);font-weight:600">Vertical</label>
+          <span id="sl-focal-y-val" style="font-size:11px;color:var(--orange,#E8650A);font-weight:700">50%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--text4)">Top</span>
+          <input type="range" id="sl-focal-y" min="0" max="100" value="50" style="flex:1;accent-color:#E8650A;cursor:pointer">
+          <span style="font-size:10px;color:var(--text4)">Bottom</span>
+        </div>
+      </div>
+    </div>
     <div class="form-group"><label class="fl">Hyperlink <span style="color:var(--text4);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input type="url" id="sl-link" placeholder="https://..."></div>
     <hr class="section-divider">
     <p class="section-label">Call-to-action button (optional)</p>
@@ -1715,7 +1740,12 @@ function renderBanner(){
     const el=document.createElement(sl.link?'a':'div');
     el.className='banner-slide'+(sl.link?' clickable':'')+(i===bannerCurrent?' active':'');
     if(sl.link){el.href=sl.link;el.target='_blank';el.rel='noopener';}
-    if(sl.img)el.style.backgroundImage='url('+sl.img+')';
+    if(sl.img){
+      el.style.backgroundImage='url('+sl.img+')';
+      const px=sl.bgPosX!==undefined?sl.bgPosX:50;
+      const py=sl.bgPosY!==undefined?sl.bgPosY:50;
+      el.style.backgroundPosition=px+'% '+py+'%';
+    }
     el.style.backgroundColor='#1e1b4b';
     var ctaBtnHtml = '';
     if(sl.btnText){ var bLink=sl.btnLink||sl.link||'#'; ctaBtnHtml+='<a href="'+escHtml(bLink)+'" target="_blank" rel="noopener" onclick="event.stopPropagation();event.preventDefault();window.open(this.href,\'_blank\')" style="display:inline-block;margin-top:10px;padding:8px 20px;background:#E8650A;color:#fff;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.3)">'+escHtml(sl.btnText)+'</a>'; }
@@ -1776,25 +1806,55 @@ function openSlideModal(idx){
   if($i('sl-btn-link'))$i('sl-btn-link').value=sl.btnLink||'';
   if($i('sl-is-ad'))$i('sl-is-ad').checked=sl.isAd||false;
   $i('slide-error').classList.remove('show');
-  updateSlidePreview(sl.img||'');
+  const fx=sl.bgPosX!==undefined?sl.bgPosX:50;
+  const fy=sl.bgPosY!==undefined?sl.bgPosY:50;
+  if($i('sl-focal-x')){$i('sl-focal-x').value=fx;$i('sl-focal-x-val').textContent=fx+'%';}
+  if($i('sl-focal-y')){$i('sl-focal-y').value=fy;$i('sl-focal-y-val').textContent=fy+'%';}
+  updateSlidePreview(sl.img||'',fx,fy);
   openModal('slide-modal');
 }
-function updateSlidePreview(url){
+function updateSlidePreview(url,fx,fy){
   const p=$i('sl-preview');
-  if(url){p.style.backgroundImage='url('+url+')';p.innerHTML='';}
-  else{p.style.backgroundImage='';p.innerHTML='<span style="color:var(--text4);font-size:13px">Image preview</span>';}
+  const wrap=$i('sl-focal-wrap');
+  const x=(fx!==undefined?fx:($i('sl-focal-x')?parseInt($i('sl-focal-x').value):50));
+  const y=(fy!==undefined?fy:($i('sl-focal-y')?parseInt($i('sl-focal-y').value):50));
+  if(url){
+    p.style.backgroundImage='url('+url+')';
+    p.style.backgroundPosition=x+'% '+y+'%';
+    p.innerHTML='';
+    if(wrap)wrap.style.display='block';
+  } else {
+    p.style.backgroundImage='';
+    p.style.backgroundPosition='center';
+    p.innerHTML='<span style="color:var(--text4);font-size:13px">Image preview</span>';
+    if(wrap)wrap.style.display='none';
+  }
 }
 function saveSlide(){
   const headline=$i('sl-headline').value.trim(),sub=$i('sl-sub').value.trim(),img=$i('sl-img').value.trim(),link=$i('sl-link').value.trim(),btnText=($i('sl-btn-text')||{value:''}).value.trim(),btnLink=($i('sl-btn-link')||{value:''}).value.trim(),isAd=$i('sl-is-ad')&&$i('sl-is-ad').checked;
   const err=$i('slide-error');
   if(!headline){err.textContent='Please enter a headline.';err.classList.add('show');return;}
   if(bannerSlides.length>=20&&editingSlide===null){err.textContent='Maximum 20 slides allowed.';err.classList.add('show');return;}
-  const sl={headline,sub,img,link,btnText,btnLink,isAd};
+  const bgPosX=$i('sl-focal-x')?parseInt($i('sl-focal-x').value):50;
+  const bgPosY=$i('sl-focal-y')?parseInt($i('sl-focal-y').value):50;
+  const sl={headline,sub,img,link,btnText,btnLink,isAd,bgPosX,bgPosY};
   if(editingSlide!==null)bannerSlides[editingSlide]=sl;else bannerSlides.push(sl);
   save();renderBanner();renderBannerList();closeModal('slide-modal');
   toast(editingSlide!==null?'Slide updated':'Slide added','success');editingSlide=null;
 }
 on('sl-img', 'input',e=>updateSlidePreview(e.target.value.trim()));
+on('sl-focal-x','input',function(){
+  const v=this.value;
+  $i('sl-focal-x-val').textContent=v+'%';
+  const url=$i('sl-img').value.trim();
+  if(url){const p=$i('sl-preview');p.style.backgroundPosition=v+'% '+$i('sl-focal-y').value+'%';}
+});
+on('sl-focal-y','input',function(){
+  const v=this.value;
+  $i('sl-focal-y-val').textContent=v+'%';
+  const url=$i('sl-img').value.trim();
+  if(url){const p=$i('sl-preview');p.style.backgroundPosition=$i('sl-focal-x').value+'% '+v+'%';}
+});
 on('add-slide-btn', 'click',()=>openSlideModal());
 on('submit-slide', 'click',saveSlide);
 on('banner-manage-btn', 'click',openBannerModal);
