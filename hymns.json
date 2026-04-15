@@ -59892,7 +59892,9 @@
       "link": "https://computicket.com/event/spirit-of-praise-next-level-tour/9b9b5431-63a4-4c8d-aaa5-f58e6d801ddf",
       "btnText": "Book Now",
       "btnLink": "https://computicket.com/event/spirit-of-praise-next-level-tour/9b9b5431-63a4-4c8d-aaa5-f58e6d801ddf",
-      "isAd": true
+      "isAd": true,
+      "bgPosX": 50,
+      "bgPosY": 12
     },
     {
       "headline": "Faith Faith Music 20 Anniversary",
@@ -59901,7 +59903,9 @@
       "link": "https://www.tikiti.co.zw/events/faith-faith-music-20-anniversary-30-05-2026",
       "btnText": "Book Now",
       "btnLink": "https://www.tikiti.co.zw/events/faith-faith-music-20-anniversary-30-05-2026",
-      "isAd": true
+      "isAd": true,
+      "bgPosX": 50,
+      "bgPosY": 63
     },
     {
       "headline": "Reunion Music",
@@ -59910,7 +59914,9 @@
       "link": "https://www.tikiti.co.zw/events/reunion--music--25-04-2026",
       "btnText": "Book Now",
       "btnLink": "https://www.tikiti.co.zw/events/reunion--music--25-04-2026",
-      "isAd": true
+      "isAd": true,
+      "bgPosX": 50,
+      "bgPosY": 53
     },
     {
       "headline": "OMEGA KHUNOU | LET THERE BE LIGHT LIVE RECORDING",
@@ -59919,7 +59925,9 @@
       "link": "https://computicket.com/event/omega-khunou-let-there-be-light-live-recording/f2ef6d02-bad2-4c0a-848d-f645cf635f84",
       "btnText": "Book Now",
       "btnLink": "https://computicket.com/event/omega-khunou-let-there-be-light-live-recording/f2ef6d02-bad2-4c0a-848d-f645cf635f84",
-      "isAd": true
+      "isAd": true,
+      "bgPosX": 50,
+      "bgPosY": 0
     }
   ],
   "donateCard": {
