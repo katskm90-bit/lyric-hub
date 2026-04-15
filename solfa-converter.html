@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HymnDesk — Solfa Converter</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #E8650A;
+  --orange-deep: #d45a08;
+  --orange-glow: rgba(232,101,10,0.15);
+  --dark: #0d0d0d;
+  --dark2: #141414;
+  --dark3: #1a1a1a;
+  --dark4: #222222;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(232,101,10,0.25);
+  --text: #f0ede8;
+  --text2: rgba(240,237,232,0.65);
+  --text3: rgba(240,237,232,0.35);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--dark2);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header-mark {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--text);
+}
+.header-sub {
+  font-size: 12px; color: var(--text3);
+  margin-top: 1px;
+  font-weight: 400;
+}
+.header-badge {
+  margin-left: auto;
+  padding: 4px 12px;
+  background: var(--orange-glow);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--orange);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ── MAIN LAYOUT ── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: calc(100vh - 65px);
+}
+
+/* ── LEFT PANEL ── */
+.panel-left {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.panel-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.panel-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.panel-desc {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+/* ── DROP ZONE ── */
+.drop-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+  min-height: 320px;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  background: rgba(232,101,10,0.04);
+}
+.drop-zone.has-image {
+  padding: 0;
+  justify-content: flex-start;
+  cursor: default;
+}
+.drop-icon {
+  width: 64px; height: 64px;
+  border: 2px dashed rgba(232,101,10,0.4);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+.drop-zone:hover .drop-icon { border-color: var(--orange); }
+.drop-icon svg { width: 28px; height: 28px; stroke: var(--orange); fill: none; stroke-width: 1.5; }
+.drop-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.drop-hint {
+  font-size: 13px; color: var(--text3);
+  text-align: center; line-height: 1.6;
+  max-width: 280px;
+}
+.drop-hint strong { color: var(--orange); }
+
+#file-input { display: none; }
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-height: 520px;
+  padding: 16px;
+  background: #111;
+}
+
+.image-actions {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--dark2);
+}
+
+/* ── CONVERT BUTTON ── */
+.btn-convert {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  color: #fff;
+  border: none; border-radius: 9px;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+  flex: 1;
+  justify-content: center;
+}
+.btn-convert:hover:not(:disabled) { filter: brightness(1.1); }
+.btn-convert:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-convert svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2; }
+
+.btn-clear {
+  padding: 10px 16px;
+  background: var(--dark4);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text2);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-clear:hover { background: var(--dark3); color: var(--text); }
+
+/* ── RIGHT PANEL — OUTPUT ── */
+.output-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-bar {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--dark2);
+  min-height: 52px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.status-dot.processing { background: var(--orange); animation: pulse-dot 1s infinite; }
+.status-dot.done { background: #10b981; }
+.status-dot.error { background: #dc2626; }
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.status-text { font-size: 12px; color: var(--text2); flex: 1; }
+.status-time { font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+.output-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+
+/* ── SOLFA OUTPUT DISPLAY ── */
+.solfa-output {
+  display: none;
+}
+.solfa-output.visible { display: block; }
+
+.key-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--orange-glow);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.section-label-out {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  color: var(--orange);
+  font-style: italic;
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.system-block {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+.voice-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+.voice-row:last-child { border-bottom: none; }
+.voice-tag {
+  width: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--orange);
+  flex-shrink: 0;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+.voice-content {
+  color: var(--text);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+}
+
+/* raw text fallback */
+.raw-output {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+/* ── COPY ACTIONS ── */
+.output-actions {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  background: var(--dark2);
+}
+.btn-copy {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 18px;
+  background: var(--dark4);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-copy:hover { background: var(--dark3); color: var(--text); border-color: var(--border2); }
+.btn-copy.copied { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #10b981; }
+.btn-copy svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+.btn-save-hymndesk {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-deep));
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+  margin-left: auto;
+}
+.btn-save-hymndesk:hover { filter: brightness(1.1); }
+.btn-save-hymndesk svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  gap: 12px;
+  color: var(--text3);
+  text-align: center;
+  padding: 40px;
+}
+.empty-state svg { width: 40px; height: 40px; stroke: rgba(232,101,10,0.3); fill: none; stroke-width: 1.2; }
+.empty-state p { font-size: 13px; line-height: 1.6; max-width: 260px; }
+
+/* ── LOADING SPINNER ── */
+.loading-wrap {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  gap: 20px;
+  text-align: center;
+}
+.loading-wrap.visible { display: flex; }
+.spinner-ring {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(232,101,10,0.2);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-msg {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  color: var(--text);
+}
+.loading-sub { font-size: 12px; color: var(--text3); }
+
+/* ── ERROR STATE ── */
+.error-wrap {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+  background: rgba(220,38,38,0.06);
+  border: 1px solid rgba(220,38,38,0.2);
+  border-radius: 12px;
+  margin: 24px;
+}
+.error-wrap.visible { display: flex; }
+.error-title { font-size: 14px; font-weight: 700; color: #dc2626; }
+.error-body { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* ── TIPS SIDEBAR ── */
+.tips {
+  margin: 24px 28px;
+  padding: 16px;
+  background: rgba(232,101,10,0.04);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+}
+.tips-title {
+  font-size: 11px; font-weight: 700; color: var(--orange);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.tip { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 6px; display: flex; gap: 8px; }
+.tip::before { content: '→'; color: var(--orange); flex-shrink: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .panel-left { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-mark">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 56 56">
+      <rect x="2" y="22" width="8" height="20" rx="4" fill="#fff" opacity="0.38"/>
+      <rect x="14" y="14" width="8" height="28" rx="4" fill="#fff" opacity="0.70"/>
+      <rect x="26" y="4" width="8" height="38" rx="4" fill="#fff"/>
+      <rect x="38" y="14" width="8" height="28" rx="4" fill="#fff" opacity="0.70"/>
+      <rect x="50" y="22" width="8" height="20" rx="4" fill="#fff" opacity="0.38"/>
+      <rect x="14" y="12" width="32" height="5" rx="2.5" fill="#fff"/>
+    </svg>
+  </div>
+  <div>
+    <div class="header-title">Solfa Converter</div>
+    <div class="header-sub">HymnDesk · Serenza Music Realm</div>
+  </div>
+  <div class="header-badge">AI Powered</div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: Upload -->
+  <div class="panel-left">
+    <div class="panel-header">
+      <div>
+        <div class="panel-label">Solfa Image</div>
+        <div class="panel-desc">Photograph or scan of a printed tonic solfa sheet</div>
+      </div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*">
+
+    <div class="drop-zone" id="drop-zone" onclick="triggerFileInput()">
+      <div class="drop-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+      </div>
+      <div class="drop-title">Drop your Solfa image</div>
+      <div class="drop-hint">
+        Tap to choose a photo or drag and drop here.<br>
+        Works with <strong>photographs</strong>, scans, and screenshots.
+      </div>
+    </div>
+
+    <img id="preview-img" class="preview-img" style="display:none" alt="Solfa sheet preview">
+
+    <div class="image-actions" id="image-actions" style="display:none">
+      <button class="btn-convert" id="btn-convert" onclick="convertImage()">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Convert to Text
+      </button>
+      <button class="btn-clear" onclick="clearImage()">Clear</button>
+    </div>
+
+    <!-- Tips -->
+    <div class="tips">
+      <div class="tips-title">Photo tips for best results</div>
+      <div class="tip">Photograph in good natural light — avoid shadows across the page</div>
+      <div class="tip">Hold the camera directly above, not at an angle</div>
+      <div class="tip">Make sure all four voice rows are fully visible</div>
+      <div class="tip">Higher resolution gives more accurate subscript detection</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Output -->
+  <div class="panel-right">
+    <div class="panel-header">
+      <div>
+        <div class="panel-label">Converted Text</div>
+        <div class="panel-desc">Structured tonic solfa ready for HymnDesk</div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <div class="status-text" id="status-text">Upload a Solfa image to begin</div>
+      <div class="status-time" id="status-time"></div>
+    </div>
+
+    <div class="output-area">
+      <div class="output-scroll" id="output-scroll">
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <p>Your converted Solfa text will appear here, structured by voice and system.</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-wrap" id="loading-wrap">
+          <div class="spinner-ring"></div>
+          <div class="loading-msg">Reading the Solfa...</div>
+          <div class="loading-sub">Identifying notes, bars, voices and sections</div>
+        </div>
+
+        <!-- Error -->
+        <div class="error-wrap" id="error-wrap">
+          <div class="error-title">Conversion failed</div>
+          <div class="error-body" id="error-body"></div>
+        </div>
+
+        <!-- Solfa Output -->
+        <div class="solfa-output" id="solfa-output"></div>
+
+        <!-- Raw text output -->
+        <pre class="raw-output" id="raw-output" style="display:none"></pre>
+
+      </div>
+
+      <div class="output-actions" id="output-actions" style="display:none">
+        <button class="btn-copy" id="btn-copy-text" onclick="copyText()">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy text
+        </button>
+        <button class="btn-copy" id="btn-copy-raw" onclick="copyRaw()" style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          Copy raw
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let currentFile = null;
+let rawResult = '';
+let startTime = 0;
+
+// ── FILE HANDLING ──────────────────────────────────────────────────────────────
+function triggerFileInput() {
+  if (currentFile) return;
+  document.getElementById('file-input').click();
+}
+
+document.getElementById('file-input').addEventListener('change', function(e) {
+  if (e.target.files[0]) loadFile(e.target.files[0]);
+});
+
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', function() {
+  dropZone.classList.remove('dragover');
+});
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadFile(file);
+});
+
+function loadFile(file) {
+  currentFile = file;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById('preview-img');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    dropZone.style.display = 'none';
+    document.getElementById('image-actions').style.display = 'flex';
+    setStatus('idle', 'Image loaded. Click Convert to Text.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage() {
+  currentFile = null;
+  document.getElementById('preview-img').style.display = 'none';
+  document.getElementById('preview-img').src = '';
+  document.getElementById('drop-zone').style.display = 'flex';
+  document.getElementById('image-actions').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  resetOutput();
+  setStatus('idle', 'Upload a Solfa image to begin');
+}
+
+function resetOutput() {
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('loading-wrap').classList.remove('visible');
+  document.getElementById('error-wrap').classList.remove('visible');
+  document.getElementById('solfa-output').classList.remove('visible');
+  document.getElementById('solfa-output').innerHTML = '';
+  document.getElementById('raw-output').style.display = 'none';
+  document.getElementById('output-actions').style.display = 'none';
+  rawResult = '';
+}
+
+// ── STATUS ─────────────────────────────────────────────────────────────────────
+function setStatus(state, msg, time) {
+  const dot = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  const timeEl = document.getElementById('status-time');
+  dot.className = 'status-dot' + (state !== 'idle' ? ' ' + state : '');
+  text.textContent = msg;
+  timeEl.textContent = time || '';
+}
+
+// ── CONVERSION ─────────────────────────────────────────────────────────────────
+async function convertImage() {
+  if (!currentFile) return;
+
+  resetOutput();
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('loading-wrap').classList.add('visible');
+  document.getElementById('btn-convert').disabled = true;
+  setStatus('processing', 'Sending image to AI for analysis...');
+  startTime = Date.now();
+
+  try {
+    // Convert file to base64
+    const base64 = await fileToBase64(currentFile);
+    const mediaType = currentFile.type || 'image/jpeg';
+    const b64data = base64.split(',')[1];
+
+    const prompt = `You are a tonic solfa music transcription specialist. Carefully read this tonic solfa sheet image and transcribe it EXACTLY into structured text.
+
+TRANSCRIPTION RULES:
+1. Identify the key at the top (e.g. "Doh is G")
+2. There are typically 4 voice rows per system (Soprano/S, Alto/A, Tenor/T, Bass/B) — read all four
+3. Preserve ALL notation exactly:
+   - Notes: d, r, m, f, s, l, t (and d' for upper octave, d₁/d1 for lower octave)
+   - Subscript lower octave: write as d1, s1, m1 etc.
+   - Superscript upper octave: write as d', s', m' etc.  
+   - Bar lines: |
+   - Beat separator: :
+   - Held/sustained note: —
+   - Passing notes joined with comma: d.,r means d passing to r
+   - Rest: blank or -
+4. Label each system as SYSTEM 1, SYSTEM 2 etc.
+5. If there is a "Chorus" or other section label, include it
+6. For each system, output 4 lines labeled S: A: T: B:
+7. Separate bars clearly with | characters
+
+OUTPUT FORMAT — follow this EXACTLY:
+Key: Doh is G
+
+SYSTEM 1
+S: :s1 |d :d |d.,r :m.,f |s :— |— :l |m :-.f |m.,r :d.,r
+A: :s1 |s1 :s1 |s1.,s1 :d.,d |d :— |— :d |d :-.d |d.,t1 :l1.,t1
+T: :s1 |m :m |m.,f :s.,f |m :— |— :f |s :-.l |s.,f :m.,f
+B: :s1 |d1 :d1 |d.,d :d.,d |d :— |— :f1 |d :-.d |d.,s1 :l1.,s1
+
+SYSTEM 2
+(continue...)
+
+Chorus
+SYSTEM 3
+(continue...)
+
+Transcribe every single note you can see. Do not skip any voice or any bar. If you are uncertain about a note, make your best judgment based on context. Output ONLY the transcription, no explanations.`;
+
+    // Call via GAS proxy — avoids CORS and keeps API key server-side
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6W48l8nqbLWA-_lemYUCQLmPk9fcAuSBc6vjxVlovtx7N0VDyC3TDB63xctR2k-Z9eg/exec';
+
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'convertSolfa',
+        imageBase64: b64data,
+        mediaType: mediaType
+      })
+    });
+
+    if (!response.ok) throw new Error('Server error ' + response.status);
+
+    const data = await response.json();
+    if (!data.success) throw new Error(data.message || 'Conversion failed');
+    const text = data.text;
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+
+    rawResult = text;
+    document.getElementById('loading-wrap').classList.remove('visible');
+    renderOutput(text);
+    setStatus('done', 'Conversion complete — review and copy', elapsed);
+    document.getElementById('output-actions').style.display = 'flex';
+
+  } catch (err) {
+    document.getElementById('loading-wrap').classList.remove('visible');
+    document.getElementById('error-wrap').classList.add('visible');
+    document.getElementById('error-body').textContent = err.message;
+    setStatus('error', 'Conversion failed — see error details');
+  }
+
+  document.getElementById('btn-convert').disabled = false;
+}
+
+// ── RENDER OUTPUT ──────────────────────────────────────────────────────────────
+function renderOutput(text) {
+  const container = document.getElementById('solfa-output');
+  container.innerHTML = '';
+  container.classList.add('visible');
+
+  const lines = text.split('\n');
+  let html = '';
+  let inSystem = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    // Key line
+    if (line.startsWith('Key:') || line.startsWith('Doh is')) {
+      html += `<div class="key-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        ${escHtml(line)}
+      </div>`;
+      continue;
+    }
+
+    // Section label (Chorus, Verse etc.)
+    if (/^(Chorus|Verse|Bridge|Refrain|Coda)/i.test(line) && !line.match(/^[SATB]:/)) {
+      html += `<div class="section-label-out">${escHtml(line)}</div>`;
+      inSystem = false;
+      continue;
+    }
+
+    // System header
+    if (/^SYSTEM\s+\d+/i.test(line)) {
+      if (inSystem) html += '</div>'; // close previous system
+      html += `<div class="system-block">`;
+      inSystem = true;
+      continue;
+    }
+
+    // Voice row S: A: T: B:
+    if (/^[SATB]:/i.test(line)) {
+      const tag = line.substring(0,1).toUpperCase();
+      const content = line.substring(2).trim();
+      const tagColors = {S:'#E8650A',A:'#FFB366',T:'#94a3b8',B:'#64748b'};
+      html += `<div class="voice-row">
+        <span class="voice-tag" style="color:${tagColors[tag]||'var(--orange)'}">${tag}</span>
+        <span class="voice-content">${escHtml(content)}</span>
+      </div>`;
+      continue;
+    }
+
+    // Fallback — plain text line
+    if (inSystem) {
+      html += `<div style="color:var(--text2);font-size:12px;padding:2px 0">${escHtml(line)}</div>`;
+    }
+  }
+
+  if (inSystem) html += '</div>';
+
+  if (!html.trim()) {
+    // Fallback to raw display
+    document.getElementById('solfa-output').classList.remove('visible');
+    document.getElementById('raw-output').style.display = 'block';
+    document.getElementById('raw-output').textContent = text;
+    document.getElementById('btn-copy-raw').style.display = 'flex';
+  } else {
+    container.innerHTML = html;
+  }
+}
+
+// ── COPY ───────────────────────────────────────────────────────────────────────
+function copyText() {
+  navigator.clipboard.writeText(rawResult).then(() => {
+    const btn = document.getElementById('btn-copy-text');
+    btn.classList.add('copied');
+    btn.querySelector('svg').outerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><polyline points="20,6 9,17 4,12" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+    btn.childNodes[btn.childNodes.length-1].textContent = ' Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy text`;
+    }, 2500);
+  });
+}
+
+function copyRaw() {
+  navigator.clipboard.writeText(rawResult).then(() => {
+    const btn = document.getElementById('btn-copy-raw');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy raw'; }, 2000);
+  });
+}
+
+// ── UTILS ──────────────────────────────────────────────────────────────────────
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(new Error('Could not read file'));
+    r.readAsDataURL(file);
+  });
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
