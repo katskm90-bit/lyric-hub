@@ -1436,21 +1436,47 @@ const BG_CLASSES=['bg-black','bg-navy','bg-purple','bg-vignette','bg-carbon'];
 const BG_LABELS=['Black','Navy','Purple','Vignette','Carbon'];
 const SEGMENT_PRESETS=['Sabbath School','Divine Service','Announcements','Special Music','Pastoral Prayer','Offering Appeal','Sermon','Mission Report','Closing','Welcome','Children\'s Story','Vespers','Prayer Meeting','Communion'];
 
-// --- Secure Admin Authentication ---
+// --- Admin Authentication ---
+// Password verified synchronously via session flag.
+// Custom modal used instead of window.prompt to hide input text.
 let isAdmin = false;
+let _adminPending = false;
+
 if (sessionStorage.getItem('lh_admin_auth') === 'true') {
-    isAdmin = true;
+  isAdmin = true;
 } else if (new URLSearchParams(window.location.search).get('admin') === 'true') {
-    const pwd = window.prompt("Admin Access Required.\nPlease enter the master password:");
-    if (pwd === atob('TWF6aWJ1a29AMjY=')) {  // obfuscated — not plain text
-        isAdmin = true;
-        sessionStorage.setItem('lh_admin_auth', 'true');
-        window.history.replaceState({}, document.title, window.location.pathname);
-        toast('Admin access granted', 'success');
-    } else {
-        alert("Incorrect password. Accessing as standard user.");
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+  _adminPending = true; // will show password modal after DOM is ready
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+function _showAdminPwdModal() {
+  if (!_adminPending) return;
+  _adminPending = false;
+  var overlay = document.getElementById('admin-pwd-overlay');
+  if (overlay) { overlay.style.display = 'flex'; document.getElementById('admin-pwd-input').focus(); }
+}
+
+function _submitAdminPwd() {
+  var input = document.getElementById('admin-pwd-input');
+  var err   = document.getElementById('admin-pwd-err');
+  var pwd   = input.value;
+  // Compare against obfuscated value — not stored as plain text
+  if (pwd === atob('TWF6aWJ1a29AMjY=')) {
+    isAdmin = true;
+    sessionStorage.setItem('lh_admin_auth', 'true');
+    document.getElementById('admin-pwd-overlay').style.display = 'none';
+    // Reload to apply admin UI
+    location.reload();
+  } else {
+    err.style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
+
+function _cancelAdminPwd() {
+  document.getElementById('admin-pwd-overlay').style.display = 'none';
+  toast('Continuing as standard user', 'info');
 }
 
 // ── STORAGE HELPERS ──────────────────────────────────────────────────────────
@@ -1800,7 +1826,8 @@ function renderBannerList(){
   list.querySelectorAll('[data-sdel]').forEach(b=>b.addEventListener('click',()=>{
     bannerSlides.splice(parseInt(b.dataset.sdel),1);
     if(bannerCurrent>=bannerSlides.length)bannerCurrent=Math.max(0,bannerSlides.length-1);
-    save();renderBanner();renderBannerList();toast('Slide removed','success');
+    save();renderBanner();
+if(typeof _showAdminPwdModal==='function')setTimeout(_showAdminPwdModal,100);renderBannerList();toast('Slide removed','success');
   }));
 }
 function openSlideModal(idx){
@@ -3813,7 +3840,6 @@ function exportStatsPDF(){
   html += '</tbody></table>';
 
   html += '<div class="footer">HymnDesk · Serenza Music Realm · hymndesk.co.za &nbsp;·&nbsp; Report generated ' + new Date().toISOString() + '</div>';
-  html += '</body></html>';
 
   // Open in new tab and trigger print
   var w = window.open('','_blank');
