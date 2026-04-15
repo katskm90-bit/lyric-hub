@@ -1,0 +1,141 @@
+{
+  "name": "HymnDesk",
+  "short_name": "HymnDesk",
+  "description": "SDA hymn library, service projection and repertoire management — Serenza Music Realm",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#E8650A",
+  "background_color": "#ffffff",
+  "lang": "en-ZA",
+  "dir": "ltr",
+  "categories": ["music", "education", "utilities"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://hymndesk.co.za/manifest.json",
+      "id": "za.co.hymndesk.app"
+    }
+  ],
+
+  "scope_extensions": [
+    { "origin": "https://katskm90-bit.github.io" }
+  ],
+
+  "display_override": ["tabbed", "window-controls-overlay", "standalone"],
+
+  "icons": [
+    { "src": "/icons/icon-16x16.png",            "sizes": "16x16",     "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-32x32.png",            "sizes": "32x32",     "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-48x48.png",            "sizes": "48x48",     "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-72x72.png",            "sizes": "72x72",     "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-96x96.png",            "sizes": "96x96",     "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-120x120.png",          "sizes": "120x120",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-128x128.png",          "sizes": "128x128",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-144x144.png",          "sizes": "144x144",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-152x152.png",          "sizes": "152x152",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-180x180.png",          "sizes": "180x180",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192x192.png",          "sizes": "192x192",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-256x256.png",          "sizes": "256x256",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512x512.png",          "sizes": "512x512",   "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-1024x1024.png",        "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512x512.png", "sizes": "512x512",   "type": "image/png", "purpose": "maskable" }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot-wide-1280x720.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "HymnDesk hymn library and service projection tool"
+    },
+    {
+      "src": "/screenshots/screenshot-narrow-750x1334.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "HymnDesk on mobile — browse and project hymns"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Browse Hymns",
+      "short_name": "Hymns",
+      "description": "Open the hymn library",
+      "url": "/",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "My Repertoires",
+      "short_name": "Repertoires",
+      "description": "View and manage service repertoires",
+      "url": "/?section=repertoires",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ],
+
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/json": [".json"]
+      }
+    }
+  ],
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+hymndesk",
+      "url": "/?hymn=%s"
+    }
+  ],
+
+  "widgets": [
+    {
+      "name": "HymnDesk",
+      "short_name": "HymnDesk",
+      "description": "Quick access to the HymnDesk hymn library",
+      "tag": "hymndesk-widget",
+      "type": "application/json",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" }],
+      "screenshots": [
+        {
+          "src": "/screenshots/screenshot-wide-1280x720.png",
+          "sizes": "1280x720",
+          "label": "HymnDesk widget preview"
+        }
+      ],
+      "auth": false,
+      "update": 3600
+    }
+  ],
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+
+  "note_taking": {
+    "new_note_url": "/"
+  }
+}
