@@ -27,7 +27,7 @@
     { "origin": "https://www.hymndesk.co.za" }
   ],
 
-  "display_override": ["tabbed", "window-controls-overlay", "standalone"],
+  "display_override": ["standalone"],
 
   "icons": [
     { "src": "/icons/icon-16x16.png",            "sizes": "16x16",     "type": "image/png", "purpose": "any" },
