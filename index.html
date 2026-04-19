@@ -357,13 +357,20 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
 .reading-chorus-slide{background:var(--bg2);border-left:4px solid #E8650A;border-radius:0 12px 12px 0;padding:18px 20px;text-align:left}
 .reading-chorus-slide .reading-stanza-label{text-align:left}
 .reading-chorus-slide .reading-stanza-text{text-align:left}
-.reading-nav-bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:8px}
+.reading-nav-bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border);padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.reading-nav-controls{display:flex;align-items:center;gap:6px;margin-left:auto}
 .reading-nav-btn{display:inline-flex;align-items:center;gap:5px;padding:11px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
 .reading-nav-btn:hover:not(:disabled){background:#FFF0E6;border-color:#FFD9B8;color:#C05A08}
 .reading-nav-btn:disabled{opacity:0.3;cursor:not-allowed}
 .reading-nav-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-.reading-pos{font-size:12px;color:var(--text3);text-align:center;line-height:1.4}
+.reading-pos{font-size:12px;color:var(--text3);text-align:left;line-height:1.4;padding-left:140px}
 .reading-pos-slide{font-size:10px;color:var(--text4);margin-top:2px}
+/* Mobile: stack and keep nav bar usable at narrow widths */
+@media(max-width:599px){
+  .reading-pos{padding-left:0;text-align:center;width:100%;order:-1;margin-bottom:6px;font-size:11px}
+  .reading-nav-controls{margin:0 auto;gap:4px;flex-wrap:wrap;justify-content:center}
+  .reading-nav-btn{padding:9px 14px;font-size:12px}
+}
 /* Tablet-specific larger reading view */
 @media(min-width:600px) and (max-width:1199px){
   .reading-body{padding:32px 48px;max-width:100%}
@@ -1287,10 +1294,6 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
       <div class="reading-hymn-title" id="reading-title"></div>
       <div class="reading-hymn-sub" id="reading-sub"></div>
     </div>
-    <div class="reading-font-btns">
-      <button class="reading-font-btn" id="reading-font-dec">A-</button>
-      <button class="reading-font-btn" id="reading-font-inc">A+</button>
-    </div>
   </div>
   <div class="reading-media-row" id="reading-media-row"></div>
   <div class="reading-body" id="reading-body"></div>
@@ -1312,13 +1315,17 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
   <audio id="reading-audio-player" style="display:none"></audio>
 
   <div class="reading-nav-bar" id="reading-nav-bar">
-    <button class="reading-nav-btn" id="reading-prev-btn">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>Prev
-    </button>
     <div class="reading-pos" id="reading-pos"></div>
-    <button class="reading-nav-btn" id="reading-next-btn">
-      Next<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-    </button>
+    <div class="reading-nav-controls">
+      <button class="reading-nav-btn" id="reading-prev-btn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>Prev
+      </button>
+      <button class="reading-font-btn" id="reading-font-dec">A-</button>
+      <button class="reading-font-btn" id="reading-font-inc">A+</button>
+      <button class="reading-nav-btn" id="reading-next-btn">
+        Next<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
