@@ -655,9 +655,9 @@ html.dark .user-profile-card{background:linear-gradient(135deg,#1a1208,#2a1a0a);
       <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Up next</div>
       <div id="pv-next" style="font-family:'Playfair Display',serif;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;white-space:pre-line"></div>
     </div>
-    <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.1)">
-      <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Jump to slide</div>
-      <div id="pv-slide-list" style="display:flex;flex-direction:column;gap:3px;max-height:150px;overflow-y:auto"></div>
+    <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.1);flex:1;overflow-y:auto">
+      <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px" id="pv-slide-list-label">Jump to slide</div>
+      <div id="pv-slide-list" style="display:flex;flex-direction:column;gap:3px"></div>
     </div>
     <div style="padding:8px 12px;background:rgba(0,0,0,0.4)">
       <div id="pv-timer" style="font-size:22px;font-weight:700;color:#E8650A;text-align:center;font-variant-numeric:tabular-nums">00:00</div>
@@ -5534,7 +5534,13 @@ function updatePresenterView() {
   if (!_presenterActive) return;
   var curEl = document.getElementById('pv-current');
   var nextEl = document.getElementById('pv-next');
+  var labelEl = document.getElementById('pv-slide-list-label');
   if (!curEl || !nextEl) return;
+
+  // Update the Jump list label to reflect repertoire vs single-hymn mode
+  if (labelEl) {
+    labelEl.textContent = (fromRep && repProjection.length > 0) ? 'Jump to any slide in service' : 'Jump to slide';
+  }
 
   if (projSequence.length > 0) {
     var cur = projSequence[projSeqIndex];
@@ -5547,8 +5553,24 @@ function updatePresenterView() {
       var nlabel = nxt.type === 'chorus' ? 'Chorus' : 'Stanza ' + nxt.num;
       nextEl.innerHTML = '<div style="font-size:10px;color:rgba(255,179,102,0.8);font-weight:700;margin-bottom:4px">' + nlabel + '</div>'
         + '<div style="white-space:pre-line;color:rgba(255,255,255,0.55);font-size:11px">' + escHtml(nxt.text.substring(0, 120)) + '…</div>';
+    } else if (fromRep && repProjIndex < repProjection.length - 1) {
+      // End of current hymn in a repertoire — show what comes next
+      var nextItem = repProjection[repProjIndex + 1];
+      var nextTitle = '';
+      var nextTypeLabel = '';
+      if (nextItem.type === 'announcement') {
+        nextTypeLabel = 'Announcement'; nextTitle = nextItem.annHeadline || '';
+      } else if (nextItem.type === 'segment') {
+        nextTypeLabel = 'Segment'; nextTitle = nextItem.name || '';
+      } else if (nextItem.type === 'divider') {
+        nextTypeLabel = 'Up next'; nextTitle = nextItem.title || '';
+      } else {
+        nextTypeLabel = 'Next hymn'; nextTitle = nextItem.title || '';
+      }
+      nextEl.innerHTML = '<div style="font-size:10px;color:rgba(255,179,102,0.8);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">' + escHtml(nextTypeLabel) + '</div>'
+        + '<div style="color:#fff;font-size:12px;font-weight:600">' + escHtml(nextTitle) + '</div>';
     } else {
-      nextEl.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:11px">Last slide of this hymn</div>';
+      nextEl.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:11px">Last slide</div>';
     }
   } else if (projHymn && projHymn.type === 'segment') {
     curEl.innerHTML = '<div style="color:#FFBB88;font-size:13px;font-weight:700">' + escHtml(projHymn.segName || '') + '</div>';
@@ -5562,7 +5584,78 @@ function updatePresenterView() {
 function buildPresenterSlideList() {
   if (!_presenterActive) return;
   var wrap = document.getElementById('pv-slide-list');
-  if (!wrap || !projSequence.length) return;
+  if (!wrap) return;
+
+  // Repertoire mode: show ALL items in the repertoire, with hymns expanded into their stanzas
+  if (fromRep && repProjection.length > 0) {
+    var html = '';
+    repProjection.forEach(function(repItem, itemIdx) {
+      var isCurrentItem = itemIdx === repProjIndex;
+
+      if (repItem.type === 'announcement') {
+        var activeStyle = isCurrentItem
+          ? 'background:rgba(232,101,10,0.25);border:1px solid rgba(232,101,10,0.5);color:#fff'
+          : 'background:rgba(74,85,104,0.15);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)';
+        html += '<button onclick="presenterJumpToRepItem(' + itemIdx + ',0)" '
+          + 'style="display:block;width:100%;text-align:left;' + activeStyle + ';'
+          + 'border-radius:6px;padding:6px 9px;cursor:pointer;margin-bottom:3px;font-size:10px;font-weight:600">'
+          + '<span style="color:#94a3b8;font-size:9px;text-transform:uppercase;letter-spacing:0.04em">Announcement</span><br>'
+          + escHtml((repItem.annHeadline || 'Untitled').substring(0, 40))
+          + '</button>';
+      }
+      else if (repItem.type === 'segment') {
+        var activeStyle = isCurrentItem
+          ? 'background:rgba(232,101,10,0.25);border:1px solid rgba(232,101,10,0.5);color:#fff'
+          : 'background:rgba(74,85,104,0.15);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)';
+        html += '<button onclick="presenterJumpToRepItem(' + itemIdx + ',0)" '
+          + 'style="display:block;width:100%;text-align:left;' + activeStyle + ';'
+          + 'border-radius:6px;padding:6px 9px;cursor:pointer;margin-bottom:3px;font-size:10px;font-weight:600">'
+          + '<span style="color:#94a3b8;font-size:9px;text-transform:uppercase;letter-spacing:0.04em">Segment</span><br>'
+          + escHtml((repItem.name || 'Untitled').substring(0, 40))
+          + '</button>';
+      }
+      else if (repItem.type === 'divider') {
+        var activeStyle = isCurrentItem
+          ? 'background:rgba(232,101,10,0.25);border:1px solid rgba(232,101,10,0.5);color:#fff'
+          : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.55)';
+        html += '<button onclick="presenterJumpToRepItem(' + itemIdx + ',0)" '
+          + 'style="display:block;width:100%;text-align:left;' + activeStyle + ';'
+          + 'border-radius:6px;padding:6px 9px;cursor:pointer;margin-bottom:3px;font-size:10px;font-weight:600">'
+          + '<span style="color:#FFBB88;font-size:9px;text-transform:uppercase;letter-spacing:0.04em">Intro</span><br>'
+          + escHtml((repItem.title || 'Untitled').substring(0, 40))
+          + '</button>';
+      }
+      else {
+        // Hymn: show title as a header, then expand its stanzas and choruses
+        var hymnCfg = (repItem._repeatConfig) || {};
+        var hymnSeq = buildSequence(repItem, hymnCfg);
+        html += '<div style="margin-top:6px;margin-bottom:3px;padding:4px 8px;background:rgba(232,101,10,0.08);border-left:2px solid #E8650A;font-size:10px;font-weight:700;color:#FFBB88;border-radius:3px">'
+          + '&#9834; ' + escHtml((repItem.title || 'Untitled').substring(0, 36))
+          + '</div>';
+        hymnSeq.forEach(function(s, slideIdx) {
+          var isCurrentSlide = isCurrentItem && slideIdx === projSeqIndex;
+          var label = s.type === 'chorus'
+            ? 'Chorus' + (s.repTotal > 1 ? ' ' + s.repNum + '/' + s.repTotal : '')
+            : 'Stanza ' + s.num + (s.repTotal > 1 ? ' (' + s.repNum + '/' + s.repTotal + ')' : '');
+          var activeStyle = isCurrentSlide
+            ? 'background:rgba(232,101,10,0.25);border:1px solid rgba(232,101,10,0.5);color:#fff'
+            : 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.55)';
+          var preview = s.text.split('\n')[0].substring(0, 30);
+          if (s.text.length > 30) preview += '…';
+          html += '<button onclick="presenterJumpToRepItem(' + itemIdx + ',' + slideIdx + ')" '
+            + 'style="display:block;width:100%;text-align:left;' + activeStyle + ';'
+            + 'border-radius:6px;padding:5px 8px;cursor:pointer;margin-bottom:2px;margin-left:8px;font-size:10px;font-weight:600">'
+            + label + ': <span style="font-weight:400;opacity:0.7">' + escHtml(preview) + '</span>'
+            + '</button>';
+        });
+      }
+    });
+    wrap.innerHTML = html;
+    return;
+  }
+
+  // Single-hymn mode (not from a repertoire): keep original behaviour
+  if (!projSequence.length) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = projSequence.map(function(s, i) {
     var label = s.type === 'chorus' ? 'Chorus' : 'Stanza ' + s.num;
     var isActive = i === projSeqIndex;
@@ -5581,6 +5674,45 @@ function presenterJumpTo(idx) {
   renderSlide();
   updatePresenterView();
   buildPresenterSlideList();
+}
+
+// Jump across repertoire items — switches to the target item, then to the target slide within it
+function presenterJumpToRepItem(itemIdx, slideIdx) {
+  if (!fromRep || !repProjection.length) return;
+  if (itemIdx < 0 || itemIdx >= repProjection.length) return;
+  var target = repProjection[itemIdx];
+
+  // If jumping to the same item we're already on, just change the slide within it
+  if (itemIdx === repProjIndex && target.type !== 'announcement' && target.type !== 'segment' && target.type !== 'divider') {
+    if (slideIdx >= 0 && slideIdx < projSequence.length) {
+      projSeqIndex = slideIdx;
+      renderSlide();
+      updatePresenterView();
+      buildPresenterSlideList();
+    }
+    return;
+  }
+
+  // Otherwise, switch to the new item, then jump to the slide within it
+  repProjIndex = itemIdx;
+  projectRepItem(target);
+  // projectRepItem is synchronous for text items; for hymns it calls startProjection which sets projSequence.
+  // Wait a tick for renderSlide's async opacity transition to settle, then jump within the hymn.
+  if (target.type !== 'announcement' && target.type !== 'segment' && target.type !== 'divider') {
+    setTimeout(function() {
+      if (slideIdx > 0 && slideIdx < projSequence.length) {
+        projSeqIndex = slideIdx;
+        renderSlide();
+      }
+      updatePresenterView();
+      buildPresenterSlideList();
+    }, 150);
+  } else {
+    setTimeout(function() {
+      updatePresenterView();
+      buildPresenterSlideList();
+    }, 50);
+  }
 }
 
 // Hook into renderSlide to refresh presenter view
